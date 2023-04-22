@@ -26,19 +26,19 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 
 
 ## Core Skills
-- [Next.js](https://nextjs.org/docs) : React framework for building server-side rendered (SSR) and statically generated (SSG) web applications.
-- [Ant Design](https://ant.design/components/overview/) : React UI library.
-- [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd) : Drag and drop lists for React library.
-- [MongoDB](https://www.mongodb.com/) : NoSQL document-oriented database.
-- [Filestack](https://www.filestack.com/) : File Uploader
-- WebSocket : Real-time communication between the client and the server.
+- [`Next.js`](https://nextjs.org/docs) : React framework for building server-side rendered (SSR) and statically generated (SSG) web applications.
+- [`Ant Design`](https://ant.design/components/overview/) : React UI library.
+- [`react-beautiful-dnd`](https://github.com/atlassian/react-beautiful-dnd) : Drag and drop lists for React library.
+- [`MongoDB`](https://www.mongodb.com/) : NoSQL document-oriented database.
+- [`Filestack`](https://www.filestack.com/) : File Uploader
+- `WebSocket` : Real-time communication between the client and the server.
 
 
 ## Tools
-- [TypeScript](https://www.typescriptlang.org/) : Strongly typed programming language builds on JavaScript.
+- [`TypeScript`](https://www.typescriptlang.org/) : Strongly typed programming language builds on JavaScript.
 - [`husky`](https://github.com/typicode/husky) : Unify git commit tools.
 - [`eslint-config-airbnb`](https://github.com/airbnb/javascript): Follow Airbnb JavaScript Style Guide.
-- [yup](https://github.com/jquense/yup) : JavaScript schema validation library used to validate objects against defined schemas.
+- [`yup`](https://github.com/jquense/yup) : JavaScript schema validation library used to validate objects against defined schemas.
 
 
 ## Coding Style
