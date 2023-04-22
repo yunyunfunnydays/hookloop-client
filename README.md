@@ -13,14 +13,13 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 - User Profile : Manage your personal user name and profile shot, overview all projects and team members you initiate. 
 
 
----
 ## Prerequisites
 - Node.js
 - Yarn
 
 ## Installation
 1. Clone this repository to your local machine.
-2. Run `yarn` in the project directory to install all required dependencies.
+2. Run `yarn install` in the project directory to install all required dependencies.
 3. Create a `.env` file at the root directory of the project and add the necessary environment variables. See the `.env.example` file for reference.
 4. Run `yarn start` or `yarn dev` to start the application.
 
@@ -37,22 +36,21 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 ## Tools
 - [`TypeScript`](https://www.typescriptlang.org/) : Strongly typed programming language builds on JavaScript.
 - [`husky`](https://github.com/typicode/husky) : Unify git commit tools.
-- [`eslint-config-airbnb`](https://github.com/airbnb/javascript): Follow Airbnb JavaScript Style Guide.
+- [`eslint-config-airbnb`](https://github.com/airbnb/javascript): Follow [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 - [`yup`](https://github.com/jquense/yup) : JavaScript schema validation library used to validate objects against defined schemas.
 
 
 ## Coding Style
-### Naming Convention
+- ### Naming Convention
+[提供參考A：irbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react#airbnb-reactjsx-style-guide)
+
+- ### Folder Structure
 
 
-### Folder Structure
+- ### Others
 
 
-### Others
-
-
-### Commit Message Guidelines
-
+- ### Commit Message Guidelines
 
 
 

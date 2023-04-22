@@ -2,12 +2,15 @@
   "extends": [
     "next/core-web-vitals", 
     "airbnb",
-    "airbnb-typescript"
+    "airbnb-typescript",
+    "prettier"
   ],
+  "plugins": ["prettier"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "rules": {
-    "react/jsx-props-no-spreading": "off"
+    "react/jsx-props-no-spreading": "off",
+    "prettier/prettier": "error"
   }
 }
