@@ -42,7 +42,7 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 
 ## Coding Style
 - ### Naming Convention
-[提供參考A：irbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react#airbnb-reactjsx-style-guide)
+    - [提供參考:Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react#airbnb-reactjsx-style-guide)
 
 - ### Folder Structure
 
@@ -51,7 +51,7 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 
 
 - ### Commit Message Guidelines
-
+    - [參考 Angular Commit Message Header](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit-message-header)
 
 
 
