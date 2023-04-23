@@ -36,6 +36,9 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 ## Tools
 - [`TypeScript`](https://www.typescriptlang.org/) : Strongly typed programming language builds on JavaScript.
 - [`husky`](https://github.com/typicode/husky) : Unify git commit tools.
+- [`commitlint`](https://github.com/conventional-changelog/commitlint#shared-configuration) : Lint git commit message.
+- [`commitizen`](https://github.com/commitizen/cz-cli) : Auto generate commit followed by commitlint convention.
+- [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog) : Generate a CHANGELOG from git metadata.
 - [`eslint-config-airbnb`](https://github.com/airbnb/javascript): Follow [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 - [`yup`](https://github.com/jquense/yup) : JavaScript schema validation library used to validate objects against defined schemas.
 
