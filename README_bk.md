@@ -5,6 +5,15 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 
 #### Project Status: Developing.
 
+## What you can do in HOOKLOOP ?
+
+- Dashboard : Overview all your workspaces and kanbans.
+- Workspace : Overview all your kanbans.
+- Kanban : Task tracking board with advanced filter, including public and private task list.
+- Card : Task assignment, including task details, comments and file uploads.
+- Notification : Instant notification when cards you included are updated.
+- User Profile : Manage your personal user name and profile shot, overview all projects and team members you initiate.
+
 ## Prerequisites
 
 - Node.js
@@ -34,6 +43,7 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 - [`commitizen`](https://github.com/commitizen/cz-cli) : Auto generate commit followed by commitlint convention.
 - [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog) : Generate a CHANGELOG from git metadata.
 - [`eslint-config-airbnb`](https://github.com/airbnb/javascript): Follow [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript/tree/master/react).
+- [`yup`](https://github.com/jquense/yup) : JavaScript schema validation library used to validate objects against defined schemas.
 
 ## Coding Style
 
