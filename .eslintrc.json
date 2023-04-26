@@ -1,14 +1,21 @@
 {
-  "extends": [
-    "next/core-web-vitals", 
-    "airbnb",
-    "airbnb-typescript",
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["next/core-web-vitals", "airbnb", "airbnb/hooks", "airbnb-typescript", "plugin:prettier/recommended"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "rules": {
-    "react/jsx-props-no-spreading": "off"
+    "react/jsx-props-no-spreading": "off",
+    "import/newline-after-import": ["error", { "count": 1 }], // import 完成後要換幾行
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "no-underscore-dangle": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "import/prefer-default-export": "off"
   }
 }
