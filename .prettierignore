@@ -1,0 +1,13 @@
+# dependencies
+/node_modules
+
+# production: 忽略編譯後的 JavaScript 檔案
+/dist
+
+
+# env files
+.env*
+
+
+# yarn error logs
+yarn-error.log
