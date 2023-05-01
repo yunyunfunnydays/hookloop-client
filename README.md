@@ -7,7 +7,7 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 
 ## Prerequisites
 
-- Node.js
+- Node.js : `>=16.14.0`
 - Yarn
 
 ## Installation
@@ -34,6 +34,7 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 - [`commitizen`](https://github.com/commitizen/cz-cli) : Auto generate commit followed by commitlint convention.
 - [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog) : Generate a CHANGELOG from git metadata.
 - [`eslint-config-airbnb`](https://github.com/airbnb/javascript): Follow [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript/tree/master/react).
+- [lint-staged](https://github.com/okonet/lint-staged) : Only Lint staged files in Git.
 
 ## Coding Style
 
