@@ -64,7 +64,7 @@ This is a project tracking application by using **Next.js** and **Typescript**.
 
 - [Ariean]()
 - [Emi]()
-- [Jason]()
+- [Jason](https://github.com/jasonluo07)
 - [Joanna](https://chen-chens.github.io/myWebsite/)
 - [Yuna]()
 - [Yun]()
