@@ -3,11 +3,11 @@
 @tailwind utilities;
 @layer components {
   #__next {
-    @apply h-full w-full;
+    @apply h-screen w-screen flex flex-col;
   }
   html,
   body {
-    @apply h-full w-full bg-[#f5f5f5];
+    @apply h-screen w-screen bg-[#f5f5f5];
   }
   blockquote,
   dl,

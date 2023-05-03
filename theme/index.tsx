@@ -5,7 +5,7 @@ const withTheme = (node: JSX.Element) => (
   <ConfigProvider
     theme={{
       token: {
-        colorPrimary: "#6989ba",
+        colorPrimary: "#434343",
       },
       components: {
         Layout: {
@@ -13,15 +13,35 @@ const withTheme = (node: JSX.Element) => (
           colorBgHeader: "#FFF",
           padding: 0,
         },
+        Button: {
+          colorText: "#6C6C6C",
+          borderRadius: 2,
+          borderRadiusLG: 2,
+          borderRadiusSM: 2,
+          controlOutline: "",
+        },
+        Input: {
+          borderRadius: 2,
+          borderRadiusLG: 2,
+          borderRadiusSM: 2,
+        },
+        Modal: {
+          borderRadiusLG: 2,
+          borderRadiusSM: 2,
+          paddingContentHorizontalLG: 25,
+          padding: 25,
+          paddingLG: 25,
+          paddingMD: 25,
+        },
         Typography: {
           colorLink: "#6989ba",
+          sizeMarginHeadingVerticalEnd: 0,
+          fontWeightStrong: 500,
+        },
+        Form: {
           margin: 0,
           marginLG: 0,
-          marginMD: 0,
-          marginSM: 0,
-          marginXL: 0,
           marginXS: 0,
-          marginXXL: 0,
           marginXXS: 0,
         },
       },
