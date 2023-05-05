@@ -7,8 +7,7 @@ import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/ic
 // logo
 import logo from "@/assets/logo.svg";
 // api
-import { AxiosResponse } from "axios";
-import { IApiResponse, IApiSuccessResponse } from "@/service/instance";
+import { IApiResponse } from "@/service/instance";
 import { getUsers, createUser, login } from "@/service/api";
 
 interface ILogin {
@@ -70,22 +69,24 @@ const Login: React.FC<ILogin> = (props) => {
 
     // window width >= 576
     if (screens.sm) {
-      return 375;
+      return "90%";
     }
 
     // window width < 576
     if (screens.sm) {
-      return 375;
+      return "90%";
     }
 
-    return 375;
+    return "90%";
   };
 
   const onFinish = async (values: IUser) => {
     // ...
     if (s_editType === "login") {
       const res = await login(values);
-      const { data, message, status } = res as any;
+      // 暫時無法解決型別問題，先用any
+      const { data, message, status } = res as unknown as IApiResponse;
+      // const { data, message, status } = res as unknown as AxiosResponse<IApiSuccessResponse<unknown>>;
       if (status === "success") {
         msg.success(message);
       } else {
@@ -95,15 +96,13 @@ const Login: React.FC<ILogin> = (props) => {
 
     if (s_editType === "signUp") {
       const res = await createUser(values);
-      const { data, message, status } = res as any;
+      // 暫時無法解決型別問題，先用any
+      const { data, message, status } = res as unknown as IApiResponse;
       if (status === "success") {
         msg.success(message);
       } else {
         msg.error(message);
       }
-      // if(res.status === 'success') {
-      //   message.success()
-      // }
     }
   };
 
@@ -120,6 +119,8 @@ const Login: React.FC<ILogin> = (props) => {
   //   };
   //   call_getUsers();
   // }, []);
+
+  console.log("getWidth = ", getWidth());
 
   return (
     <Modal
