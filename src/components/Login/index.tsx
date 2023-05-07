@@ -2,13 +2,12 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Grid, Row, Col, Modal, Typography, Form, Input, Button, message as msg } from "antd";
+import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/icons";
 // logo
 import logo from "@/assets/logo.svg";
 // api
-import { AxiosResponse } from "axios";
-import { IApiResponse, IApiSuccessResponse } from "@/service/instance";
+import { IApiResponse } from "@/service/instance";
 import { getUsers, createUser, login } from "@/service/api";
 
 interface ILogin {
@@ -23,6 +22,7 @@ const { Title, Text, Link } = Typography;
 const Login: React.FC<ILogin> = (props) => {
   const { open, close } = props;
   const [form] = Form.useForm();
+  const [api, contextHolder] = notification.useNotification();
   const screens: Record<string, boolean> = useBreakpoint();
 
   const [s_editType, set_s_editType] = useState<"login" | "signUp">("login");
@@ -70,40 +70,51 @@ const Login: React.FC<ILogin> = (props) => {
 
     // window width >= 576
     if (screens.sm) {
-      return 375;
+      return "90%";
     }
 
     // window width < 576
     if (screens.sm) {
-      return 375;
+      return "90%";
     }
 
-    return 375;
+    return "90%";
   };
 
   const onFinish = async (values: IUser) => {
     // ...
     if (s_editType === "login") {
       const res = await login(values);
-      const { data, message, status } = res as any;
+      // 暫時無法解決型別問題，先用any
+      const { data, message, status } = res as unknown as IApiResponse;
+      // const { data, message, status } = res as unknown as AxiosResponse<IApiSuccessResponse<unknown>>;
       if (status === "success") {
         msg.success(message);
       } else {
-        msg.error(message);
+        // msg.error(message);
+        api.info({
+          message,
+          duration: 10,
+          placement: "topLeft",
+          description: (
+            <div>
+              <Tag>{data.field}</Tag>
+              <span className="ml-2">{data.error}</span>
+            </div>
+          ),
+        });
       }
     }
 
     if (s_editType === "signUp") {
       const res = await createUser(values);
-      const { data, message, status } = res as any;
+      // 暫時無法解決型別問題，先用any
+      const { data, message, status } = res as unknown as IApiResponse;
       if (status === "success") {
         msg.success(message);
       } else {
         msg.error(message);
       }
-      // if(res.status === 'success') {
-      //   message.success()
-      // }
     }
   };
 
@@ -121,6 +132,8 @@ const Login: React.FC<ILogin> = (props) => {
   //   call_getUsers();
   // }, []);
 
+  // console.log("getWidth = ", getWidth());
+
   return (
     <Modal
       width={getWidth()}
@@ -132,6 +145,7 @@ const Login: React.FC<ILogin> = (props) => {
       onCancel={handleCancel}
       footer={null}
     >
+      {contextHolder}
       <div className="flex flex-col items-center p-[25px] pt-[7px]">
         <Form
           layout="vertical"
@@ -175,11 +189,11 @@ const Login: React.FC<ILogin> = (props) => {
                 className="flex-1"
                 label={<Title level={5}>Password</Title>}
                 name="password"
-                rules={[{ required: true }]}
+                rules={[{ required: true }, { max: 20 }, { min: 8 }]}
               >
                 <Input.Password
                   size="large"
-                  placeholder="12 or more letters"
+                  placeholder="enter 8 to 20 letters."
                   iconRender={(_) => <div />}
                   visibilityToggle={{
                     visible: s_passwordVisible,

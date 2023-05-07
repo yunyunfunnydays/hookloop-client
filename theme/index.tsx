@@ -5,7 +5,7 @@ const withTheme = (node: JSX.Element) => (
   <ConfigProvider
     theme={{
       token: {
-        colorPrimary: "#434343",
+        colorPrimary: "#262626",
       },
       components: {
         Layout: {

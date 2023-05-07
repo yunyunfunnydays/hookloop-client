@@ -1,9 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-export interface IApiResponse<T = any> {
+export interface IApiResponse {
   status: "success" | "fail" | "error";
   message: string;
-  data: T;
+  data: any;
 }
 
 export interface IApiSuccessResponse<T> extends IApiResponse {
@@ -12,17 +12,17 @@ export interface IApiSuccessResponse<T> extends IApiResponse {
   data: T;
 }
 
-interface IApiFailResponse<T> extends IApiResponse {
+export interface IApiFailResponse<T> extends IApiResponse {
   status: "fail";
   message: string;
   data: T;
 }
 
-interface IApiErrorResponse<T> extends IApiResponse {
-  status: "error";
-  message: string;
-  data: T;
-}
+// interface IApiErrorResponse<T> extends IApiResponse {
+//   status: "error";
+//   message: string;
+//   data: T;
+// }
 
 // 创建一个 Axios instance
 const instance: AxiosInstance = axios.create({
@@ -36,48 +36,49 @@ const instance: AxiosInstance = axios.create({
 });
 
 instance.interceptors.response.use(
-  (response: AxiosResponse<IApiResponse>) => {
-    console.log("response = ", response);
+  (response: AxiosResponse) => {
+    // console.log("response = ", response);
     const { status } = response.data;
+
     if (status === "success") {
-      const { data, message } = response.data as IApiSuccessResponse<unknown>;
+      const { data, message } = response.data;
       return {
         data,
         message,
         status,
-      } as unknown as AxiosResponse<IApiSuccessResponse<unknown>>;
+      } as unknown as AxiosResponse<IApiResponse>;
     }
 
     if (status === "fail") {
-      const { message } = response.data as IApiFailResponse<unknown>;
+      const { message } = response.data;
       return {
         data: {},
         message,
         status: "fail",
-      } as unknown as AxiosResponse<IApiFailResponse<unknown>>;
+      } as unknown as AxiosResponse<IApiResponse>;
     }
 
     return {
       data: {},
       message: "程式錯誤",
       status: "fail",
-    } as unknown as AxiosResponse<IApiErrorResponse<unknown>>;
+    } as unknown as AxiosResponse<IApiResponse>;
   },
   (error) => {
     if (error.response) {
-      const { message } = error.response.data as IApiFailResponse<unknown>;
+      const { message, data } = error.response.data;
       return {
-        data: {},
+        data,
         message,
         status: "fail",
-      } as unknown as AxiosResponse<IApiErrorResponse<unknown>>;
+      } as unknown as AxiosResponse<IApiResponse>;
     }
 
     return {
       data: {},
       message: "程式錯誤",
       status: "fail",
-    } as unknown as AxiosResponse<IApiErrorResponse<unknown>>;
+    } as unknown as AxiosResponse<IApiResponse>;
   },
 );
 
