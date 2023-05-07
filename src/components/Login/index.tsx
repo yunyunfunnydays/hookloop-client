@@ -176,7 +176,7 @@ const Login: React.FC<ILogin> = (props) => {
                 className="flex-1"
                 label={<Title level={5}>Password</Title>}
                 name="password"
-                rules={[{ required: true }]}
+                rules={[{ required: true }, { len: 12 }]}
               >
                 <Input.Password
                   size="large"

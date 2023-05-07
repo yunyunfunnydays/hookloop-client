@@ -2,7 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Grid, Button } from "antd";
-// imgs
+// img
 import mission from "@/assets/mission.svg";
 import dashboard from "@/assets/dashboard.svg";
 import kanban from "@/assets/kanban.svg";
@@ -25,16 +25,16 @@ const Home: React.FC = () => {
           flex md:justify-center items-center gap-[40px] md:gap-[80px] lg:gap-[100px] xxl:gap-[160px]
       `}
       >
-        <a href="#" className="shrink-0">
+        <a href="#Dashboard" className="shrink-0">
           Dashboard
         </a>
-        <a href="#" className="shrink-0">
+        <a href="#Kanban" className="shrink-0">
           Kanban
         </a>
-        <a href="#" className="shrink-0">
+        <a href="#Card" className="shrink-0">
           Card
         </a>
-        <a href="#" className="shrink-0">
+        <a href="#Plan" className="shrink-0">
           Plan & Pricing
         </a>
         <a href="#" className="shrink-0">
@@ -47,6 +47,7 @@ const Home: React.FC = () => {
         <section
           className={`
           xl:w-[1200px]
+          h-[calc(100vh_-_160px)]
           relative left-[50%] translate-x-[-50%]
           px-[40px] xl:px-[0px]
           mb-[35px] xl:mb-[80px]
@@ -68,10 +69,11 @@ const Home: React.FC = () => {
           </div>
         </section>
 
+        {/* introduce */}
         <section className="py-[40px] px-[12px] md:px-[24px] flex flex-col items-center gap-[40px] bg-[#FAFAFA]">
-          <h1 className="font-black text-[24px] font-['Montserrat']">ALL YOU NEED IS HERE</h1>
+          <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat']">ALL YOU NEED IS HERE</h1>
           {/* dashboard */}
-          <div className="flex flex-col md:flex-row items-center md:gap-[20px] xl:w-[1155px]">
+          <div id="Dashboard" className="flex flex-col md:flex-row items-center md:gap-[20px] xl:w-[1155px]">
             <Image
               src={dashboard}
               className="w-[295px] md:w-[355px] xl:w-[565px] h-[155px] md:h-[185px] xl:h-[300px]"
@@ -91,7 +93,7 @@ const Home: React.FC = () => {
             </div>
           </div>
           {/* kanban */}
-          <div className="flex flex-col md:flex-row-reverse items-center md:gap-[20px] xl:w-[1155px]">
+          <div id="Kanban" className="flex flex-col md:flex-row-reverse items-center md:gap-[20px] xl:w-[1155px]">
             <Image
               src={kanban}
               className="w-[295px] md:w-[355px] xl:w-[565px] h-[155px] md:h-[185px] xl:h-[400px]"
@@ -108,7 +110,7 @@ const Home: React.FC = () => {
             </div>
           </div>
           {/* card */}
-          <div className="flex flex-col md:flex-row items-center md:gap-[20px] xl:w-[1155px]">
+          <div id="Card" className="flex flex-col md:flex-row items-center md:gap-[20px] xl:w-[1155px]">
             <Image
               src={card}
               className="w-[295px] md:w-[355px] xl:w-[565px] h-[155px] md:h-[185px] xl:h-[385px]"
@@ -130,13 +132,81 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        <section className="py-[40px] px-[12px] flex flex-col items-center gap-[40px]">
-          <h1 className="font-black text-[24px] font-['Montserrat']">PLAN & PRICING</h1>
+        {/* plan */}
+        <section id="Plan" className="py-[40px] px-[12px] flex flex-col items-center gap-[40px]">
+          <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat']">PLAN & PRICING</h1>
+
+          <div className="flex flex-col md:flex-row flex-wrap justify-center gap-[20px]">
+            {/* box */}
+            <section className="w-[350px] md:w-[300px] min-h-[340px] rounded-lg overflow-hidden flex flex-col items-center border border-[#D9D9D9]">
+              <div className="w-full h-[80px] flex-center bg-[#FFA940] text-white">
+                <h5 className="font-bold text-[30px]">Premium</h5>
+              </div>
+              <div className="pt-[25px] w-[250px] flex flex-col items-center">
+                <div className="flex-center">
+                  <strong className="font-medium font-['Roboto'] text-[30px]">NT&nbsp;$&nbsp;207.5</strong>
+                  <span className="ml-[16px] text-[24px]">/&nbsp;month</span>
+                </div>
+                <span className="text-[#595959] mt-[8px]">NT $ 2490.0 / year</span>
+                <div className="w-full border-0 border-b-2 mt-[20px]" />
+                <ul className="mt-[20px] list-disc text-[20px]">
+                  <li>
+                    <strong>Unlimited</strong> Workspace
+                  </li>
+                </ul>
+                <Button type="primary" className="mt-[25px] w-[115px] h-[40px] font-bold">
+                  Best choice!
+                </Button>
+              </div>
+            </section>
+
+            {/* box */}
+            <section className="w-[350px] md:w-[300px] min-h-[340px] rounded-lg overflow-hidden flex flex-col items-center border border-[#D9D9D9]">
+              <div className="w-full h-[80px] flex-center bg-[#FFF7E6] text-black border-0 border-b">
+                <h5 className="font-bold text-[30px] text-[#D46B08]">Standard</h5>
+              </div>
+              <div className="pt-[25px] w-[250px] flex flex-col items-center">
+                <div className="flex-center">
+                  <strong className="font-medium font-['Roboto'] text-[30px]">NT&nbsp;$&nbsp;310.0</strong>
+                  <span className="ml-[16px] text-[24px]">/&nbsp;month</span>
+                </div>
+                <div className="w-full border-0 border-b-2 mt-[50px]" />
+                <ul className="mt-[20px] list-disc text-[20px]">
+                  <li>10 workspace</li>
+                </ul>
+                <Button className="mt-[25px] w-[115px] h-[40px] font-bold text-black">Select it</Button>
+              </div>
+            </section>
+
+            {/* box */}
+            <section className="w-[350px] md:w-[300px] min-h-[340px] rounded-lg overflow-hidden flex flex-col items-center border border-[#D9D9D9]">
+              <div className="w-full h-[80px] flex-center bg-[#D9D9D9] text-black">
+                <h5 className="font-bold text-[30px]">Free</h5>
+              </div>
+              <div className="pt-[25px] w-[250px] flex flex-col items-center">
+                <div className="flex-center">
+                  <strong className="font-medium font-['Roboto'] text-[30px]">NT&nbsp;$&nbsp;0</strong>
+                </div>
+                <div className="w-full border-0 border-b-2 mt-[50px]" />
+                <ul className="mt-[20px] list-disc text-[20px]">
+                  <li>1 Workspace</li>
+                </ul>
+                <Button className="mt-[25px] w-[115px] h-[40px] font-bold text-black">Select it</Button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        {/* slider */}
+        <section className="py-[80px] bg-[#434343] flex flex-col items-center">
+          <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat'] text-white">
+            KICKSTART YOUR PROJECT IN SECONDS
+          </h1>
         </section>
       </section>
 
-      {/* <section className="h-full flex-center">
-        <h1 className="text-[100px]">Home Page</h1>
+      {/* <section classNameName="h-full flex-center">
+        <h1 classNameName="text-[100px]">Home Page</h1>
       </section> */}
     </>
   );

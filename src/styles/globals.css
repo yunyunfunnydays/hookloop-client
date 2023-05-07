@@ -22,6 +22,10 @@
     margin: 0;
   }
 
+  section {
+    scroll-behavior: smooth;
+  }
+
   .flex-center {
     @apply flex justify-center items-center;
   }
