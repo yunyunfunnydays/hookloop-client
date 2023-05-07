@@ -14,3 +14,8 @@ export const createUser = (data: IUser) => {
 export const login = (data: IUser) => {
   return instance.post(`auth/login`, data);
 };
+
+// 修改密碼
+export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
+  return instance.patch("/users/me/password", data);
+};
