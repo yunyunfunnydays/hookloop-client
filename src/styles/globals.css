@@ -3,12 +3,9 @@
 @tailwind utilities;
 @layer components {
   #__next {
-    @apply h-screen w-screen flex flex-col;
+    @apply w-screen h-screen bg-white;
   }
   html,
-  body {
-    @apply h-screen w-screen bg-white;
-  }
   blockquote,
   dl,
   dd,
