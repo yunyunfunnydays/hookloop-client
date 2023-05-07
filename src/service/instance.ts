@@ -39,6 +39,7 @@ instance.interceptors.response.use(
   (response: AxiosResponse) => {
     // console.log("response = ", response);
     const { status } = response.data;
+
     if (status === "success") {
       const { data, message } = response.data;
       return {
@@ -65,9 +66,9 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      const { message } = error.response.data;
+      const { message, data } = error.response.data;
       return {
-        data: {},
+        data,
         message,
         status: "fail",
       } as unknown as AxiosResponse<IApiResponse>;

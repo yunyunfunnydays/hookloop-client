@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Grid, Row, Col, Modal, Typography, Form, Input, Button, message as msg } from "antd";
+import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/icons";
 // logo
 import logo from "@/assets/logo.svg";
@@ -22,6 +22,7 @@ const { Title, Text, Link } = Typography;
 const Login: React.FC<ILogin> = (props) => {
   const { open, close } = props;
   const [form] = Form.useForm();
+  const [api, contextHolder] = notification.useNotification();
   const screens: Record<string, boolean> = useBreakpoint();
 
   const [s_editType, set_s_editType] = useState<"login" | "signUp">("login");
@@ -90,7 +91,18 @@ const Login: React.FC<ILogin> = (props) => {
       if (status === "success") {
         msg.success(message);
       } else {
-        msg.error(message);
+        // msg.error(message);
+        api.info({
+          message,
+          duration: 10,
+          placement: "topLeft",
+          description: (
+            <div>
+              <Tag>{data.field}</Tag>
+              <span className="ml-2">{data.error}</span>
+            </div>
+          ),
+        });
       }
     }
 
@@ -120,7 +132,7 @@ const Login: React.FC<ILogin> = (props) => {
   //   call_getUsers();
   // }, []);
 
-  console.log("getWidth = ", getWidth());
+  // console.log("getWidth = ", getWidth());
 
   return (
     <Modal
@@ -133,6 +145,7 @@ const Login: React.FC<ILogin> = (props) => {
       onCancel={handleCancel}
       footer={null}
     >
+      {contextHolder}
       <div className="flex flex-col items-center p-[25px] pt-[7px]">
         <Form
           layout="vertical"
@@ -176,11 +189,11 @@ const Login: React.FC<ILogin> = (props) => {
                 className="flex-1"
                 label={<Title level={5}>Password</Title>}
                 name="password"
-                rules={[{ required: true }, { len: 12 }]}
+                rules={[{ required: true }, { max: 20 }, { min: 8 }]}
               >
                 <Input.Password
                   size="large"
-                  placeholder="12 or more letters"
+                  placeholder="enter 8 to 20 letters."
                   iconRender={(_) => <div />}
                   visibilityToggle={{
                     visible: s_passwordVisible,
