@@ -36,7 +36,7 @@ const Header: React.FC = () => {
   }, [screens]);
 
   return (
-    <header className="box-border h-[80px] mx-[24px] border-b-[1px] flex justify-between items-center">
+    <header className="box-border h-[80px] mx-[25px] border-b-[1px] flex justify-between items-center">
       <Image src={logo} alt="HOOK LOOP" />
 
       {/* 大尺寸螢幕使用的 menu */}
