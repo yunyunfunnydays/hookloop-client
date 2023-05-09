@@ -6,24 +6,6 @@ export interface IApiResponse {
   data: any;
 }
 
-export interface IApiSuccessResponse<T> extends IApiResponse {
-  status: "success";
-  message: string;
-  data: T;
-}
-
-export interface IApiFailResponse<T> extends IApiResponse {
-  status: "fail";
-  message: string;
-  data: T;
-}
-
-// interface IApiErrorResponse<T> extends IApiResponse {
-//   status: "error";
-//   message: string;
-//   data: T;
-// }
-
 // 创建一个 Axios instance
 const instance: AxiosInstance = axios.create({
   baseURL: `${process.env.rootUrl}/api/v1`,
@@ -37,48 +19,53 @@ const instance: AxiosInstance = axios.create({
 
 instance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // console.log("response = ", response);
-    const { status } = response.data;
+    const { status } = response.data as IApiResponse;
 
     if (status === "success") {
       const { data, message } = response.data;
-      return {
+      response.data = {
         data,
         message,
         status,
-      } as unknown as AxiosResponse<IApiResponse>;
-    }
-
-    if (status === "fail") {
-      const { message } = response.data;
-      return {
-        data: {},
+      };
+    } else if (status === "fail") {
+      const { message, data } = response.data;
+      response.data = {
+        data,
         message,
         status: "fail",
-      } as unknown as AxiosResponse<IApiResponse>;
+      };
+    } else {
+      response.data = {
+        data: {},
+        message: "程式錯誤",
+        status: "fail",
+      };
     }
-
-    return {
-      data: {},
-      message: "程式錯誤",
-      status: "fail",
-    } as unknown as AxiosResponse<IApiResponse>;
+    return response; // 返回修改後的 response
   },
   (error) => {
     if (error.response) {
       const { message, data } = error.response.data;
-      return {
-        data,
-        message,
-        status: "fail",
-      } as unknown as AxiosResponse<IApiResponse>;
+      const modifiedResponse: AxiosResponse<IApiResponse> = {
+        ...error.response,
+        data: {
+          data,
+          message,
+          status: "fail",
+        },
+      };
+      return modifiedResponse;
     }
 
     return {
-      data: {},
-      message: "程式錯誤",
-      status: "fail",
-    } as unknown as AxiosResponse<IApiResponse>;
+      ...error.response,
+      data: {
+        data: {},
+        message: "程式錯誤",
+        status: "fail",
+      },
+    };
   },
 );
 

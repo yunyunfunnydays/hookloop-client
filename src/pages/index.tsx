@@ -13,6 +13,8 @@ const Home: React.FC = () => {
 
   console.log("screens = ", screens);
 
+  // const images = [mission, dashboard, kanban, card];
+
   return (
     <>
       <Head>
