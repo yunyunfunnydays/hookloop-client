@@ -24,6 +24,10 @@ export const getMe = () => {
   return instance.get("/users/me");
 };
 
+export const updateMe = (data: { name: string }) => {
+  return instance.patch("/users/me", data);
+};
+
 // 修改密碼
 export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
   return instance.patch("/users/me/password", data);
