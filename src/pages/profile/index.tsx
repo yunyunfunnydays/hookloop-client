@@ -1,9 +1,9 @@
 import ChangePassword from "@/components/ChangePassword";
-import { getMe } from "@/service/api";
+import { getMe, updateMe } from "@/service/api";
 import { IApiResponse } from "@/service/instance";
 import React, { useEffect, useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
-import { Button, Form, Row, Col, Typography, Input, Divider, Avatar } from "antd";
+import { Button, Form, Row, Col, Typography, Input, Divider, Avatar, message as msg } from "antd";
 
 const { Title } = Typography;
 
@@ -19,11 +19,9 @@ const Profile = () => {
     (async () => {
       const res = await getMe();
       const { status, data } = res as unknown as IApiResponse;
-
-      console.log("data.userData", data.userData);
       if (status === "success") {
         form.setFieldsValue({
-          username: data.userData.name,
+          name: data.userData.name,
           email: data.userData.email,
         });
       }
@@ -31,7 +29,19 @@ const Profile = () => {
   }, [form]);
 
   const onFinish = (values: any) => {
-    console.log(values);
+    (async () => {
+      const { name } = values;
+
+      const res = await updateMe({ name });
+
+      const { status, message } = res as unknown as IApiResponse;
+
+      if (status === "success") {
+        msg.success(message);
+      } else {
+        msg.error(message);
+      }
+    })();
   };
 
   return (
@@ -48,10 +58,10 @@ const Profile = () => {
             labelCol={{ span: 6 }}
             labelAlign="left"
             onFinish={onFinish}
-            className="w-full flex flex-col items-center gap-[20px] mb-4"
+            className="w-full flex flex-col gap-[20px] mb-4"
           >
-            <Form.Item name="username" label="Username" className="w-full">
-              <Input onBlur={() => console.log('onBlur')} />
+            <Form.Item name="name" label="Name" className="w-full">
+              <Input />
             </Form.Item>
             <Row className="w-full">
               <Col span={6} className="leading-[32px]">
@@ -66,11 +76,11 @@ const Profile = () => {
             <Form.Item name="email" label="Email" className="w-full">
               <Input disabled />
             </Form.Item>
-            {/* <Form.Item>
-              <Button type="primary" htmlType="submit">
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="rounded">
                 Save
               </Button>
-            </Form.Item> */}
+            </Form.Item>
           </Form>
         </section>
         <section className="mb-8">
@@ -80,7 +90,7 @@ const Profile = () => {
             labelCol={{ span: 6 }}
             labelAlign="left"
             onFinish={onFinish}
-            className="w-full flex flex-col items-center gap-[20px] mb-4"
+            className="w-full flex flex-col gap-[20px] mb-4"
             initialValues={{ language: "English (United States) [Default]", colorTheme: "Normal" }}
           >
             <Form.Item name="language" label="Language" className="w-full">
@@ -115,7 +125,7 @@ const Profile = () => {
             </Col>
           </Row>
         </section>
-        <Button danger className="mt-6 ">
+        <Button danger className="mt-6 rounded">
           Close Account
         </Button>
       </div>
