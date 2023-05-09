@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import Image from "next/image";
 import { Grid, Button, Avatar, Switch } from "antd";
 import { MenuOutlined, CloseOutlined, UserOutlined, NotificationOutlined } from "@ant-design/icons";
@@ -16,6 +16,7 @@ import Login from "../Login";
 
 const Header: React.FC = () => {
   const screens = Grid.useBreakpoint();
+  const router = useRouter();
   // rwd 時控制要不要出現選單
   const [s_showMenu, set_s_showMenu] = useState(false);
   // 控制要不要顯示 Login 組件
@@ -42,7 +43,10 @@ const Header: React.FC = () => {
       const res: AxiosResponse = await verifyUserToken();
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
-        Router.push("dashboard");
+        const currentPath = router.pathname;
+        if (currentPath === "/") {
+          Router.push("dashboard");
+        }
         set_s_user(data);
       } else {
         Router.push("/");
