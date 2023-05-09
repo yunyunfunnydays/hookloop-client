@@ -1,8 +1,9 @@
 import ChangePassword from "@/components/ChangePassword";
 import { getMe } from "@/service/api";
 import { IApiResponse } from "@/service/instance";
-import { Button, Form, Row, Col, Typography, Input, Divider } from "antd";
 import React, { useEffect, useState } from "react";
+import { UserOutlined } from "@ant-design/icons";
+import { Button, Form, Row, Col, Typography, Input, Divider, Avatar } from "antd";
 
 const { Title } = Typography;
 
@@ -36,6 +37,9 @@ const Profile = () => {
   return (
     <section className="h-full flex justify-center">
       <div className="w-[685px] mt-8">
+        <div className="w-full flex-center mb-2">
+          <Avatar size={80} icon={<UserOutlined />} />
+        </div>
         <section className="mb-8">
           <Title level={2}>Basic Info</Title>
           <Divider />
@@ -47,7 +51,7 @@ const Profile = () => {
             className="w-full flex flex-col items-center gap-[20px] mb-4"
           >
             <Form.Item name="username" label="Username" className="w-full">
-              <Input />
+              <Input onBlur={() => console.log('onBlur')} />
             </Form.Item>
             <Row className="w-full">
               <Col span={6} className="leading-[32px]">
