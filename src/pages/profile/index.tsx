@@ -18,7 +18,6 @@ const Profile = () => {
   useEffect(() => {
     (async () => {
       const res = await getMe();
-      console.log(res.data)
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
         form.setFieldsValue({
