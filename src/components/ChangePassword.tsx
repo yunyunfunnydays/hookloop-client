@@ -38,7 +38,7 @@ const ChangePassword: React.FC<IChangePassword> = (props) => {
       }
     } catch (error) {
       msg.error("密碼修改失敗");
-      console.error(error);
+      // console.error(error);
     }
   };
 
