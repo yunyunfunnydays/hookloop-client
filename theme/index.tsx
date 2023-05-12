@@ -6,12 +6,25 @@ const withTheme = (node: JSX.Element) => (
     theme={{
       token: {
         colorPrimary: "#262626",
+        borderRadius: 2,
       },
       components: {
+        Menu: {
+          colorSubItemBg: "#FFF",
+          colorItemBgHover: "rgba(0, 0, 0, 0.06)",
+          colorItemBgSelected: "rgba(0, 0, 0, 0.06)",
+          colorItemText: "#595959",
+          colorSplit: "transprant",
+          margin: 4,
+        },
         Layout: {
           colorBgLayout: "#FFF",
           colorBgHeader: "#FFF",
           padding: 0,
+        },
+        DatePicker: {
+          controlHeight: 40,
+          fontSize: 16,
         },
         Button: {
           colorText: "#6C6C6C",
@@ -24,6 +37,8 @@ const withTheme = (node: JSX.Element) => (
           borderRadius: 2,
           borderRadiusLG: 2,
           borderRadiusSM: 2,
+          controlHeight: 40,
+          fontSize: 16,
         },
         Modal: {
           borderRadiusLG: 2,

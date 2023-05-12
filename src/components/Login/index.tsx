@@ -172,7 +172,7 @@ const Login: React.FC<ILogin> = (props) => {
             <Form.Item
               label={<Title level={5}>Username</Title>}
               className="w-full"
-              name="name"
+              name="username"
               rules={[{ required: true }]}
             >
               <Input size="large" placeholder="type your username" />

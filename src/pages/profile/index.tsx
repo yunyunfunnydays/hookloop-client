@@ -18,7 +18,7 @@ const Profile = () => {
   useEffect(() => {
     (async () => {
       const res = await getMe();
-      const { status, data } = res as unknown as IApiResponse;
+      const { status, data } = res.data as IApiResponse;
       if (status === "success") {
         form.setFieldsValue({
           name: data.userData.name,
@@ -34,7 +34,7 @@ const Profile = () => {
 
       const res = await updateMe({ name });
 
-      const { status, message } = res as unknown as IApiResponse;
+      const { status, message } = res.data as unknown as IApiResponse;
 
       if (status === "success") {
         msg.success(message);
