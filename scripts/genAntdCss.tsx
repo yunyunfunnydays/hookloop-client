@@ -9,9 +9,8 @@ const outputPath = "./public/antd.min.css";
 // const css = extractStyle();
 
 // 2. With custom theme
-console.log("withTheme = ", withTheme);
 const css = extractStyle(withTheme);
 
 fs.writeFileSync(outputPath, css);
 
-console.log(`🎉 Antd CSS generated at ${outputPath}`);
+// console.log(`🎉 Antd CSS generated at ${outputPath}`);
