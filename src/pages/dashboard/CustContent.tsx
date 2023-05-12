@@ -13,7 +13,7 @@ const CustContent = ({ setCollapsed }: IContent) => {
     <section className="flex flex-col ">
       <div
         className="w-[64px] h-[64px] bg-[#F5F5F5] absolute top-0 left-0 cursor-pointer flex-center"
-        onClick={() => setCollapsed((prev) => !prev)}
+        onClick={() => setCollapsed((prev: any) => !prev)}
       >
         <DoubleRightOutlined />
       </div>
