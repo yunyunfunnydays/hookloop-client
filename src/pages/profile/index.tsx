@@ -21,7 +21,7 @@ const Profile = () => {
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
         form.setFieldsValue({
-          name: data.userData.name,
+          username: data.userData.username,
           email: data.userData.email,
         });
       }
@@ -30,9 +30,9 @@ const Profile = () => {
 
   const onFinish = (values: any) => {
     (async () => {
-      const { name } = values;
+      const { username } = values;
 
-      const res = await updateMe({ name });
+      const res = await updateMe({ username });
 
       const { status, message } = res.data as unknown as IApiResponse;
 
@@ -60,7 +60,7 @@ const Profile = () => {
             onFinish={onFinish}
             className="w-full flex flex-col gap-[20px] mb-4"
           >
-            <Form.Item name="name" label="Name" className="w-full">
+            <Form.Item name="username" label="Username" className="w-full">
               <Input />
             </Form.Item>
             <Row className="w-full">

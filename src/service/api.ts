@@ -24,7 +24,7 @@ export const getMe = () => {
   return instance.get("/users/me");
 };
 
-export const updateMe = (data: { name: string }) => {
+export const updateMe = (data: { username: string }) => {
   return instance.patch("/users/me", data);
 };
 
