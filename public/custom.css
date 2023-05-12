@@ -1,0 +1,53 @@
+.ant-input-search-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ant-btn-icon-only {
+  vertical-align: middle;
+}
+
+.ant-menu-root {
+  width: 190px;
+  flex: 1;
+  overflow: auto;
+}
+
+.ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  /* justify-content: center; */
+}
+
+.workspace > .ant-menu-submenu-title:first-child,
+.workspace > .ant-menu-submenu-title:first-child:hover {
+  background-color: #fff7e6;
+  color: #d46b08 !important;
+  font-weight: 500;
+  border-radius: 2px;
+  margin-top: 15px;
+  padding-left: 4px !important;
+}
+
+.ant-menu-submenu-title:has(.kanbans),
+.ant-menu-submenu-title:has(.settings) {
+  padding-left: 4px !important;
+  color: #262626;
+  font-weight: 500;
+}
+
+.ant-menu-item {
+  height: 30px !important;
+  padding-left: 30px !important;
+  margin-top: 0px !important;
+  margin-bottom: 5px !important;
+}
+
+.ant-menu-item:has(.ant-menu-title-content > .members) {
+  padding-left: 5px !important;
+  color: #262626;
+  font-weight: 500;
+}
