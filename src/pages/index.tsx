@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Image from "next/image";
-import { Grid, Button } from "antd";
+import { Button } from "antd";
 // img
 import mission from "@/assets/mission.svg";
 import dashboard from "@/assets/dashboard.svg";
@@ -9,10 +9,6 @@ import kanban from "@/assets/kanban.svg";
 import card from "@/assets/card.svg";
 
 const Home: React.FC = () => {
-  const screens = Grid.useBreakpoint();
-
-  console.log("screens = ", screens);
-
   // const images = [mission, dashboard, kanban, card];
 
   return (
