@@ -11,7 +11,6 @@ import logo from "@/assets/logo_black.svg";
 import { IApiResponse } from "@/service/instance";
 import { createUser, login } from "@/service/api";
 
-
 interface ILogin {
   open: boolean;
   close: () => void;
