@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button } from "antd";
+import { Layout, Menu, Button, notification, message as msg, Typography } from "antd";
 import {
   DesktopOutlined,
   AppstoreOutlined,
@@ -9,10 +9,30 @@ import {
   DoubleLeftOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import { logout } from "@/service/api";
+import Router from "next/router";
 import CustContent from "./CustContent";
 
 const Dashboard = () => {
+  // API 錯誤時用來讓使用者明確知道錯在哪裡
+  const [api] = notification.useNotification();
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleLogout = async () => {
+    const res: AxiosResponse = await logout();
+    const { status, message } = res.data as IApiResponse;
+    if (status === "success") {
+      msg.success(message);
+      Router.push("/");
+    } else {
+      api.info({
+        message: res.data.message,
+        duration: 10,
+        placement: "topLeft",
+      });
+    }
+  };
+
   const menuItem = [
     {
       key: "1",
@@ -133,7 +153,9 @@ const Dashboard = () => {
         </section>
         {/* workspace */}
         <Menu theme="light" mode="inline" selectable={false} items={menuItem} />
-        <div>Log out</div>
+        <Typography.Link onClick={handleLogout} style={{ padding: 10 }}>
+          Log out
+        </Typography.Link>
       </Layout.Sider>
       <Layout.Content className="px-[25px] py-[30px] relative">
         <CustContent setCollapsed={setCollapsed} />

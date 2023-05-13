@@ -39,23 +39,23 @@ const Header: React.FC = () => {
   useEffect(() => {
     (async () => {
       if (s_showLogin) return;
-      // 檢查 cookie:
-      // eslint-disable-next-line no-console
-      console.log("HOOKLOOP_TOKEN: ", document.cookie);
       // step1 调用API检查token是否过期
       const res: AxiosResponse = await verifyUserToken();
       const { status, data } = res.data as IApiResponse;
+      const currentPath = router.pathname;
       if (status === "success") {
-        const currentPath = router.pathname;
         if (currentPath === "/") {
           Router.push("dashboard");
         }
         set_s_user(data);
-      } else {
+        return;
+      }
+      if (currentPath !== "/") {
         Router.push("/");
       }
+      set_s_user(null);
     })();
-  }, [s_showLogin]);
+  }, [s_showLogin, router.asPath]);
 
   // 螢幕變成md以上的尺寸時替使用者關閉漢堡選單
   useEffect(() => {
