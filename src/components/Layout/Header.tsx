@@ -73,13 +73,23 @@ const Header: React.FC = () => {
       ${s_user ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
     `}
     >
-      <Image src={s_user ? logo_white : logo_black} alt="HOOK LOOP" />
+      <Image
+        src={s_user ? logo_white : logo_black}
+        alt="HOOK LOOP"
+        className="cursor-pointer"
+        onClick={() => Router.push("/dashboard")}
+      />
 
       {s_user ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="bg-[#434343] w-[42px] h-[22px]" />
           <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
-          <Avatar className="bg-white text-black cursor-pointer" size={32} icon={<UserOutlined />} />
+          <Avatar
+            className="bg-white text-black cursor-pointer"
+            size={32}
+            onClick={() => Router.push("profile")}
+            icon={<UserOutlined />}
+          />
         </div>
       ) : (
         <>
