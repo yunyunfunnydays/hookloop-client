@@ -11,6 +11,7 @@ import logo from "@/assets/logo_black.svg";
 import { IApiResponse } from "@/service/instance";
 import { createUser, login } from "@/service/api";
 
+
 interface ILogin {
   open: boolean;
   close: () => void;
@@ -93,6 +94,9 @@ const Login: React.FC<ILogin> = (props) => {
   const handleResponse = (res: IApiResponse) => {
     const { data, message, status } = res;
     if (status === "success") {
+      // 檢查 cookie:
+      // eslint-disable-next-line no-console
+      console.log("HOOKLOOP_TOKEN: ", document.cookie);
       msg.success(message);
       Router.push("/dashboard");
       close();
