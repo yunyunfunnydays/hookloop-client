@@ -39,6 +39,9 @@ const Header: React.FC = () => {
   useEffect(() => {
     (async () => {
       if (s_showLogin) return;
+      // 檢查 cookie:
+      // eslint-disable-next-line no-console
+      console.log("HOOKLOOP_TOKEN: ", document.cookie);
       // step1 调用API检查token是否过期
       const res: AxiosResponse = await verifyUserToken();
       const { status, data } = res.data as IApiResponse;
