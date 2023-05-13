@@ -5,6 +5,11 @@ export const login = (data: IUser) => {
   return instance.post(`auth/login`, data);
 };
 
+// 登入
+export const logout = () => {
+  return instance.post("auth/logout");
+};
+
 // 驗證 token 是否過期
 export const verifyUserToken = () => {
   return instance.get("auth/verifyUserToken");
