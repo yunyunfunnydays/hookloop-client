@@ -15,4 +15,20 @@ declare global {
     message: string;
     data: any;
   }
+
+  interface ISetStateFunction<T> {
+    (newState: T | ((prevState: T) => T)): void;
+  }
+
+  interface Ikanban {
+    id: string;
+    kanbanName: string;
+  }
+
+  interface Iworkspace {
+    id: string;
+    workspaceName: string;
+    kanbans: Ikanban[];
+    persons: string[];
+  }
 }
