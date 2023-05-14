@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Image from "next/image";
-import { Button } from "antd";
+import { Button, Dropdown } from "antd";
 // img
 import mission from "@/assets/mission.svg";
 import dashboard from "@/assets/dashboard.svg";
@@ -10,9 +10,34 @@ import card from "@/assets/card.svg";
 import user1 from "@/assets/user1.svg";
 import user2 from "@/assets/user2.svg";
 import user3 from "@/assets/user3.svg";
+import user4 from "@/assets/user4.svg";
+import user5 from "@/assets/user5.svg";
+import user6 from "@/assets/user6.svg";
+import user7 from "@/assets/user7.svg";
+import user8 from "@/assets/user8.svg";
+import user9 from "@/assets/user9.svg";
+
+import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
+import type { MenuProps } from "antd";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
+
+  const handleMenuClick: MenuProps["onClick"] = (e) => {
+    console.info("click", e);
+  };
+
+  const items: MenuProps["items"] = [
+    {
+      label: "English",
+      key: "en",
+    },
+  ];
+
+  const menuProps = {
+    items,
+    onClick: handleMenuClick,
+  };
 
   return (
     <>
@@ -205,7 +230,7 @@ const Home: React.FC = () => {
           </h1>
         </section>
 
-        {/* User Testmony */}
+        {/* user testmony */}
         <section id="user-testimony" className="py-10 flex flex-col items-center">
           <h1 className="font-black text-2xl leading-[1.2] mb-10 font-['Montserrat'] text-[#262626] lg:text-[40px]">
             USER TESTMONY
@@ -246,6 +271,52 @@ const Home: React.FC = () => {
                 real-time updates has greatly improved our communication and efficiency.
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* footer */}
+        {/* TODO: 先完成手機版的尺寸 */}
+        <section id="footer" className=" bg-[#F5F5F5]">
+          <div className="pt-6 pb-4 px-6 border-b-[1px] border-[#D9D9D9] lg:flex lg:justify-between">
+            <div className="flex flex-col items-center lg:flex-row lg:gap-4">
+              <div className="flex items-center mb-5 lg:mb-0">
+                <GlobalOutlined className="text-[24px] mr-2" />
+                <Dropdown menu={menuProps} className="w-[210px] md:w-[140px]">
+                  <Button className="flex justify-between items-center">
+                    English
+                    <DownOutlined />
+                  </Button>
+                </Dropdown>
+              </div>
+              <ul className="flex flex-col items-center gap-5 lg:flex-row whitespace-nowrap">
+                <li className="text-base font-medium text-['Roboto'] text-[#434343]">
+                  <a href="">Contact us</a>
+                </li>
+                <li className="text-base font-medium text-['Roboto'] text-[#434343]">
+                  <a href="">Policy</a>
+                </li>
+                <li className="text-base font-medium text-['Roboto'] text-[#434343]">
+                  <a href="">Terms</a>
+                </li>
+                <li className="text-base font-medium text-['Roboto'] text-[#434343]">
+                  <a href="">Impressum</a>
+                </li>
+              </ul>
+            </div>
+            <div className="flex flex-col items-center mt-10 lg:flex-row lg:mt-0">
+              <h5 className="text-['Roboto'] whitespace-nowrap mr-2">Team members:</h5>
+              <div className="mt-2 flex gap-x-2 lg:mt-0">
+                <Image src={user4} className="w-10 h-10 rounded-full" alt="user4" />
+                <Image src={user5} className="w-10 h-10 rounded-full" alt="user5" />
+                <Image src={user6} className="w-10 h-10 rounded-full" alt="user6" />
+                <Image src={user7} className="w-10 h-10 rounded-full" alt="user7" />
+                <Image src={user8} className="w-10 h-10 rounded-full" alt="user8" />
+                <Image src={user9} className="w-10 h-10 rounded-full" alt="user9" />
+              </div>
+            </div>
+          </div>
+          <div className="py-6 flex justify-center items-center text-base font-medium text-[#595959]">
+            Copyright &copy; 2023 HookLoop
           </div>
         </section>
       </section>
