@@ -7,6 +7,9 @@ import mission from "@/assets/mission.svg";
 import dashboard from "@/assets/dashboard.svg";
 import kanban from "@/assets/kanban.svg";
 import card from "@/assets/card.svg";
+import user1 from "@/assets/user1.svg";
+import user2 from "@/assets/user2.svg";
+import user3 from "@/assets/user3.svg";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
@@ -197,15 +200,55 @@ const Home: React.FC = () => {
 
         {/* slider */}
         <section className="py-[80px] bg-[#434343] flex flex-col items-center">
-          <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat'] text-white">
+          <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat']">
             KICKSTART YOUR PROJECT IN SECONDS
           </h1>
         </section>
-      </section>
 
-      {/* <section classNameName="h-full flex-center">
-        <h1 classNameName="text-[100px]">Home Page</h1>
-      </section> */}
+        {/* User Testmony */}
+        <section id="user-testimony" className="py-10 flex flex-col items-center">
+          <h1 className="font-black text-2xl leading-[1.2] mb-10 font-['Montserrat'] text-[#262626] lg:text-[40px]">
+            USER TESTMONY
+          </h1>
+          <div className="w-full flex flex-col items-center gap-6 lg:w-auto lg:flex-row">
+            <div className="h-[412px] w-[355px] p-6 border-2 border-black lg:w-[310px]">
+              <div className="h-[172px] flex flex-col items-center border-b border-[#8C8C8C]">
+                <Image src={user1} className="w-20 h-20 rounded-full mb-4" alt="user1" />
+                <h4 className="text-xl font-medium font-['Roboto'] text-[#262626]">John M.</h4>
+                <h5 className="text-base font-normal font-['Roboto'] text-[#8C8C8C]">Project Manager</h5>
+              </div>
+              <p className="h-[168px] mt-6 text-base font-normal font-['Roboto'] text-[#434343]">
+                &quot;As a project manager, I&apos;ve tried many different task management tools, but HookLoop is by far
+                the most user&#8208;friendly and effective. I can easily track progress, assign tasks, and communicate
+                with my team all in one place.&quot;
+              </p>
+            </div>
+            <div className="h-[412px] w-[355px] p-6 border-2 border-black lg:w-[310px]">
+              <div className="h-[172px] flex flex-col items-center border-b border-[#8C8C8C]">
+                <Image src={user2} className="w-20 h-20 rounded-full mb-4" alt="user2" />
+                <h4 className="text-xl font-medium font-['Roboto'] text-[#262626]">Emily G.</h4>
+                <h5 className="text-base font-normal font-['Roboto'] text-[#8C8C8C]">Entrepreneur</h5>
+              </div>
+              <p className="h-[168px] mt-6 text-base font-normal font-['Roboto'] text-[#434343]">
+                &quot;I&apos;ve been using HookLoop for both personal and professional tasks and it&apos;s been a
+                lifesaver. Its flexibility and ease of use have helped me stay organized and focused on what&apos;s
+                important.&quot;
+              </p>
+            </div>
+            <div className="h-[412px] w-[355px] p-6 border-2 border-black lg:w-[310px]">
+              <div className="h-[172px] flex flex-col items-center border-b border-[#8C8C8C]">
+                <Image src={user3} className="w-20 h-20 rounded-full mb-4" alt="user3" />
+                <h4 className="text-xl font-medium font-['Roboto'] text-[#262626]">Dave R.</h4>
+                <h5 className="text-base font-normal font-['Roboto'] text-[#8C8C8C]">CEO</h5>
+              </div>
+              <p className="h-[168px] mt-6 text-base font-normal font-['Roboto'] text-[#434343]">
+                &quot;HookLoop has been a game changer for my team. The ability to collaborate on tasks and see
+                real-time updates has greatly improved our communication and efficiency.
+              </p>
+            </div>
+          </div>
+        </section>
+      </section>
     </>
   );
 };
