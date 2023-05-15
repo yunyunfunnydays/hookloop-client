@@ -47,6 +47,7 @@ const withTheme = (node: JSX.Element) => (
           padding: 25,
           paddingLG: 25,
           paddingMD: 25,
+          wireframe: true,
         },
         Typography: {
           colorLink: "#6989ba",

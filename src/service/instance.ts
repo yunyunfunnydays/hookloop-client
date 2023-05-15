@@ -12,6 +12,7 @@ const instance: AxiosInstance = axios.create({
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
+    // Authorization: "Bearer " + token, // 在標頭中設定 Authorization
   },
   // 跨域存取cookies 等待後端設定 cors
   withCredentials: true,
