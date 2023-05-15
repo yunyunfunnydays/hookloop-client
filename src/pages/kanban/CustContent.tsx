@@ -266,27 +266,27 @@ const CustContent = ({ setCollapsed }: IContent) => {
                             <div className="flex gap-2 mb-3">
                               {card.priority === "High" && (
                                 <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
-                                  <div className="text-['Roboto'] font-medium text-sm leading-[22px] text-[#CF1322] whitespace-nowrap">
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#CF1322] whitespace-nowrap">
                                     Priority: High
                                   </div>
                                 </div>
                               )}
                               {card.priority === "Medium" && (
                                 <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
-                                  <div className="text-['Roboto'] font-medium text-sm leading-[22px] text-[#D46B08] whitespace-nowrap">
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#D46B08] whitespace-nowrap">
                                     Priority: Medium
                                   </div>
                                 </div>
                               )}
                               {card.priority === "Low" && (
                                 <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
-                                  <div className="text-['Roboto'] font-medium text-sm leading-[22px] text-[#389E0D] whitespace-nowrap">
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#389E0D] whitespace-nowrap">
                                     Priority: Low
                                   </div>
                                 </div>
                               )}
                               <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
-                                <div className="text-['Roboto'] font-medium text-sm leading-[22px] text-[#595959] whitespace-nowrap">
+                                <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#595959] whitespace-nowrap">
                                   Status: {card.status}
                                 </div>
                               </div>
