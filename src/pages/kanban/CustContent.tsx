@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from "react";
 import {
   BellFilled,
@@ -18,10 +16,6 @@ import user3 from "@/assets/user3.svg";
 import user4 from "@/assets/user4.svg";
 import user5 from "@/assets/user5.svg";
 import fakeImage from "@/assets/fakeImage.svg";
-
-interface IContent {
-  setCollapsed: (value: any) => void;
-}
 
 interface ICard {
   id: string;
@@ -209,8 +203,8 @@ const initialData2: IData = {
   listOrder: ["list-1", "list-2", "list-3", "list-4", "list-5", "list-6"],
 };
 
-const CustContent = ({ setCollapsed }: IContent) => {
-  const [data, setData] = useState<IData>(initialData2);
+const CustContent = () => {
+  const [data] = useState<IData>(initialData2);
 
   return (
     <section className="flex flex-col ">
@@ -266,28 +260,28 @@ const CustContent = ({ setCollapsed }: IContent) => {
                             <div className="flex gap-2 mb-3">
                               {card.priority === "High" && (
                                 <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
-                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#CF1322] whitespace-nowrap">
-                                    Priority: High
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#CF1322] whitespace-nowrap">
+                                    Priority:&nbsp;High
                                   </div>
                                 </div>
                               )}
                               {card.priority === "Medium" && (
                                 <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
-                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#D46B08] whitespace-nowrap">
-                                    Priority: Medium
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#D46B08] whitespace-nowrap">
+                                    Priority:&nbsp;Medium
                                   </div>
                                 </div>
                               )}
                               {card.priority === "Low" && (
                                 <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
-                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#389E0D] whitespace-nowrap">
-                                    Priority: Low
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#389E0D] whitespace-nowrap">
+                                    Priority:&nbsp;Low
                                   </div>
                                 </div>
                               )}
                               <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
-                                <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#595959] whitespace-nowrap">
-                                  Status: {card.status}
+                                <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#595959] whitespace-nowrap">
+                                  Status:&nbsp;{card.status}
                                 </div>
                               </div>
                             </div>
