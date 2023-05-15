@@ -16,7 +16,7 @@ import user3 from "@/assets/user3.svg";
 import user4 from "@/assets/user4.svg";
 import user5 from "@/assets/user5.svg";
 import fakeImage from "@/assets/fakeImage.svg";
-import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const initialData: IData = {
   cards: {
@@ -272,133 +272,146 @@ const CustContent = () => {
                           ref={provided.innerRef}
                           {...provided.droppableProps}
                         >
-                          {cards.map((card: ICard) => {
+                          {cards.map((card: ICard, index) => {
                             return (
-                              <div id="first-card" className="py-4 px-3 bg-white" key={card.id}>
-                                {/* 小鈴鐺 */}
-                                <div className="flex gap-2 text-base mb-3">
-                                  <div className="flex items-center gap-1 text-[#FA541C]">
-                                    <BellFilled />
-                                    <span className="text-sm"> 3</span>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <MessageOutlined />
-                                    <span className="text-sm"> 3</span>
-                                  </div>
-                                </div>
-                                {/* 標題 */}
-                                <div className="text-['Roboto'] font-bold text-base text-[#262626]">{card.title}</div>
-                                {(card.preview || card.priority || card.tags.length > 0 || card.reporter) && (
-                                  <div className="mt-4" />
-                                )}
-                                {/* 預覽圖 */}
-                                {card.preview && (
-                                  <Image src={card.preview.src} alt={card.preview.filename} className="mb-4" />
-                                )}
-                                {/* 優先度 */}
-                                {card.priority && (
-                                  <div className="flex gap-2 mb-3">
-                                    {card.priority === "High" && (
-                                      <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
-                                        <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#CF1322] whitespace-nowrap">
-                                          Priority:&nbsp;High
-                                        </div>
+                              <Draggable draggableId={card.id} index={index}>
+                                {(provided2) => (
+                                  <div
+                                    id="first-card"
+                                    className="py-4 px-3 bg-white"
+                                    key={card.id}
+                                    ref={provided2.innerRef}
+                                    {...provided2.draggableProps}
+                                    {...provided2.dragHandleProps}
+                                  >
+                                    {/* 小鈴鐺 */}
+                                    <div className="flex gap-2 text-base mb-3">
+                                      <div className="flex items-center gap-1 text-[#FA541C]">
+                                        <BellFilled />
+                                        <span className="text-sm"> 3</span>
                                       </div>
-                                    )}
-                                    {card.priority === "Medium" && (
-                                      <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
-                                        <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#D46B08] whitespace-nowrap">
-                                          Priority:&nbsp;Medium
-                                        </div>
-                                      </div>
-                                    )}
-                                    {card.priority === "Low" && (
-                                      <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
-                                        <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#389E0D] whitespace-nowrap">
-                                          Priority:&nbsp;Low
-                                        </div>
-                                      </div>
-                                    )}
-                                    <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
-                                      <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#595959] whitespace-nowrap">
-                                        Status:&nbsp;{card.status}
+                                      <div className="flex items-center gap-1">
+                                        <MessageOutlined />
+                                        <span className="text-sm"> 3</span>
                                       </div>
                                     </div>
-                                  </div>
-                                )}
-                                {/* 標籤 */}
-                                {card.tags.length > 0 && (
-                                  <div className="flex gap-2 flex-wrap mb-6">
-                                    {card.tags.map((tag: { id: string; name: string }) => {
-                                      if (tag.name === "bug") {
-                                        return (
-                                          <div
-                                            className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
-                                            key={tag.id}
-                                          >
-                                            <BugOutlined className="text-[13px]" />
-                                            <span className="text-sm leading-[22px]">{tag.name}</span>
-                                          </div>
-                                        );
-                                      }
-                                      if (tag.name === "new") {
-                                        return (
-                                          <div
-                                            className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
-                                            key={tag.id}
-                                          >
-                                            <ThunderboltOutlined className="text-[13px]" />
-                                            <span className="text-sm leading-[22px]">{tag.name}</span>
-                                          </div>
-                                        );
-                                      }
-                                      return (
-                                        <div
-                                          className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
-                                          key={tag.id}
-                                        >
-                                          <TagOutlined className="text-[13px]" />
-                                          <span className="text-sm leading-[22px]">{tag.name}</span>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                                <div className="flex items-center justify-between">
-                                  {/* 成員 */}
-                                  {card.reporter && (
-                                    <div className="flex space-x-[-12px]">
-                                      <Image
-                                        src={card.reporter.avatar}
-                                        className="h-8 w-8 rounded-full z-40 outline outline-2 outline-[#FA8C16]"
-                                        alt="reporter"
-                                      />
-                                      {card.assignees.map((assignee: any, index: number) => (
-                                        <Image
-                                          key={assignee.id}
-                                          src={assignee.avatar}
-                                          className={`h-8 w-8 rounded-full border border-[#D9D9D9] z-${
-                                            30 - index * 10
-                                          }`}
-                                          alt="assignee"
-                                        />
-                                      ))}
+                                    {/* 標題 */}
+                                    <div className="text-['Roboto'] font-bold text-base text-[#262626]">
+                                      {card.title}
                                     </div>
-                                  )}
-                                  {/* 時間 */}
-                                  {card.dueDate && (
-                                    <div className="flex gap-1 text-['Roboto'] text-[14px] leading-[22px] text-[#595959]">
-                                      <ClockCircleOutlined />
-                                      {card.dueDate.type === "daterange" && (
-                                        <span>
-                                          {card.dueDate.start} - {card.dueDate.end}
-                                        </span>
+                                    {(card.preview || card.priority || card.tags.length > 0 || card.reporter) && (
+                                      <div className="mt-4" />
+                                    )}
+                                    {/* 預覽圖 */}
+                                    {card.preview && (
+                                      <Image src={card.preview.src} alt={card.preview.filename} className="mb-4" />
+                                    )}
+                                    {/* 優先度 */}
+                                    {card.priority && (
+                                      <div className="flex gap-2 mb-3">
+                                        {card.priority === "High" && (
+                                          <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
+                                            <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#CF1322] whitespace-nowrap">
+                                              Priority:&nbsp;High
+                                            </div>
+                                          </div>
+                                        )}
+                                        {card.priority === "Medium" && (
+                                          <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
+                                            <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#D46B08] whitespace-nowrap">
+                                              Priority:&nbsp;Medium
+                                            </div>
+                                          </div>
+                                        )}
+                                        {card.priority === "Low" && (
+                                          <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
+                                            <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#389E0D] whitespace-nowrap">
+                                              Priority:&nbsp;Low
+                                            </div>
+                                          </div>
+                                        )}
+                                        <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
+                                          <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#595959] whitespace-nowrap">
+                                            Status:&nbsp;{card.status}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                    {/* 標籤 */}
+                                    {card.tags.length > 0 && (
+                                      <div className="flex gap-2 flex-wrap mb-6">
+                                        {card.tags.map((tag: { id: string; name: string }) => {
+                                          if (tag.name === "bug") {
+                                            return (
+                                              <div
+                                                className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
+                                                key={tag.id}
+                                              >
+                                                <BugOutlined className="text-[13px]" />
+                                                <span className="text-sm leading-[22px]">{tag.name}</span>
+                                              </div>
+                                            );
+                                          }
+                                          if (tag.name === "new") {
+                                            return (
+                                              <div
+                                                className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
+                                                key={tag.id}
+                                              >
+                                                <ThunderboltOutlined className="text-[13px]" />
+                                                <span className="text-sm leading-[22px]">{tag.name}</span>
+                                              </div>
+                                            );
+                                          }
+                                          return (
+                                            <div
+                                              className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
+                                              key={tag.id}
+                                            >
+                                              <TagOutlined className="text-[13px]" />
+                                              <span className="text-sm leading-[22px]">{tag.name}</span>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                    <div className="flex items-center justify-between">
+                                      {/* 成員 */}
+                                      {card.reporter && (
+                                        <div className="flex space-x-[-12px]">
+                                          <Image
+                                            src={card.reporter.avatar}
+                                            className="h-8 w-8 rounded-full z-40 outline outline-2 outline-[#FA8C16]"
+                                            alt="reporter"
+                                          />
+                                          {card.assignees.map((assignee: any, index: number) => (
+                                            <Image
+                                              key={assignee.id}
+                                              src={assignee.avatar}
+                                              className={`h-8 w-8 rounded-full border border-[#D9D9D9] z-${
+                                                30 - index * 10
+                                              }`}
+                                              alt="assignee"
+                                            />
+                                          ))}
+                                        </div>
                                       )}
-                                      {card.dueDate.type === "date" && <span>{card.dueDate.end}</span>}
+                                      {/* 時間 */}
+                                      {card.dueDate && (
+                                        <div className="flex gap-1 text-['Roboto'] text-[14px] leading-[22px] text-[#595959]">
+                                          <ClockCircleOutlined />
+                                          {card.dueDate.type === "daterange" && (
+                                            <span>
+                                              {card.dueDate.start} - {card.dueDate.end}
+                                            </span>
+                                          )}
+                                          {card.dueDate.type === "date" && <span>{card.dueDate.end}</span>}
+                                        </div>
+                                      )}
                                     </div>
-                                  )}
-                                </div>
-                              </div>
+                                  </div>
+                                )}
+                              </Draggable>
                             );
                           })}
                         </div>
