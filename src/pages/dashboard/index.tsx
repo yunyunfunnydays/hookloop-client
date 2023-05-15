@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button, notification, message as msg, Typography } from "antd";
+import { Layout, Menu, Button, notification, message as msg } from "antd";
 import {
   DesktopOutlined,
   AppstoreOutlined,
@@ -8,6 +8,7 @@ import {
   HomeOutlined,
   DoubleLeftOutlined,
   PlusOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { logout } from "@/service/api";
 import Router from "next/router";
@@ -16,7 +17,7 @@ import CustContent from "./CustContent";
 const Dashboard = () => {
   // API 錯誤時用來讓使用者明確知道錯在哪裡
   const [api] = notification.useNotification();
-  const [collapsed, setCollapsed] = useState(false);
+  const [s_collapsed, set_s_collapsed] = useState(false);
 
   const handleLogout = async () => {
     const res: AxiosResponse = await logout();
@@ -131,14 +132,18 @@ const Dashboard = () => {
         collapsedWidth={0}
         className="border-r-[1px] transition-all duration-500 overflow-hidden"
         collapsible
-        collapsed={collapsed}
+        collapsed={s_collapsed}
       >
         {/* Home */}
         <section className="w-full py-5 px-7 text-[#595959] text-base">
           <HomeOutlined />
           <span className="font-medium ml-2">Home</span>
-          <DoubleLeftOutlined className="float-right mt-1 cursor-pointer" onClick={() => setCollapsed(!collapsed)} />
+          <DoubleLeftOutlined
+            className="float-right mt-1 cursor-pointer"
+            onClick={() => set_s_collapsed(!s_collapsed)}
+          />
         </section>
+
         {/* create workspace */}
         <section className=" w-full py-5 px-7 text-[#262626] bg-[#F5F5F5] text-base ">
           <DesktopOutlined />
@@ -151,14 +156,24 @@ const Dashboard = () => {
             icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
           />
         </section>
+
         {/* workspace */}
         <Menu theme="light" mode="inline" selectable={false} items={menuItem} />
-        <Typography.Link onClick={handleLogout} style={{ padding: 10 }}>
-          Log out
-        </Typography.Link>
+
+        {/* logout */}
+        <section
+          role="presentation"
+          className="w-full py-5 px-7 text-[#595959] text-base cursor-pointer hover:bg-[#F5F5F5]"
+          onClick={handleLogout}
+        >
+          <LogoutOutlined />
+          <span className="font-medium ml-2">Log out</span>
+        </section>
       </Layout.Sider>
-      <Layout.Content className="px-[25px] py-[30px] relative">
-        <CustContent setCollapsed={setCollapsed} />
+
+      {/* content */}
+      <Layout.Content className="px-[25px] py-[30px] relative overflow-auto">
+        <CustContent s_collapsed={s_collapsed} set_s_collapsed={set_s_collapsed} />
       </Layout.Content>
     </Layout>
   );
