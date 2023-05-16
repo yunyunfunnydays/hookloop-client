@@ -1,19 +1,31 @@
 import React from "react";
-import { Input } from "antd";
+import { Input, Divider, Button } from "antd";
+import MemberModal from "./MemberModal";
 
-const WorkspaceModal = () => {
+interface IProps {
+  set_s_isShowModal: ISetStateFunction<boolean>;
+}
+
+const WorkspaceModal: React.FC<IProps> = ({ set_s_isShowModal }) => {
   return (
-    <div className="flex flex-col">
+    <section className="flex flex-col">
       <div className="flex flex-col">
-        <p className="text-base font-medium">Workspace name</p>
+        <p className="text-base font-medium mb-1">Workspace name</p>
         <Input placeholder="type a name for your workspace" />
       </div>
 
-      <div className="flex flex-col">
-        <p className="text-base font-medium">Invite members</p>
-        <Input.Search placeholder="input search text" enterButton style={{ width: 250 }} />
+      {/* 選擇 Member的 UI component */}
+      <MemberModal />
+
+      <Divider />
+
+      <div className="flex justify-end gap-2">
+        <Button className="text-black" onClick={() => set_s_isShowModal(false)}>
+          Cancel
+        </Button>
+        <Button type="primary">OK</Button>
       </div>
-    </div>
+    </section>
   );
 };
 

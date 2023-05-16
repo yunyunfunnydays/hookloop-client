@@ -3,11 +3,11 @@ import { Divider, Space } from "antd";
 import { DesktopOutlined, AppstoreOutlined, UserOutlined, SettingOutlined } from "@ant-design/icons";
 import KanbanCard, { CreateKanbanCard } from "./KanbanCard";
 
-interface IworkspaceProps {
+interface IProps {
   workspaceData: Iworkspace;
 }
 
-const Workspace: React.FC<IworkspaceProps> = ({ workspaceData }) => {
+const Workspace: React.FC<IProps> = ({ workspaceData }) => {
   const { kanbans = [], persons = [] } = workspaceData;
 
   return (

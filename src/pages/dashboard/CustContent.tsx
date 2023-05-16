@@ -3,17 +3,16 @@
 import React from "react";
 import { DatePicker, Input } from "antd";
 import { DoubleRightOutlined } from "@ant-design/icons";
-
 // component
 import Workspace from "@/components/Workspace";
 
-interface IContent {
+interface IProps {
   s_collapsed: boolean;
   set_s_collapsed: ISetStateFunction<boolean>;
   s_workspaces: Iworkspace[];
 }
 
-const CustContent: React.FC<IContent> = ({ s_collapsed, set_s_collapsed, s_workspaces }) => {
+const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed, s_workspaces }) => {
   return (
     <div className="flex flex-col">
       <section className="flex justify-end gap-3">

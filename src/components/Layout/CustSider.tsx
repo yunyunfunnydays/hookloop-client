@@ -13,13 +13,14 @@ import {
 } from "@ant-design/icons";
 import { logout } from "@/service/api";
 import WorkSpaceModal from "@/components/Workspace/WorkspaceModal";
+// import MemberModal from "@/components/Workspace/MemberModal";
 
-interface ISider {
+interface IProps {
   s_collapsed: boolean;
   set_s_collapsed: ISetStateFunction<boolean>;
 }
 
-const CustSider: React.FC<ISider> = ({ s_collapsed, set_s_collapsed }) => {
+const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   // API 錯誤時用來讓使用者明確知道錯在哪裡
   const [api] = notification.useNotification();
 
@@ -173,8 +174,14 @@ const CustSider: React.FC<ISider> = ({ s_collapsed, set_s_collapsed }) => {
         <span className="font-medium ml-2">Log out</span>
       </section>
 
-      <Modal title="Create new workspace" width="572px" open={s_isShowModal} footer={null}>
-        <WorkSpaceModal />
+      <Modal
+        title="Create new workspace"
+        width="572px"
+        open={s_isShowModal}
+        onCancel={() => set_s_isShowModal(false)}
+        footer={null}
+      >
+        <WorkSpaceModal set_s_isShowModal={set_s_isShowModal} />
       </Modal>
     </Layout.Sider>
   );
