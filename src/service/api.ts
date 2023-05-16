@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Cookies from "js-cookie";
 import instance from "./instance";
 
 // 登入
@@ -12,7 +14,11 @@ export const logout = () => {
 
 // 驗證 token 是否過期
 export const verifyUserToken = () => {
-  return instance.get("auth/verifyUserToken");
+  return instance.get("auth/verifyUserToken", {
+    headers: {
+      Authorization: `Bearer ${Cookies.get("hookloop-token")}`,
+    },
+  });
 };
 
 // 取得使用者

@@ -3,12 +3,12 @@ import { Divider, Space } from "antd";
 import { DesktopOutlined, AppstoreOutlined, UserOutlined, SettingOutlined } from "@ant-design/icons";
 import KanbanCard, { CreateKanbanCard } from "./KanbanCard";
 
-interface IworkspaceProps {
+interface IProps {
   workspaceData: Iworkspace;
 }
 
-const Workspace: React.FC<IworkspaceProps> = ({ workspaceData }) => {
-  const { kanbans = [], persons = [] } = workspaceData;
+const Workspace: React.FC<IProps> = ({ workspaceData }) => {
+  const { kanbans = [], members = [] } = workspaceData;
 
   return (
     <div className="flex flex-col justify-start">
@@ -25,7 +25,7 @@ const Workspace: React.FC<IworkspaceProps> = ({ workspaceData }) => {
           <span className="ml-1 mr-2">{kanbans.length}</span>
           <UserOutlined />
           {/* 看板人員總數 */}
-          <span className="ml-1 mr-2">{persons.length}</span>
+          <span className="ml-1 mr-2">{members.length}</span>
           <SettingOutlined />
         </div>
       </section>

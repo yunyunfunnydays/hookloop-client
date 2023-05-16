@@ -43,10 +43,11 @@ const withTheme = (node: JSX.Element) => (
         Modal: {
           borderRadiusLG: 2,
           borderRadiusSM: 2,
-          paddingContentHorizontalLG: 25,
-          padding: 25,
-          paddingLG: 25,
-          paddingMD: 25,
+          paddingContentHorizontalLG: 16,
+          padding: 16,
+          paddingLG: 16,
+          paddingMD: 16,
+          wireframe: true,
         },
         Typography: {
           colorLink: "#6989ba",

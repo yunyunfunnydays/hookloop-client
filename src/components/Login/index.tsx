@@ -5,6 +5,8 @@ import Image from "next/image";
 import Router from "next/router";
 import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
 // import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/icons";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Cookies from "js-cookie";
 // logo
 import logo from "@/assets/logo_black.svg";
 // api
@@ -96,6 +98,7 @@ const Login: React.FC<ILogin> = (props) => {
     const { data, message, status } = res;
     if (status === "success") {
       msg.success(message);
+      Cookies.set("hookloop-token", data.token);
       Router.push("/dashboard");
       close();
     } else {
