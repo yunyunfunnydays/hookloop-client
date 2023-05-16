@@ -274,7 +274,7 @@ const CustContent = () => {
                         >
                           {cards.map((card: ICard, index) => {
                             return (
-                              <Draggable draggableId={card.id} index={index}>
+                              <Draggable draggableId={card.id} index={index} key={card.id}>
                                 {(provided2) => (
                                   <div
                                     id="first-card"
