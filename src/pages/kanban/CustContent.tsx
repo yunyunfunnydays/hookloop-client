@@ -384,12 +384,12 @@ const CustContent = () => {
                                             className="h-8 w-8 rounded-full z-40 outline outline-2 outline-[#FA8C16]"
                                             alt="reporter"
                                           />
-                                          {card.assignees.map((assignee: any, index: number) => (
+                                          {card.assignees.map((assignee: any, index2: number) => (
                                             <Image
                                               key={assignee.id}
                                               src={assignee.avatar}
                                               className={`h-8 w-8 rounded-full border border-[#D9D9D9] z-${
-                                                30 - index * 10
+                                                30 - index2 * 10
                                               }`}
                                               alt="assignee"
                                             />
