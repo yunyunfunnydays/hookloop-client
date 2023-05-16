@@ -1,18 +1,21 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React from "react";
+import React, { useContext } from "react";
 import { DatePicker, Input } from "antd";
 import { DoubleRightOutlined } from "@ant-design/icons";
+// context
+import GlobalContext from "@/Context/GlobalContext";
 // component
 import Workspace from "@/components/Workspace";
 
 interface IProps {
   s_collapsed: boolean;
   set_s_collapsed: ISetStateFunction<boolean>;
-  s_workspaces: Iworkspace[];
 }
 
-const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed, s_workspaces }) => {
+const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
+  const { c_workspaces } = useContext(GlobalContext);
+
   return (
     <div className="flex flex-col">
       <section className="flex justify-end gap-3">
@@ -22,9 +25,9 @@ const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed, s_workspa
 
       <section className="mt-5 flex flex-col gap-8">
         {/* <Workspace /> */}
-        {s_workspaces.map((item: Iworkspace) => (
-          <Workspace key={item.id} workspaceData={item} />
-        ))}
+        {c_workspaces?.map((workspace: Iworkspace) => {
+          return <Workspace key={workspace.id} workspaceData={workspace} />;
+        }) || []}
       </section>
 
       {/* 收合sider的按鈕，因使用絕對定位所以放在最下方 */}

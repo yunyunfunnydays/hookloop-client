@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const Workspace: React.FC<IProps> = ({ workspaceData }) => {
-  const { kanbans = [], persons = [] } = workspaceData;
+  const { kanbans = [], members = [] } = workspaceData;
 
   return (
     <div className="flex flex-col justify-start">
@@ -25,7 +25,7 @@ const Workspace: React.FC<IProps> = ({ workspaceData }) => {
           <span className="ml-1 mr-2">{kanbans.length}</span>
           <UserOutlined />
           {/* 看板人員總數 */}
-          <span className="ml-1 mr-2">{persons.length}</span>
+          <span className="ml-1 mr-2">{members.length}</span>
           <SettingOutlined />
         </div>
       </section>

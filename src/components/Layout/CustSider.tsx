@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Router from "next/router";
 import { Layout, Menu, Button, notification, Modal, message as msg } from "antd";
+import type { MenuProps } from "antd";
 import {
   DesktopOutlined,
   AppstoreOutlined,
@@ -11,9 +12,13 @@ import {
   PlusOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
+// API
 import { logout } from "@/service/api";
+// context
+import GlobalContext from "@/Context/GlobalContext";
+// component
 import WorkSpaceModal from "@/components/Workspace/WorkspaceModal";
-// import MemberModal from "@/components/Workspace/MemberModal";
+import MemberModal from "../Workspace/MemberModal";
 
 interface IProps {
   s_collapsed: boolean;
@@ -21,100 +26,56 @@ interface IProps {
 }
 
 const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
+  const { c_workspaces } = useContext(GlobalContext);
   // API 錯誤時用來讓使用者明確知道錯在哪裡
   const [api] = notification.useNotification();
 
+  // 顯示新增 workspace 的開關
   const [s_isShowModal, set_s_isShowModal] = useState(false);
 
-  const menuItem = [
-    {
-      key: "1",
-      icon: <DesktopOutlined />,
-      className: "workspace",
-      label: <div className="">Workapace 1</div>,
-      children: [
-        {
-          label: <span className="kanbans">Kanbans</span>,
-          key: "2",
-          icon: <AppstoreOutlined />,
-          children: [
-            {
-              key: "3",
-              label: "Manage",
-            },
-            {
-              key: "4",
-              label: "Design",
-            },
-          ],
-        },
-        {
-          label: <span className="members">Members</span>,
-          key: "5",
-          icon: <UserOutlined />,
-        },
-        {
-          label: <span className="settings">Setting</span>,
-          key: "6",
-          icon: <SettingOutlined />,
-          children: [
-            {
-              key: "7",
-              label: "Archive workspace",
-            },
-            {
-              key: "8",
-              label: "Kanban setting",
-            },
-          ],
-        },
-      ],
-    },
+  // 顯示選擇 Member 的開關
+  const [s_isShowMember, set_s_isShowMember] = useState(false);
 
-    {
-      key: "9",
+  const menuItemX: MenuProps["items"] = c_workspaces?.map((workspace: Iworkspace) => {
+    return {
+      key: workspace.id,
       icon: <DesktopOutlined />,
       className: "workspace",
-      label: <div className="">Workapace 2</div>,
+      label: <div className="">{workspace.workspaceName}</div>,
       children: [
         {
           label: <span className="kanbans">Kanbans</span>,
-          key: "10",
+          key: `${workspace.id}Kanbans`,
           icon: <AppstoreOutlined />,
-          children: [
-            {
-              key: "11",
-              label: "Manage",
-            },
-            {
-              key: "12",
-              label: "Design",
-            },
-          ],
+          children: workspace.kanbans.map((kanban) => ({
+            key: workspace.workspaceName + kanban.id,
+            label: kanban.kanbanName,
+          })),
         },
         {
           label: <span className="members">Members</span>,
-          key: "13",
+          key: `${workspace.id}members`,
           icon: <UserOutlined />,
+          onClick: () => set_s_isShowMember(true),
         },
         {
           label: <span className="settings">Setting</span>,
-          key: "14",
+          key: `${workspace.id}settings`,
           icon: <SettingOutlined />,
           children: [
             {
-              key: "15",
+              key: `${workspace.id}Archive`,
               label: "Archive workspace",
             },
             {
-              key: "16",
+              key: `${workspace.id}Kanban_setting`,
               label: "Kanban setting",
             },
           ],
         },
       ],
-    },
-  ];
+    };
+  });
 
   const handleLogout = async () => {
     const res: AxiosResponse = await logout();
@@ -162,7 +123,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       </section>
 
       {/* workspace */}
-      <Menu theme="light" mode="inline" selectable={false} items={menuItem} />
+      <Menu theme="light" mode="inline" selectable={false} items={menuItemX} />
 
       {/* logout */}
       <section
@@ -182,6 +143,16 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         footer={null}
       >
         <WorkSpaceModal set_s_isShowModal={set_s_isShowModal} />
+      </Modal>
+
+      <Modal
+        title="Choose Member"
+        width="572px"
+        open={s_isShowMember}
+        onCancel={() => set_s_isShowMember(false)}
+        footer={null}
+      >
+        <MemberModal set_s_isShowMember={set_s_isShowMember} />
       </Modal>
     </Layout.Sider>
   );
