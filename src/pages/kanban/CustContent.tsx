@@ -276,24 +276,25 @@ const CustContent = () => {
               const list = data.lists[listId];
               const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
               return (
-                <div id="first-list" className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]" key={listId}>
-                  {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
-                  <div className="flex justify-between items-center">
-                    <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
-                    <EllipsisOutlined className="text-xl cursor-pointer" />
-                  </div>
-                  <div className="text-['Roboto'] font-medium text-sm text-[#8C8C8C] mb-2">
-                    {cards.length} {cards.length === 1 ? "card" : "cards"}
-                  </div>
-                  {cards.length > 0 && (
-                    <Droppable droppableId={listId} type="card">
-                      {(provided) => (
-                        <div
-                          id="first-cards"
-                          className="flex flex-col gap-6 mb-4"
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                        >
+                <Droppable droppableId={listId} type="card">
+                  {(provided) => (
+                    <div
+                      id="first-list"
+                      className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]"
+                      key={listId}
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
+                        <EllipsisOutlined className="text-xl cursor-pointer" />
+                      </div>
+                      <div className="text-['Roboto'] font-medium text-sm text-[#8C8C8C] mb-2">
+                        {cards.length} {cards.length === 1 ? "card" : "cards"}
+                      </div>
+                      {cards.length > 0 && (
+                        <div id="first-cards" className="flex flex-col gap-6 mb-4">
                           {cards.map((card: ICard, index) => {
                             return (
                               <Draggable draggableId={card.id} index={index} key={card.id}>
@@ -436,16 +437,16 @@ const CustContent = () => {
                               </Draggable>
                             );
                           })}
-                          {provided.placeholder}
                         </div>
                       )}
-                    </Droppable>
+                      {provided.placeholder}
+                      <div id="add-card" className="cursor-pointer">
+                        <PlusOutlined />
+                        <span> Add a card</span>
+                      </div>
+                    </div>
                   )}
-                  <div id="add-card" className="cursor-pointer">
-                    <PlusOutlined />
-                    <span> Add a card</span>
-                  </div>
-                </div>
+                </Droppable>
               );
             })}
             <div id="add-list" className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]">
