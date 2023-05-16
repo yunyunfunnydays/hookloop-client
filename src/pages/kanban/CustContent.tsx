@@ -414,6 +414,7 @@ const CustContent = () => {
                               </Draggable>
                             );
                           })}
+                          {provided.placeholder}
                         </div>
                       )}
                     </Droppable>
