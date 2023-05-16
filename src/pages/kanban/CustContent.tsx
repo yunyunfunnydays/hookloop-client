@@ -16,7 +16,8 @@ import user3 from "@/assets/user3.svg";
 import user4 from "@/assets/user4.svg";
 import user5 from "@/assets/user5.svg";
 import fakeImage from "@/assets/fakeImage.svg";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { produce } from "immer";
 
 const initialData: IData = {
   cards: {
@@ -232,10 +233,31 @@ interface IData {
 }
 
 const CustContent = () => {
-  const [data] = useState<IData>(initialData);
+  const [data, setData] = useState<IData>(initialData);
 
-  const handleDragEnd = (result: any) => {
-    console.info(result);
+  const handleDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId, type } = result;
+
+    // 沒有任何移動
+    if (!destination) {
+      console.info("沒有任何移動");
+      return;
+    }
+
+    // 移動到原本的位置
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      console.info("移動到原本的位置");
+      return;
+    }
+
+    if (type === "card") {
+      setData((prevData) =>
+        produce(prevData, (draft) => {
+          draft.lists[source.droppableId].cardOrder.splice(source.index, 1);
+          draft.lists[destination.droppableId].cardOrder.splice(destination.index, 0, draggableId);
+        }),
+      );
+    }
   };
 
   return (
@@ -264,7 +286,7 @@ const CustContent = () => {
                     {cards.length} {cards.length === 1 ? "card" : "cards"}
                   </div>
                   {cards.length > 0 && (
-                    <Droppable droppableId={listId}>
+                    <Droppable droppableId={listId} type="card">
                       {(provided) => (
                         <div
                           id="first-cards"
