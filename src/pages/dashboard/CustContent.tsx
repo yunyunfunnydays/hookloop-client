@@ -1,52 +1,18 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { DatePicker, Input } from "antd";
 import { DoubleRightOutlined } from "@ant-design/icons";
-
 // component
 import Workspace from "@/components/Workspace";
 
-interface IContent {
+interface IProps {
   s_collapsed: boolean;
   set_s_collapsed: ISetStateFunction<boolean>;
+  s_workspaces: Iworkspace[];
 }
 
-const CustContent = ({ s_collapsed, set_s_collapsed }: IContent) => {
-  // 所有 workspace
-  const [s_workspaces, set_s_workspaces] = useState<Iworkspace[]>([]);
-
-  // call API 取得 workspace
-  useEffect(() => {
-    const _tmp: Iworkspace[] = [
-      {
-        id: "1",
-        workspaceName: "Workspace 1",
-        kanbans: [
-          { id: "1", kanbanName: "kanban1" },
-          { id: "2", kanbanName: "kanban2" },
-          { id: "3", kanbanName: "kanban3" },
-        ],
-        persons: ["user01", "user02"],
-      },
-      {
-        id: "2",
-        workspaceName: "Workspace 1",
-        kanbans: [
-          { id: "1", kanbanName: "kanban1" },
-          { id: "2", kanbanName: "kanban2" },
-          { id: "3", kanbanName: "kanban3" },
-          { id: "4", kanbanName: "kanban4" },
-          { id: "5", kanbanName: "kanban5" },
-          { id: "6", kanbanName: "kanban6" },
-          { id: "7", kanbanName: "kanban7" },
-        ],
-        persons: ["user01", "user02", "user02"],
-      },
-    ];
-    set_s_workspaces(_tmp);
-  }, []);
-
+const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed, s_workspaces }) => {
   return (
     <div className="flex flex-col">
       <section className="flex justify-end gap-3">
