@@ -21,7 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
         { id: "2", kanbanName: "kanban2" },
         { id: "3", kanbanName: "kanban3" },
       ],
-      members: ["user01", "user02"],
+      members: ["user01", "user02"], // 還要存角色(ex: Admain、member)
     },
     {
       id: "2",
@@ -40,7 +40,12 @@ export default function App({ Component, pageProps }: AppProps) {
   ]);
 
   // 存登入人員的資訊
-  const [c_user, set_c_user] = useState<IUser>({} as IUser);
+  const [c_user, set_c_user] = useState<IUser>({
+    username: "",
+    email: "",
+    password: "",
+    avatar: "",
+  });
 
   return withTheme(
     <GlobalContext.Provider value={{ c_workspaces, set_c_workspaces, c_user, set_c_user }}>

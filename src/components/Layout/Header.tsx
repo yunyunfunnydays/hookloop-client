@@ -43,10 +43,12 @@ const Header: React.FC = () => {
       const res: AxiosResponse = await verifyUserToken();
       const { status, data } = res.data as IApiResponse;
       const currentPath = router.pathname;
+
       if (status === "success") {
         if (currentPath === "/") {
           Router.push("dashboard");
         }
+        // console.log("data = ", data);
         set_c_user(data);
         return;
       }
@@ -55,7 +57,7 @@ const Header: React.FC = () => {
       }
       set_c_user({} as IUser);
     })();
-  }, [s_showLogin, router.asPath]);
+  }, [s_showLogin, router.asPath]); // , router.asPath
 
   // 螢幕變成md以上的尺寸時替使用者關閉漢堡選單
   useEffect(() => {
@@ -70,17 +72,17 @@ const Header: React.FC = () => {
       className={`
       box-border h-[80px] border-b-[1px] 
       flex justify-between items-center
-      ${c_user ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
+      ${Object.keys(c_user).length ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
     `}
     >
       <Image
-        src={c_user ? logo_white : logo_black}
+        src={Object.keys(c_user).length ? logo_white : logo_black}
         alt="HOOK LOOP"
         className="cursor-pointer"
         onClick={() => Router.push("/dashboard")}
       />
 
-      {c_user ? (
+      {Object.keys(c_user).length ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="bg-[#434343] w-[42px] h-[22px]" />
           <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />

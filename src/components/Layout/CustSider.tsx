@@ -1,6 +1,8 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Cookies from "js-cookie";
 import React, { useState, useContext } from "react";
 import Router from "next/router";
-import { Layout, Menu, Button, notification, Modal, message as msg } from "antd";
+import { Layout, Menu, Button, Modal, message as msg } from "antd";
 import type { MenuProps } from "antd";
 import {
   DesktopOutlined,
@@ -13,7 +15,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 // API
-import { logout } from "@/service/api";
+// import { logout } from "@/service/api";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // component
@@ -28,7 +30,7 @@ interface IProps {
 const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   const { c_workspaces } = useContext(GlobalContext);
   // API 錯誤時用來讓使用者明確知道錯在哪裡
-  const [api] = notification.useNotification();
+  // const [api] = notification.useNotification();
 
   // 顯示新增 workspace 的開關
   const [s_isShowModal, set_s_isShowModal] = useState(false);
@@ -78,18 +80,22 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   });
 
   const handleLogout = async () => {
-    const res: AxiosResponse = await logout();
-    const { status, message } = res.data as IApiResponse;
-    if (status === "success") {
-      msg.success(message);
-      Router.push("/");
-    } else {
-      api.info({
-        message: res.data.message,
-        duration: 10,
-        placement: "topLeft",
-      });
-    }
+    msg.success("Log out success");
+    Cookies.set("hookloop-token", "");
+    Router.push("/");
+    // const res: AxiosResponse = await logout();
+    // const { status, message } = res.data as IApiResponse;
+    // if (status === "success") {
+    //   msg.success(message);
+    //   Cookies.set("hookloop-token", "");
+    //   Router.push("/");
+    // } else {
+    //   api.info({
+    //     message: res.data.message,
+    //     duration: 10,
+    //     placement: "topLeft",
+    //   });
+    // }
   };
 
   return (
