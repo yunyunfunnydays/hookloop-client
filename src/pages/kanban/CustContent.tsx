@@ -276,7 +276,7 @@ const CustContent = () => {
               const list = data.lists[listId];
               const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
               return (
-                <Droppable droppableId={listId} type="card">
+                <Droppable droppableId={listId} type="card" key={listId}>
                   {(provided) => (
                     <div
                       id="first-list"
