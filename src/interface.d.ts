@@ -29,6 +29,6 @@ declare global {
     id: string;
     workspaceName: string;
     kanbans: Ikanban[];
-    persons: string[];
+    members: string[];
   }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Input, Divider, Button } from "antd";
-import MemberModal from "./MemberModal";
+import ChooseMember from "./ChooseMember";
 
 interface IProps {
   set_s_isShowModal: ISetStateFunction<boolean>;
@@ -15,7 +15,7 @@ const WorkspaceModal: React.FC<IProps> = ({ set_s_isShowModal }) => {
       </div>
 
       {/* 選擇 Member的 UI component */}
-      <MemberModal />
+      <ChooseMember />
 
       <Divider />
 
