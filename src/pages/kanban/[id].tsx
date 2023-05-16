@@ -158,7 +158,7 @@ const Kanban = () => {
         </Typography.Link>
       </Layout.Sider>
       <Layout.Content className="pl-6 relative">
-        <CustContent setCollapsed={setCollapsed} />
+        <CustContent />
       </Layout.Content>
     </Layout>
   );

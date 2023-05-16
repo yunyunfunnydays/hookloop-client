@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Cookies from "js-cookie";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 export interface IApiResponse {
@@ -5,13 +7,14 @@ export interface IApiResponse {
   message: string;
   data: any;
 }
-
+// const token = Cookies.get("hookloop-token");
 // 创建一个 Axios instance
 const instance: AxiosInstance = axios.create({
   baseURL: `${process.env.rootUrl}/api/v1`,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${Cookies.get("hookloop-token")}`, // 在標頭中設定 Authorization
   },
   // 跨域存取cookies 等待後端設定 cors
   withCredentials: true,

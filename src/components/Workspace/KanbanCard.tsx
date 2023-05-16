@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { EllipsisOutlined, StarOutlined, StarFilled, PlusOutlined } from "@ant-design/icons";
 
-interface IKanbanCardProps {
+interface IProps {
   kanbanData: Ikanban;
 }
 
 const CARD_BASICSTYLE = "w-[210px] h-[110px] rounded cursor-pointer";
 const ICON_BASICSTYLE = "text-lg transition-all hover:scale-125";
 
-const KanbanCard: React.FC<IKanbanCardProps> = ({ kanbanData }) => {
+const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
   const [s_favorites, set_s_favorites] = useState(false);
   // 加入我的最愛 or 取消我的最愛
   const toggleFavorites = (): void => {
