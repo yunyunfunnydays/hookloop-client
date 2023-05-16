@@ -236,6 +236,194 @@ interface IData {
   listOrder: string[];
 }
 
+interface ICardProps {
+  card: ICard;
+  index: number;
+}
+
+interface IListProps {
+  list: IList;
+  cards: ICard[];
+}
+
+const Card = (props: ICardProps) => {
+  const { card, index } = props;
+
+  return (
+    <Draggable draggableId={card.id} index={index} key={card.id}>
+      {(provided2) => (
+        <div
+          id="first-card"
+          className="py-4 px-3 bg-white"
+          key={card.id}
+          ref={provided2.innerRef}
+          {...provided2.draggableProps}
+          {...provided2.dragHandleProps}
+        >
+          {/* 小鈴鐺 */}
+          <div className="flex gap-2 text-base mb-3">
+            <div className="flex items-center gap-1 text-[#FA541C]">
+              <BellFilled />
+              <span className="text-sm"> 3</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MessageOutlined />
+              <span className="text-sm"> 3</span>
+            </div>
+          </div>
+          {/* 標題 */}
+          <div className="text-['Roboto'] font-bold text-base text-[#262626]">{card.title}</div>
+          {(card.preview || card.priority || card.tags.length > 0 || card.reporter) && <div className="mt-4" />}
+          {/* 預覽圖 */}
+          {card.preview && <Image src={card.preview.src} alt={card.preview.filename} className="mb-4" />}
+          {/* 優先度 */}
+          {card.priority && (
+            <div className="flex gap-2 mb-3">
+              {card.priority === "High" && (
+                <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
+                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#CF1322] whitespace-nowrap">
+                    Priority:&nbsp;High
+                  </div>
+                </div>
+              )}
+              {card.priority === "Medium" && (
+                <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
+                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#D46B08] whitespace-nowrap">
+                    Priority:&nbsp;Medium
+                  </div>
+                </div>
+              )}
+              {card.priority === "Low" && (
+                <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
+                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#389E0D] whitespace-nowrap">
+                    Priority:&nbsp;Low
+                  </div>
+                </div>
+              )}
+              <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
+                <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#595959] whitespace-nowrap">
+                  Status:&nbsp;{card.status}
+                </div>
+              </div>
+            </div>
+          )}
+          {/* 標籤 */}
+          {card.tags.length > 0 && (
+            <div className="flex gap-2 flex-wrap mb-6">
+              {card.tags.map((tag: { id: string; name: string }) => {
+                if (tag.name === "bug") {
+                  return (
+                    <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']" key={tag.id}>
+                      <BugOutlined className="text-[13px]" />
+                      <span className="text-sm leading-[22px]">{tag.name}</span>
+                    </div>
+                  );
+                }
+                if (tag.name === "new") {
+                  return (
+                    <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']" key={tag.id}>
+                      <ThunderboltOutlined className="text-[13px]" />
+                      <span className="text-sm leading-[22px]">{tag.name}</span>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']" key={tag.id}>
+                    <TagOutlined className="text-[13px]" />
+                    <span className="text-sm leading-[22px]">{tag.name}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div className="flex items-center justify-between">
+            {/* 成員 */}
+            {card.reporter && (
+              <div className="flex space-x-[-12px]">
+                <Image
+                  src={card.reporter.avatar}
+                  className="h-8 w-8 rounded-full z-40 outline outline-2 outline-[#FA8C16]"
+                  alt="reporter"
+                />
+                {card.assignees.map((assignee: any, index2: number) => (
+                  <Image
+                    key={assignee.id}
+                    src={assignee.avatar}
+                    className={`h-8 w-8 rounded-full border border-[#D9D9D9] z-${30 - index2 * 10}`}
+                    alt="assignee"
+                  />
+                ))}
+              </div>
+            )}
+            {/* 時間 */}
+            {card.dueDate && (
+              <div className="flex gap-1 text-['Roboto'] text-[14px] leading-[22px] text-[#595959]">
+                <ClockCircleOutlined />
+                {card.dueDate.type === "daterange" && (
+                  <span>
+                    {card.dueDate.start} - {card.dueDate.end}
+                  </span>
+                )}
+                {card.dueDate.type === "date" && <span>{card.dueDate.end}</span>}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </Draggable>
+  );
+};
+
+const AddCard = () => {
+  return (
+    <div id="add-card" className="cursor-pointer">
+      <PlusOutlined />
+      <span> Add a card</span>
+    </div>
+  );
+};
+
+const List = (props: IListProps) => {
+  const { list, cards } = props;
+
+  return (
+    <Droppable droppableId={list.id} type="card">
+      {(provided) => (
+        <div className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]" ref={provided.innerRef} {...provided.droppableProps}>
+          {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
+          <div className="flex justify-between items-center">
+            <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
+            <EllipsisOutlined className="text-xl cursor-pointer" />
+          </div>
+          <div className="text-['Roboto'] font-medium text-sm text-[#8C8C8C] mb-2">
+            {cards.length} {cards.length === 1 ? "card" : "cards"}
+          </div>
+          {cards.length > 0 && (
+            <div className="flex flex-col gap-6 mb-4">
+              {cards.map((card: ICard, index: number) => (
+                <Card key={card.id} card={card} index={index} />
+              ))}
+            </div>
+          )}
+          {provided.placeholder}
+          <AddCard />
+        </div>
+      )}
+    </Droppable>
+  );
+};
+
+const AddList = () => {
+  return (
+    <div className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]">
+      <div className="text-['Roboto'] font-medium text-base text-[#595959] cursor-pointer">
+        <PlusOutlined />
+        <span> Add a list</span>
+      </div>
+    </div>
+  );
+};
+
 const CustContent = () => {
   const [data, setData] = useState<IData>(initialData);
 
@@ -266,199 +454,17 @@ const CustContent = () => {
 
   return (
     <section className="flex flex-col ">
-      {/* <div
-        className="w-[64px] h-[64px] bg-[#F5F5F5] absolute top-0 left-0 cursor-pointer flex-center"
-        onClick={() => setCollapsed((prev: any) => !prev)}
-      >
-        <DoubleRightOutlined />
-      </div> */}
+      {/* Collapse Sidebar */}
       <section className="">
         <div className="w-full h-24 bg-yellow-500" />
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div id="lists" className="flex gap-6 items-start">
+          <div className="flex gap-6 items-start">
             {data.listOrder.map((listId: string) => {
               const list = data.lists[listId];
               const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
-              return (
-                <Droppable droppableId={listId} type="card" key={listId}>
-                  {(provided) => (
-                    <div
-                      id="first-list"
-                      className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]"
-                      key={listId}
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
-                      <div className="flex justify-between items-center">
-                        <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
-                        <EllipsisOutlined className="text-xl cursor-pointer" />
-                      </div>
-                      <div className="text-['Roboto'] font-medium text-sm text-[#8C8C8C] mb-2">
-                        {cards.length} {cards.length === 1 ? "card" : "cards"}
-                      </div>
-                      {cards.length > 0 && (
-                        <div id="first-cards" className="flex flex-col gap-6 mb-4">
-                          {cards.map((card: ICard, index) => {
-                            return (
-                              <Draggable draggableId={card.id} index={index} key={card.id}>
-                                {(provided2) => (
-                                  <div
-                                    id="first-card"
-                                    className="py-4 px-3 bg-white"
-                                    key={card.id}
-                                    ref={provided2.innerRef}
-                                    {...provided2.draggableProps}
-                                    {...provided2.dragHandleProps}
-                                  >
-                                    {/* 小鈴鐺 */}
-                                    <div className="flex gap-2 text-base mb-3">
-                                      <div className="flex items-center gap-1 text-[#FA541C]">
-                                        <BellFilled />
-                                        <span className="text-sm"> 3</span>
-                                      </div>
-                                      <div className="flex items-center gap-1">
-                                        <MessageOutlined />
-                                        <span className="text-sm"> 3</span>
-                                      </div>
-                                    </div>
-                                    {/* 標題 */}
-                                    <div className="text-['Roboto'] font-bold text-base text-[#262626]">
-                                      {card.title}
-                                    </div>
-                                    {(card.preview || card.priority || card.tags.length > 0 || card.reporter) && (
-                                      <div className="mt-4" />
-                                    )}
-                                    {/* 預覽圖 */}
-                                    {card.preview && (
-                                      <Image src={card.preview.src} alt={card.preview.filename} className="mb-4" />
-                                    )}
-                                    {/* 優先度 */}
-                                    {card.priority && (
-                                      <div className="flex gap-2 mb-3">
-                                        {card.priority === "High" && (
-                                          <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
-                                            <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#CF1322] whitespace-nowrap">
-                                              Priority:&nbsp;High
-                                            </div>
-                                          </div>
-                                        )}
-                                        {card.priority === "Medium" && (
-                                          <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
-                                            <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#D46B08] whitespace-nowrap">
-                                              Priority:&nbsp;Medium
-                                            </div>
-                                          </div>
-                                        )}
-                                        {card.priority === "Low" && (
-                                          <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
-                                            <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#389E0D] whitespace-nowrap">
-                                              Priority:&nbsp;Low
-                                            </div>
-                                          </div>
-                                        )}
-                                        <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
-                                          <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#595959] whitespace-nowrap">
-                                            Status:&nbsp;{card.status}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-                                    {/* 標籤 */}
-                                    {card.tags.length > 0 && (
-                                      <div className="flex gap-2 flex-wrap mb-6">
-                                        {card.tags.map((tag: { id: string; name: string }) => {
-                                          if (tag.name === "bug") {
-                                            return (
-                                              <div
-                                                className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
-                                                key={tag.id}
-                                              >
-                                                <BugOutlined className="text-[13px]" />
-                                                <span className="text-sm leading-[22px]">{tag.name}</span>
-                                              </div>
-                                            );
-                                          }
-                                          if (tag.name === "new") {
-                                            return (
-                                              <div
-                                                className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
-                                                key={tag.id}
-                                              >
-                                                <ThunderboltOutlined className="text-[13px]" />
-                                                <span className="text-sm leading-[22px]">{tag.name}</span>
-                                              </div>
-                                            );
-                                          }
-                                          return (
-                                            <div
-                                              className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
-                                              key={tag.id}
-                                            >
-                                              <TagOutlined className="text-[13px]" />
-                                              <span className="text-sm leading-[22px]">{tag.name}</span>
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
-                                    <div className="flex items-center justify-between">
-                                      {/* 成員 */}
-                                      {card.reporter && (
-                                        <div className="flex space-x-[-12px]">
-                                          <Image
-                                            src={card.reporter.avatar}
-                                            className="h-8 w-8 rounded-full z-40 outline outline-2 outline-[#FA8C16]"
-                                            alt="reporter"
-                                          />
-                                          {card.assignees.map((assignee: any, index2: number) => (
-                                            <Image
-                                              key={assignee.id}
-                                              src={assignee.avatar}
-                                              className={`h-8 w-8 rounded-full border border-[#D9D9D9] z-${
-                                                30 - index2 * 10
-                                              }`}
-                                              alt="assignee"
-                                            />
-                                          ))}
-                                        </div>
-                                      )}
-                                      {/* 時間 */}
-                                      {card.dueDate && (
-                                        <div className="flex gap-1 text-['Roboto'] text-[14px] leading-[22px] text-[#595959]">
-                                          <ClockCircleOutlined />
-                                          {card.dueDate.type === "daterange" && (
-                                            <span>
-                                              {card.dueDate.start} - {card.dueDate.end}
-                                            </span>
-                                          )}
-                                          {card.dueDate.type === "date" && <span>{card.dueDate.end}</span>}
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-                              </Draggable>
-                            );
-                          })}
-                        </div>
-                      )}
-                      {provided.placeholder}
-                      <div id="add-card" className="cursor-pointer">
-                        <PlusOutlined />
-                        <span> Add a card</span>
-                      </div>
-                    </div>
-                  )}
-                </Droppable>
-              );
+              return <List key={list.id} list={list} cards={cards} />;
             })}
-            <div id="add-list" className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]">
-              <div className="text-['Roboto'] font-medium text-base text-[#595959] cursor-pointer">
-                <PlusOutlined />
-                <span> Add a list</span>
-              </div>
-            </div>
+            <AddList />
           </div>
         </DragDropContext>
       </section>
