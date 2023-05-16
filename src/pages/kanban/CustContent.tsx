@@ -1,6 +1,8 @@
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+
 import React, { useState } from "react";
 import {
   BellFilled,
@@ -20,39 +22,7 @@ import user4 from "@/assets/user4.svg";
 import user5 from "@/assets/user5.svg";
 import fakeImage from "@/assets/fakeImage.svg";
 
-interface IContent {
-  setCollapsed: (value: any) => void;
-}
-
-interface ICard {
-  id: string;
-  title: string;
-  preview: any;
-  priority: string | null;
-  status: string | null;
-  tags: string[];
-  reporter: { id: string; avatar: string } | null;
-  assignees: { id: string; avatar: string }[];
-  dueDate: {
-    type: string;
-    start?: string;
-    end: string;
-  } | null;
-}
-
-interface IList {
-  id: string;
-  title: string;
-  cardOrder: string[];
-}
-
-interface IData {
-  cards: { [key: string]: ICard };
-  lists: { [key: string]: IList };
-  listOrder: string[];
-}
-
-const initialData2: IData = {
+const initialData: IData = {
   cards: {
     "card-1": {
       id: "card-1",
@@ -60,7 +30,12 @@ const initialData2: IData = {
       preview: null,
       priority: "Low",
       status: "Pending",
-      tags: ["P03", "bug", "new", "unknown"],
+      tags: [
+        { id: "p03", name: "P03" },
+        { id: "bug", name: "bug" },
+        { id: "new", name: "new" },
+        { id: "unknown", name: "unknown" },
+      ],
       reporter: { id: "user1", avatar: user1 },
       assignees: [
         { id: "user2", avatar: user2 },
@@ -80,7 +55,12 @@ const initialData2: IData = {
       preview: { src: fakeImage, filename: "fakeImage" },
       priority: "High",
       status: "Pending",
-      tags: ["P03", "bug", "new", "unknown"],
+      tags: [
+        { id: "p03", name: "P03" },
+        { id: "bug", name: "bug" },
+        { id: "new", name: "new" },
+        { id: "unknown", name: "unknown" },
+      ],
       reporter: { id: "user3", avatar: user3 },
       assignees: [
         { id: "user1", avatar: user1 },
@@ -97,7 +77,12 @@ const initialData2: IData = {
       preview: null,
       priority: "Medium",
       status: "In Progress",
-      tags: ["P02", "bug", "new", "unknown"],
+      tags: [
+        { id: "p02", name: "P03" },
+        { id: "bug", name: "bug" },
+        { id: "new", name: "new" },
+        { id: "unknown", name: "unknown" },
+      ],
       reporter: { id: "user2", avatar: user2 },
       assignees: [
         { id: "user4", avatar: user4 },
@@ -118,7 +103,11 @@ const initialData2: IData = {
       },
       priority: "High",
       status: "Done",
-      tags: ["P02", "new", "unknown"],
+      tags: [
+        { id: "p02", name: "P02" },
+        { id: "new", name: "new" },
+        { id: "unknown", name: "unknown" },
+      ],
       reporter: { id: "user5", avatar: user5 },
       assignees: [
         { id: "user2", avatar: user2 },
@@ -138,7 +127,12 @@ const initialData2: IData = {
       },
       priority: "Low",
       status: "Done",
-      tags: ["P02", "bug", "new", "unknown"],
+      tags: [
+        { id: "p02", name: "P02" },
+        { id: "bug", name: "bug" },
+        { id: "new", name: "new" },
+        { id: "unknown", name: "unknown" },
+      ],
       reporter: { id: "user2", avatar: user2 },
       assignees: [
         { id: "user4", avatar: user4 },
@@ -155,7 +149,10 @@ const initialData2: IData = {
       preview: null,
       priority: "Low",
       status: "Pending",
-      tags: ["P03", "new"],
+      tags: [
+        { id: "p03", name: "P03" },
+        { id: "new", name: "new" },
+      ],
       reporter: { id: "user1", avatar: user1 },
       assignees: [],
       dueDate: {
@@ -210,8 +207,36 @@ const initialData2: IData = {
   listOrder: ["list-1", "list-2", "list-3", "list-4", "list-5", "list-6"],
 };
 
-const CustContent = ({ setCollapsed }: IContent) => {
-  const [data, setData] = useState<IData>(initialData2);
+interface ICard {
+  id: string;
+  title: string;
+  preview: any;
+  priority: string | null;
+  status: string | null;
+  tags: { id: string; name: string }[];
+  reporter: { id: string; avatar: string } | null;
+  assignees: { id: string; avatar: string }[];
+  dueDate: {
+    type: string;
+    start?: string;
+    end: string;
+  } | null;
+}
+
+interface IList {
+  id: string;
+  title: string;
+  cardOrder: string[];
+}
+
+interface IData {
+  cards: { [key: string]: ICard };
+  lists: { [key: string]: IList };
+  listOrder: string[];
+}
+
+const CustContent = () => {
+  const [data] = useState<IData>(initialData);
 
   return (
     <section className="flex flex-col ">
@@ -228,7 +253,7 @@ const CustContent = ({ setCollapsed }: IContent) => {
             const list = data.lists[listId];
             const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
             return (
-              <div id="first-list" className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]">
+              <div id="first-list" className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]" key={listId}>
                 {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
                 <div className="flex justify-between items-center">
                   <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
@@ -241,7 +266,7 @@ const CustContent = ({ setCollapsed }: IContent) => {
                   <div id="first-cards" className="flex flex-col gap-6 mb-4">
                     {cards.map((card: ICard) => {
                       return (
-                        <div id="first-card" className="py-4 px-3 bg-white">
+                        <div id="first-card" className="py-4 px-3 bg-white" key={card.id}>
                           {/* 小鈴鐺 */}
                           <div className="flex gap-2 text-base mb-3">
                             <div className="flex items-center gap-1 text-[#FA541C]">
@@ -267,28 +292,28 @@ const CustContent = ({ setCollapsed }: IContent) => {
                             <div className="flex gap-2 mb-3">
                               {card.priority === "High" && (
                                 <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
-                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#CF1322] whitespace-nowrap">
-                                    Priority: High
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#CF1322] whitespace-nowrap">
+                                    Priority:&nbsp;High
                                   </div>
                                 </div>
                               )}
                               {card.priority === "Medium" && (
                                 <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
-                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#D46B08] whitespace-nowrap">
-                                    Priority: Medium
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#D46B08] whitespace-nowrap">
+                                    Priority:&nbsp;Medium
                                   </div>
                                 </div>
                               )}
                               {card.priority === "Low" && (
                                 <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
-                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#389E0D] whitespace-nowrap">
-                                    Priority: Low
+                                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#389E0D] whitespace-nowrap">
+                                    Priority:&nbsp;Low
                                   </div>
                                 </div>
                               )}
                               <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
-                                <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] text-[#595959] whitespace-nowrap">
-                                  Status: {card.status}
+                                <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#595959] whitespace-nowrap">
+                                  Status:&nbsp;{card.status}
                                 </div>
                               </div>
                             </div>
@@ -296,27 +321,36 @@ const CustContent = ({ setCollapsed }: IContent) => {
                           {/* 標籤 */}
                           {card.tags.length > 0 && (
                             <div className="flex gap-2 flex-wrap mb-6">
-                              {card.tags.map((tag: any) => {
-                                if (tag === "bug") {
+                              {card.tags.map((tag: { id: string; name: string }) => {
+                                if (tag.name === "bug") {
                                   return (
-                                    <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']">
+                                    <div
+                                      className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
+                                      key={tag.id}
+                                    >
                                       <BugOutlined className="text-[13px]" />
-                                      <span className="text-sm leading-[22px]">{tag}</span>
+                                      <span className="text-sm leading-[22px]">{tag.name}</span>
                                     </div>
                                   );
                                 }
-                                if (tag === "new") {
+                                if (tag.name === "new") {
                                   return (
-                                    <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']">
+                                    <div
+                                      className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
+                                      key={tag.id}
+                                    >
                                       <ThunderboltOutlined className="text-[13px]" />
-                                      <span className="text-sm leading-[22px]">{tag}</span>
+                                      <span className="text-sm leading-[22px]">{tag.name}</span>
                                     </div>
                                   );
                                 }
                                 return (
-                                  <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']">
+                                  <div
+                                    className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']"
+                                    key={tag.id}
+                                  >
                                     <TagOutlined className="text-[13px]" />
-                                    <span className="text-sm leading-[22px]">{tag}</span>
+                                    <span className="text-sm leading-[22px]">{tag.name}</span>
                                   </div>
                                 );
                               })}
