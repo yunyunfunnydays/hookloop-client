@@ -1,9 +1,11 @@
 import ChangePassword from "@/components/ChangePassword";
-import { getMe, updateMe } from "@/service/api";
+import { getMe, updateMe, closeMe } from "@/service/api";
 import { IApiResponse } from "@/service/instance";
 import React, { useEffect, useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Form, Row, Col, Typography, Input, Divider, Avatar, message as msg } from "antd";
+import Router from "next/router";
+import Cookies from "js-cookie";
 
 const { Title } = Typography;
 
@@ -24,22 +26,38 @@ const Profile = () => {
           username: data.userData.username,
           email: data.userData.email,
         });
+      } else {
+        msg.error("Failed to get user data");
       }
     })();
   }, [form]);
 
-  const onFinish = (values: any) => {
+  const handleFinish = (values: { username: string; email: string }) => {
     (async () => {
       const { username } = values;
 
       const res = await updateMe({ username });
 
-      const { status, message } = res.data as unknown as IApiResponse;
+      const { status, message } = res.data as IApiResponse;
 
       if (status === "success") {
         msg.success(message);
       } else {
         msg.error(message);
+      }
+    })();
+  };
+
+  const handleCloseAccount = () => {
+    (async () => {
+      const res = await closeMe();
+      const { status } = res.data as IApiResponse;
+      if (status === "success") {
+        Cookies.set("hookloop-token", "");
+        Router.push("/");
+        msg.success("Account closed");
+      } else {
+        msg.error("Failed to close account");
       }
     })();
   };
@@ -57,7 +75,7 @@ const Profile = () => {
             form={form}
             labelCol={{ span: 6 }}
             labelAlign="left"
-            onFinish={onFinish}
+            onFinish={handleFinish}
             className="w-full flex flex-col gap-[20px] mb-4"
           >
             <Form.Item name="username" label="Username" className="w-full">
@@ -89,7 +107,7 @@ const Profile = () => {
           <Form
             labelCol={{ span: 6 }}
             labelAlign="left"
-            onFinish={onFinish}
+            onFinish={handleFinish}
             className="w-full flex flex-col gap-[20px] mb-4"
             initialValues={{ language: "English (United States) [Default]", colorTheme: "Normal" }}
           >
@@ -125,7 +143,7 @@ const Profile = () => {
             </Col>
           </Row>
         </section>
-        <Button danger className="mt-6 rounded">
+        <Button danger className="mt-6 rounded" onClick={() => handleCloseAccount()}>
           Close Account
         </Button>
       </div>

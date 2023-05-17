@@ -43,3 +43,7 @@ export const updateMe = (data: { username: string }) => {
 export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
   return instance.patch("/users/me/password", data);
 };
+
+export const closeMe = () => {
+  return instance.patch("/users/me/isActive");
+};
