@@ -13,7 +13,6 @@ const ChangePassword: React.FC<IChangePassword> = (props) => {
   const [form] = Form.useForm();
 
   const handleCancel = (): void => {
-    // ...
     close();
   };
 
@@ -28,10 +27,12 @@ const ChangePassword: React.FC<IChangePassword> = (props) => {
     try {
       const { oldPassword, newPassword } = values;
       const res = await updatePassword({ oldPassword, newPassword });
-      const { message, status } = res as unknown as IApiResponse;
+
+      const { message, status } = res.data as IApiResponse;
 
       if (status === "success") {
         msg.success(message);
+        form.resetFields();
         close();
       } else {
         msg.error(message);
@@ -57,27 +58,36 @@ const ChangePassword: React.FC<IChangePassword> = (props) => {
             name="oldPassword"
             className="w-full"
             label="Old Password"
-            rules={[{ required: true, message: "Please enter your old password" }]}
+            rules={[
+              { required: true, message: "Please enter your old password" },
+              { min: 8, max: 20, message: "Password must be between 8 and 20 characters" },
+            ]}
           >
-            <Input.Password minLength={8} maxLength={20} />
+            <Input.Password />
           </Form.Item>
 
           <Form.Item
             name="newPassword"
             className="w-full"
             label="New Password"
-            rules={[{ required: true, message: "Please enter your new password" }]}
+            rules={[
+              { required: true, message: "Please enter your new password" },
+              { min: 8, max: 20, message: "Password must be between 8 and 20 characters" },
+            ]}
           >
-            <Input.Password minLength={8} maxLength={20} />
+            <Input.Password />
           </Form.Item>
 
           <Form.Item
             name="confirmPassword"
             className="w-full"
             label="Confirm Password"
-            rules={[{ required: true, message: "Please confirm your new password" }]}
+            rules={[
+              { required: true, message: "Please confirm your new password" },
+              { min: 8, max: 20, message: "Password must be between 8 and 20 characters" },
+            ]}
           >
-            <Input.Password minLength={8} maxLength={20} />
+            <Input.Password />
           </Form.Item>
 
           <Form.Item>
