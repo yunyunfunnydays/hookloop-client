@@ -346,7 +346,8 @@ const Card = (props: ICardProps) => {
                   <Image
                     key={assignee.id}
                     src={assignee.avatar}
-                    className={`h-8 w-8 rounded-full border border-[#D9D9D9] z-${30 - index2 * 10}`}
+                    className="h-8 w-8 rounded-full border border-[#D9D9D9]"
+                    style={{ zIndex: 30 - index2 * 10 }}
                     alt="assignee"
                   />
                 ))}
