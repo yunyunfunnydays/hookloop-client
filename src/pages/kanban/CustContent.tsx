@@ -240,6 +240,7 @@ interface ICardProps {
 interface IListProps {
   list: IList;
   cards: ICard[];
+  index2: number;
 }
 
 const Card = (props: ICardProps) => {
@@ -380,32 +381,42 @@ const AddCard = () => {
 };
 
 const List = (props: IListProps) => {
-  const { list, cards } = props;
+  const { list, cards, index2 } = props;
 
   return (
-    <Droppable droppableId={list.id} type="card">
-      {(provided) => (
-        <div className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]" ref={provided.innerRef} {...provided.droppableProps}>
-          {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
-          <div className="flex justify-between items-center">
-            <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
-            <EllipsisOutlined className="text-xl cursor-pointer" />
-          </div>
-          <div className="text-['Roboto'] font-medium text-sm text-[#8C8C8C] mb-2">
-            {cards.length} {cards.length === 1 ? "card" : "cards"}
-          </div>
-          {cards.length > 0 && (
-            <div className="flex flex-col gap-6 mb-4">
-              {cards.map((card: ICard, index: number) => (
-                <Card key={card.id} card={card} index={index} />
-              ))}
-            </div>
-          )}
-          {provided.placeholder}
-          <AddCard />
+    <Draggable draggableId={list.id} index={index2}>
+      {(provided2) => (
+        <div ref={provided2.innerRef} {...provided2.draggableProps} {...provided2.dragHandleProps}>
+          <Droppable droppableId={list.id} type="card">
+            {(provided) => (
+              <div
+                className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
+                <div className="flex justify-between items-center">
+                  <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
+                  <EllipsisOutlined className="text-xl cursor-pointer" />
+                </div>
+                <div className="text-['Roboto'] font-medium text-sm text-[#8C8C8C] mb-2">
+                  {cards.length} {cards.length === 1 ? "card" : "cards"}
+                </div>
+                {cards.length > 0 && (
+                  <div className="flex flex-col gap-6 mb-4">
+                    {cards.map((card: ICard, index: number) => (
+                      <Card key={card.id} card={card} index={index} />
+                    ))}
+                  </div>
+                )}
+                {provided.placeholder}
+                <AddCard />
+              </div>
+            )}
+          </Droppable>
         </div>
       )}
-    </Droppable>
+    </Draggable>
   );
 };
 
@@ -445,6 +456,13 @@ const CustContent = () => {
           draft.lists[destination.droppableId].cardOrder.splice(destination.index, 0, draggableId);
         }),
       );
+    } else if (type === "list") {
+      setData((prevData) =>
+        produce(prevData, (draft) => {
+          draft.listOrder.splice(source.index, 1);
+          draft.listOrder.splice(destination.index, 0, draggableId);
+        }),
+      );
     }
   };
 
@@ -454,14 +472,19 @@ const CustContent = () => {
       <section className="">
         <div className="w-full h-24 bg-yellow-500" />
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="flex gap-6 items-start">
-            {data.listOrder.map((listId: string) => {
-              const list = data.lists[listId];
-              const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
-              return <List key={list.id} list={list} cards={cards} />;
-            })}
-            <AddList />
-          </div>
+          <Droppable droppableId="all-lists" direction="horizontal" type="list">
+            {(provided) => (
+              <div className="flex gap-6 items-start" ref={provided.innerRef} {...provided.droppableProps}>
+                {data.listOrder.map((listId: string, index2: number) => {
+                  const list = data.lists[listId];
+                  const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
+                  return <List key={list.id} list={list} cards={cards} index2={index2} />;
+                })}
+                {provided.placeholder}
+                <AddList />
+              </div>
+            )}
+          </Droppable>
         </DragDropContext>
       </section>
     </section>
