@@ -251,7 +251,7 @@ const Card = (props: ICardProps) => {
       {(provided2) => (
         <div
           id="first-card"
-          className="py-4 px-3 bg-white"
+          className="py-4 px-3 bg-white cursor-pointer"
           key={card.id}
           ref={provided2.innerRef}
           {...provided2.draggableProps}
@@ -387,7 +387,12 @@ const List = (props: IListProps) => {
   return (
     <Draggable draggableId={list.id} index={index2}>
       {(provided2) => (
-        <div ref={provided2.innerRef} {...provided2.draggableProps} {...provided2.dragHandleProps}>
+        <div
+          ref={provided2.innerRef}
+          {...provided2.draggableProps}
+          {...provided2.dragHandleProps}
+          className="cursor-pointer"
+        >
           <Droppable droppableId={list.id} type="card">
             {(provided) => (
               <div
