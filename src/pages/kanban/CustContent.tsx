@@ -403,7 +403,7 @@ const List = (props: IListProps) => {
                   {cards.length} {cards.length === 1 ? "card" : "cards"}
                 </div>
                 {cards.length > 0 && (
-                  <div className="flex flex-col gap-6 mb-4">
+                  <div className="flex flex-col space-y-6 mb-4">
                     {cards.map((card: ICard, index: number) => (
                       <Card key={card.id} card={card} index={index} />
                     ))}
@@ -474,7 +474,7 @@ const CustContent = () => {
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="all-lists" direction="horizontal" type="list">
             {(provided) => (
-              <div className="flex gap-6 items-start" ref={provided.innerRef} {...provided.droppableProps}>
+              <div className="flex space-x-6 items-start" ref={provided.innerRef} {...provided.droppableProps}>
                 {data.listOrder.map((listId: string, index2: number) => {
                   const list = data.lists[listId];
                   const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
