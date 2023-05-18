@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useContext } from "react";
-import { DatePicker, Input } from "antd";
+import React, { useState, useContext } from "react";
+import { DatePicker, Input, Button, Modal } from "antd";
 import { DoubleRightOutlined } from "@ant-design/icons";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // component
 import Workspace from "@/components/Workspace";
+import Card from "@/components/Card";
 
 interface IProps {
   s_collapsed: boolean;
@@ -14,17 +15,23 @@ interface IProps {
 }
 
 const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
+  // workspace 資料
   const { c_workspaces } = useContext(GlobalContext);
+  // 是否開啟卡片(測試用)
+  const [s_showCard, set_s_showCard] = useState(false);
 
   return (
     <div className="flex flex-col">
       <section className="flex justify-end gap-3">
+        <Button type="primary" size="large" onClick={() => set_s_showCard(true)}>
+          測試卡片
+        </Button>
         <DatePicker className="w-[250px]" />
         <Input.Search placeholder="input search text" enterButton style={{ width: 250 }} />
       </section>
 
       <section className="mt-5 flex flex-col gap-8">
-        {/* <Workspace /> */}
+        {/* Workspace */}
         {c_workspaces?.map((workspace: Iworkspace) => {
           return <Workspace key={workspace.id} workspaceData={workspace} />;
         }) || []}
@@ -39,6 +46,10 @@ const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           <DoubleRightOutlined />
         </div>
       )}
+
+      <Modal title="Add Card" width="572px" open={s_showCard} onCancel={() => set_s_showCard(false)} footer={null}>
+        {s_showCard && <Card set_s_showCard={set_s_showCard} />}
+      </Modal>
     </div>
   );
 };
