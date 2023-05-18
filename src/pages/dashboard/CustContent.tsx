@@ -47,7 +47,16 @@ const CustContent: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         </div>
       )}
 
-      <Modal title="Add Card" width="572px" open={s_showCard} onCancel={() => set_s_showCard(false)} footer={null}>
+      <Modal
+        title="Add Card"
+        width="572px"
+        open={s_showCard}
+        style={{
+          top: 20,
+        }}
+        onCancel={() => set_s_showCard(false)}
+        footer={null}
+      >
         {s_showCard && <Card set_s_showCard={set_s_showCard} />}
       </Modal>
     </div>
