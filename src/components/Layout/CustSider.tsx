@@ -148,7 +148,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         onCancel={() => set_s_isShowModal(false)}
         footer={null}
       >
-        <WorkSpaceModal set_s_isShowModal={set_s_isShowModal} />
+        {s_isShowModal && <WorkSpaceModal set_s_isShowModal={set_s_isShowModal} />}
       </Modal>
 
       <Modal
@@ -158,7 +158,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         onCancel={() => set_s_isShowMember(false)}
         footer={null}
       >
-        <MemberModal set_s_isShowMember={set_s_isShowMember} />
+        {s_isShowMember && <MemberModal set_s_isShowMember={set_s_isShowMember} />}
       </Modal>
     </Layout.Sider>
   );
