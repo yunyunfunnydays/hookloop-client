@@ -1,27 +1,51 @@
-import React, { useState } from "react";
-import { Layout } from "antd";
-// import { useRouter } from "next/router";
-
+import React, { useState, useContext } from "react";
+import { DatePicker, Input, Button, Modal } from "antd";
+// context
+import GlobalContext from "@/Context/GlobalContext";
 // component
-import CustSider from "@/components/Layout/CustSider";
-import CustContent from "./CustContent";
+import CustLayout from "@/components/Layout";
+import Workspace from "@/components/Workspace";
+import Card from "@/components/Card";
 
-const Dashboard = () => {
-  // const router = useRouter();
-  // 控制 Sider 收合的開關
-  const [s_collapsed, set_s_collapsed] = useState(false);
-  // console.log("router.isPreview = ", router.isPreview);
-  // console.log("router.isReady = ", router.isReady);
+interface IProps {}
+
+const Dashboard: React.FC<IProps> = () => {
+  // workspace 資料
+  const { c_workspaces } = useContext(GlobalContext);
+  // 是否開啟卡片(測試用)
+  const [s_showCard, set_s_showCard] = useState(false);
   return (
-    <Layout className="h-[calc(100vh_-_80px)] bg-white p-0">
-      {/* Sider */}
-      <CustSider s_collapsed={s_collapsed} set_s_collapsed={set_s_collapsed} />
+    <CustLayout>
+      <div className="flex flex-col">
+        <section className="flex justify-end gap-3">
+          <Button type="primary" size="large" onClick={() => set_s_showCard(true)}>
+            測試卡片
+          </Button>
+          <DatePicker className="w-[250px]" />
+          <Input.Search placeholder="input search text" enterButton style={{ width: 250 }} />
+        </section>
 
-      {/* content */}
-      <Layout.Content className="px-[25px] py-[30px] relative overflow-auto">
-        <CustContent s_collapsed={s_collapsed} set_s_collapsed={set_s_collapsed} />
-      </Layout.Content>
-    </Layout>
+        <section className="mt-5 flex flex-col gap-8">
+          {/* Workspace */}
+          {c_workspaces?.map((workspace: Iworkspace) => {
+            return <Workspace key={workspace.id} workspaceData={workspace} />;
+          }) || []}
+        </section>
+
+        <Modal
+          title="Add Card"
+          width="572px"
+          open={s_showCard}
+          style={{
+            top: 20,
+          }}
+          onCancel={() => set_s_showCard(false)}
+          footer={null}
+        >
+          {s_showCard && <Card set_s_showCard={set_s_showCard} />}
+        </Modal>
+      </div>
+    </CustLayout>
   );
 };
 

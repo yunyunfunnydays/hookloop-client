@@ -16,6 +16,10 @@ import Login from "../Login";
 
 const Header: React.FC = () => {
   const { c_user, set_c_user } = useContext(GlobalContext);
+
+  // 判斷是否有權限
+  const hasAuth = c_user?.email.length > 0;
+  // antd 用來監聽畫面寬度變化的 API
   const screens = Grid.useBreakpoint();
   const router = useRouter();
   // rwd 時控制要不要出現選單
@@ -34,8 +38,7 @@ const Header: React.FC = () => {
   const toggle = (): void => {
     set_s_showMenu(!s_showMenu);
   };
-
-  // // 第一次渲染判斷 token 是否過期並取得登入人員資訊
+  // 第一次渲染判斷 token 是否過期並取得登入人員資訊
   useEffect(() => {
     (async () => {
       if (s_showLogin) return;
@@ -45,19 +48,21 @@ const Header: React.FC = () => {
       const currentPath = router.pathname;
 
       if (status === "success") {
+        // 如果目前正在首頁登入後要直接導轉到 dashboard
         if (currentPath === "/") {
           Router.push("dashboard");
         }
-        // console.log("data = ", data);
+        // 儲存使用者資訊
         set_c_user(data);
         return;
       }
+      // 因為沒有驗證成功，所以要導轉到首頁
       if (currentPath !== "/") {
         Router.push("/");
       }
       set_c_user({} as IUser);
     })();
-  }, [s_showLogin, router.asPath]); // , router.asPath
+  }, [s_showLogin]);
 
   // 螢幕變成md以上的尺寸時替使用者關閉漢堡選單
   useEffect(() => {
@@ -72,17 +77,17 @@ const Header: React.FC = () => {
       className={`
       box-border h-[80px] border-b-[1px] 
       flex justify-between items-center
-      ${Object.keys(c_user).length ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
+      ${hasAuth ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
     `}
     >
       <Image
-        src={Object.keys(c_user).length ? logo_white : logo_black}
+        src={hasAuth ? logo_white : logo_black}
         alt="HOOK LOOP"
         className="cursor-pointer"
         onClick={() => Router.push("/dashboard")}
       />
 
-      {Object.keys(c_user).length ? (
+      {hasAuth ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="bg-[#434343] w-[42px] h-[22px]" />
           <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
