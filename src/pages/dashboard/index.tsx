@@ -5,7 +5,7 @@ import GlobalContext from "@/Context/GlobalContext";
 // component
 import CustLayout from "@/components/Layout";
 import Workspace from "@/components/Workspace";
-import Card from "@/components/Card";
+import CardModal from "@/components/Card/CardModal";
 
 interface IProps {}
 
@@ -42,7 +42,7 @@ const Dashboard: React.FC<IProps> = () => {
           onCancel={() => set_s_showCard(false)}
           footer={null}
         >
-          {s_showCard && <Card set_s_showCard={set_s_showCard} />}
+          {s_showCard && <CardModal set_s_showCard={set_s_showCard} />}
         </Modal>
       </div>
     </CustLayout>

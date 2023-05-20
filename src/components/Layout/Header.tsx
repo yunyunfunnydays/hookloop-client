@@ -18,7 +18,7 @@ const Header: React.FC = () => {
   const { c_user, set_c_user } = useContext(GlobalContext);
 
   // 判斷是否有權限
-  const hasAuth = c_user?.email.length > 0;
+  const hasAuth = c_user?.email?.length > 0;
   // antd 用來監聽畫面寬度變化的 API
   const screens = Grid.useBreakpoint();
   const router = useRouter();

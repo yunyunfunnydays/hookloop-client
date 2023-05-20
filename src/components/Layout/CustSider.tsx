@@ -26,7 +26,7 @@ interface IProps {
 }
 
 const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
-  const { c_workspaces } = useContext(GlobalContext);
+  const { c_workspaces, set_c_user } = useContext(GlobalContext);
 
   // 顯示新增 workspace 的開關
   const [s_isShowModal, set_s_isShowModal] = useState(false);
@@ -82,6 +82,12 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   const handleLogout = async () => {
     msg.success("Log out success");
     Cookies.set("hookloop-token", "");
+    set_c_user({
+      username: "",
+      email: "",
+      password: "",
+      avatar: "",
+    });
     Router.push("/");
   };
 
