@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [c_workspaces, set_c_workspaces] = useState<Iworkspace[]>([
     {
       id: "1",
-      workspaceName: "Workspace 1",
+      workspaceName: "Workspace 100",
       kanbans: [
         { id: "1", kanbanName: "kanban1" },
         { id: "2", kanbanName: "kanban2" },

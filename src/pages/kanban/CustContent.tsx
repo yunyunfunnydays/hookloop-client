@@ -204,22 +204,6 @@ const initialData: IData = {
   listOrder: ["list-1", "list-2", "list-3", "list-4", "list-5", "list-6"],
 };
 
-interface ICard {
-  id: string;
-  title: string;
-  preview: any;
-  priority: string | null;
-  status: string | null;
-  tags: { id: string; name: string }[];
-  reporter: { id: string; avatar: string } | null;
-  assignees: { id: string; avatar: string }[];
-  dueDate: {
-    type: string;
-    start?: string;
-    end: string;
-  } | null;
-}
-
 interface IList {
   id: string;
   title: string;
@@ -472,11 +456,11 @@ const CustContent = () => {
     }
   };
 
+  // line 477 新增 mt-[64px] overflow-x-auto
   return (
-    <section className="flex flex-col ">
-      {/* Collapse Sidebar */}
-      <section className="">
-        <div className="w-full h-24 bg-yellow-500" />
+    <section className="flex flex-col">
+      <div className="w-full h-24 bg-yellow-500 flex justify-end">test</div>
+      <section className="overflow-x-auto h-full">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="all-lists" direction="horizontal" type="list">
             {(provided) => (

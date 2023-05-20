@@ -31,4 +31,20 @@ declare global {
     kanbans: Ikanban[];
     members: string[];
   }
+
+  interface ICard {
+    id: string;
+    title: string;
+    preview: any;
+    priority: string | null;
+    status: string | null;
+    tags: { id: string; name: string }[];
+    reporter: { id: string; avatar: string } | null;
+    assignees: { id: string; avatar: string }[];
+    dueDate: {
+      type: string;
+      start?: string;
+      end: string;
+    } | null;
+  }
 }

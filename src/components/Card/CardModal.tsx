@@ -64,7 +64,7 @@ const tagRender = (props: CustomTagProps) => {
   );
 };
 
-const Card: React.FC<IProps> = ({ set_s_showCard }) => {
+const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
   const options = [
     {
       value: "P03",
@@ -283,4 +283,4 @@ const Card: React.FC<IProps> = ({ set_s_showCard }) => {
   );
 };
 
-export default Card;
+export default CardModal;

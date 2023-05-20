@@ -8,15 +8,15 @@ interface IProps {
 }
 
 const Workspace: React.FC<IProps> = ({ workspaceData }) => {
-  const { kanbans = [], members = [] } = workspaceData;
+  const { kanbans = [], members = [], workspaceName } = workspaceData;
 
   return (
     <div className="flex flex-col justify-start">
-      {/* 資訊欄部分 */}
+      {/* 資訊欄區域 */}
       <section className="flex justify-between">
         <h5 className="text-[24px] text-[#595959] font-medium">
           <DesktopOutlined />
-          <span className="ml-2">Workspace 1</span>
+          <span className="ml-2">{workspaceName}</span>
         </h5>
 
         <div className="flex items-center text-[16px]">
@@ -31,7 +31,7 @@ const Workspace: React.FC<IProps> = ({ workspaceData }) => {
       </section>
 
       <Divider className="mt-1" />
-
+      {/* 看板區域 */}
       <Space wrap size="middle">
         {kanbans.map((item: Ikanban) => (
           <KanbanCard key={item.id} kanbanData={item} />
