@@ -15,10 +15,13 @@ import {
   MessageFilled,
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
+// image
 import User1 from "@/assets/user1.svg";
 import User2 from "@/assets/user2.svg";
 import User3 from "@/assets/user3.svg";
 import User4 from "@/assets/user4.svg";
+// component
+import CommentList from "./CommentList";
 
 interface IProps {
   set_s_showCard: ISetStateFunction<boolean>;
@@ -263,6 +266,8 @@ const Card: React.FC<IProps> = ({ set_s_showCard }) => {
           <MessageFilled className="mr-1" />
           Comment
         </GroupTitle>
+
+        <CommentList />
       </section>
 
       <Divider className="my-3" />
