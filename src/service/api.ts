@@ -47,3 +47,13 @@ export const updatePassword = (data: { oldPassword: string; newPassword: string 
 export const closeMe = () => {
   return instance.patch("/users/me/isActive");
 };
+
+// 取得看板
+export const getKanban = (kanbanID: string = "") => {
+  return instance.get(`/kanbans/${kanbanID}`);
+};
+
+// 至頂看板
+export const renameKanban = (kanbanID: string = "", name: string = "") => {
+  return instance.patch(`/kanbans/${kanbanID}/name`, { name });
+};
