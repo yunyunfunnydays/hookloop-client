@@ -32,6 +32,7 @@ const Dashboard: React.FC<IProps> = () => {
           }) || []}
         </section>
 
+        {/* 暫時用來測試 Card 切版 */}
         <Modal
           title="Add Card"
           width="572px"
