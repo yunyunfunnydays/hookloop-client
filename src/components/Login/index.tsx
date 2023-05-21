@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unstable-nested-components */
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import Image from "next/image";
 import Router from "next/router";
 import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
@@ -9,6 +8,8 @@ import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notificati
 import Cookies from "js-cookie";
 // logo
 import logo from "@/assets/logo_black.svg";
+// context
+import GlobalContext from "@/Context/GlobalContext";
 // api
 import { IApiResponse } from "@/service/instance";
 import { createUser, login } from "@/service/api";
@@ -29,6 +30,7 @@ const Login: React.FC<ILogin> = (props) => {
    * close 關閉彈窗時執行
    */
   const { open, close } = props;
+  const { set_c_user } = useContext(GlobalContext);
   const [form] = Form.useForm();
   // API 錯誤時用來讓使用者明確知道錯在哪裡
   const [api, contextHolder] = notification.useNotification();
@@ -99,6 +101,7 @@ const Login: React.FC<ILogin> = (props) => {
     if (status === "success") {
       msg.success(message);
       Cookies.set("hookloop-token", data.token);
+      set_c_user(data.user);
       Router.push("/dashboard");
       close();
     } else {

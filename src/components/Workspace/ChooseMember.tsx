@@ -1,13 +1,15 @@
 import React from "react";
-import { Input, Select } from "antd";
+import { Select } from "antd";
 import { UserOutlined, DeleteOutlined } from "@ant-design/icons";
+import MemberSelect from "@/components/Member/MemberSelect";
 
 const ChooseMember = () => {
   return (
     <section>
       <div className="flex flex-col mt-4">
         <p className="text-base font-medium mb-1">Invite members</p>
-        <Input.Search placeholder="input search text" enterButton />
+        {/* <Input.Search placeholder="input search text" enterButton /> */}
+        <MemberSelect />
       </div>
 
       <section className="flex flex-col mt-4 gap-5">

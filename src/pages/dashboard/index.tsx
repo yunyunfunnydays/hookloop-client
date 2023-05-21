@@ -16,7 +16,7 @@ const Dashboard: React.FC<IProps> = () => {
   const [s_showCard, set_s_showCard] = useState(false);
   return (
     <CustLayout>
-      <div className="flex flex-col">
+      <div className="flex flex-col py-[30px]">
         <section className="flex justify-end gap-3">
           <Button type="primary" size="large" onClick={() => set_s_showCard(true)}>
             測試卡片
@@ -32,6 +32,7 @@ const Dashboard: React.FC<IProps> = () => {
           }) || []}
         </section>
 
+        {/* 暫時用來測試 Card 切版 */}
         <Modal
           title="Add Card"
           width="572px"
