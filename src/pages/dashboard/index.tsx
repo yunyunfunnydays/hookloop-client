@@ -28,7 +28,7 @@ const Dashboard: React.FC<IProps> = () => {
         <section className="mt-5 flex flex-col gap-8">
           {/* Workspace */}
           {c_workspaces?.map((workspace: Iworkspace) => {
-            return <Workspace key={workspace.id} workspaceData={workspace} />;
+            return <Workspace key={workspace.workspaceId} workspaceData={workspace} />;
           }) || []}
         </section>
 
