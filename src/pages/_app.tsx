@@ -6,7 +6,7 @@ import "../../public/antd.min.css";
 import "../../public/custom.css";
 import type { AppProps } from "next/app";
 import Router, { useRouter } from "next/router";
-import { message as msg } from "antd";
+import { Spin } from "antd";
 // component
 import Header from "@/components/Layout/Header";
 // API
@@ -19,50 +19,30 @@ import GlobalContext from "../Context/GlobalContext";
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   // 所有 workspace
-  const [c_workspaces, set_c_workspaces] = useState<Iworkspace[]>([
-    {
-      id: "1",
-      workspaceName: "Workspace 100",
-      kanbans: [
-        { id: "1", kanbanName: "kanban1" },
-        { id: "2", kanbanName: "kanban2" },
-        { id: "3", kanbanName: "kanban3" },
-      ],
-      members: ["user01", "user02"], // 還要存角色(ex: Admain、member)
-    },
-    {
-      id: "2",
-      workspaceName: "Workspace 2",
-      kanbans: [
-        { id: "1", kanbanName: "kanban1" },
-        { id: "2", kanbanName: "kanban2" },
-        { id: "3", kanbanName: "kanban3" },
-        { id: "4", kanbanName: "kanban4" },
-        { id: "5", kanbanName: "kanban5" },
-        { id: "6", kanbanName: "kanban6" },
-        { id: "7", kanbanName: "kanban7" },
-      ],
-      members: ["user01", "user02", "user02"],
-    },
-  ]);
-
+  const [c_workspaces, set_c_workspaces] = useState<Iworkspace[]>([]);
+  const [s_isLoading, set_s_isLoading] = useState(false);
   // 存登入人員的資訊
   const [c_user, set_c_user] = useState<IUser>({
     username: "",
     email: "",
     password: "",
     avatar: "",
+    userId: "",
   });
 
   // 取得所有 workspace
   const c_getAllWorkspace = async () => {
+    set_s_isLoading(true);
     const res: AxiosResponse = await getWorkspacesByUserId();
-    const { status, message } = res.data as IApiResponse;
-    // console.log("message = ", message);
-    // console.log("status = ", status);
+    const { status, data } = res.data as IApiResponse;
     if (status === "success") {
-      msg.success(message);
+      // msg.success(message);
+
+      const _data = data.filter((workspace: Iworkspace) => workspace.isArchived !== true);
+      // console.log("c_workspaces = ", _data);
+      set_c_workspaces(_data);
     }
+    set_s_isLoading(false);
   };
 
   // 第一次渲染判斷 token 是否過期並取得登入人員資訊
@@ -79,7 +59,10 @@ export default function App({ Component, pageProps }: AppProps) {
           Router.push("dashboard");
         }
         // 儲存使用者資訊
-        set_c_user(data);
+        set_c_user({
+          ...data,
+          userId: data._id,
+        });
         return;
       }
       // 因為沒有驗證成功，所以要導轉到首頁
@@ -91,6 +74,7 @@ export default function App({ Component, pageProps }: AppProps) {
         email: "",
         password: "",
         avatar: "",
+        userId: "",
       });
     })();
   }, []);
@@ -105,8 +89,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return withTheme(
     <GlobalContext.Provider value={{ c_workspaces, set_c_workspaces, c_user, set_c_user, c_getAllWorkspace }}>
-      <Header />
-      <Component {...pageProps} />
+      <Spin spinning={s_isLoading}>
+        <Header />
+        <Component {...pageProps} />
+      </Spin>
     </GlobalContext.Provider>,
   );
 }

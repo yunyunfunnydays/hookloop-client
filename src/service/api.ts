@@ -26,6 +26,11 @@ export const getUsers = (userID: string = "") => {
   return instance.get(`/users/${userID}`);
 };
 
+// 取得 Member 下拉選單資料
+export const getMember = (email: string = "") => {
+  return instance.get(`/users/getMember/${email}`);
+};
+
 // 建立使用者
 export const createUser = (data: IUser) => {
   return instance.post(`/users`, data);

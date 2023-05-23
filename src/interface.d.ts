@@ -8,6 +8,7 @@ declare global {
     email: string;
     password: string;
     avatar: string;
+    userId: string;
   }
 
   interface IApiResponse {
@@ -25,11 +26,20 @@ declare global {
     kanbanName: string;
   }
 
+  interface Imember {
+    username: string;
+    userId: string;
+    role: "Admin" | "Member" | "Owner";
+    avatar: string;
+    state: "create" | "delete";
+  }
+
   interface Iworkspace {
-    id: string;
+    workspaceId: string;
     workspaceName: string;
     kanbans: Ikanban[];
-    members: string[];
+    members: Imember[];
+    isArchived: boolean;
   }
 
   interface ICard {

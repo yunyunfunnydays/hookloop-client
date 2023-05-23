@@ -101,7 +101,10 @@ const Login: React.FC<ILogin> = (props) => {
     if (status === "success") {
       msg.success(message);
       Cookies.set("hookloop-token", data.token);
-      set_c_user(data.user);
+      set_c_user({
+        ...data.user,
+        userId: data.user._id,
+      });
       Router.push("/dashboard");
       close();
     } else {

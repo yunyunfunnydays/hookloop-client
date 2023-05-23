@@ -1,26 +1,41 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Select, Spin } from "antd";
+import { Select, Spin, Avatar } from "antd";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from "lodash/debounce";
-import { getUsers } from "@/service/api";
+import { getMember } from "@/service/api";
 
 const MemberSelect = (props: any) => {
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState([]);
   const fetchRef = useRef(0);
-  const call_getUsers = async (value: string = "") => {
-    const res: AxiosResponse = await getUsers(value);
+  const call_getMember = async (value: string = "") => {
+    const res: AxiosResponse = await getMember(value);
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
-      console.log(data);
+      const _data =
+        data.members?.map((member: IUser) => ({
+          ...member,
+          key: member.email,
+          label: (
+            <span className="flex gap-1">
+              <Avatar size="small">{member.username[0]}</Avatar>
+              {member.username}
+            </span>
+          ),
+          value: member.userId,
+        })) || [];
+      return _data;
     }
+
+    return [];
   };
   const debounceFetcher = useMemo(() => {
-    const loadOptions = (value) => {
+    const loadOptions = (value: any) => {
       fetchRef.current += 1;
       const fetchId = fetchRef.current;
       setOptions([]);
       setFetching(true);
-      call_getUsers(value).then((newOptions) => {
+      call_getMember(value).then((newOptions) => {
         if (fetchId !== fetchRef.current) {
           // for fetch callback order
           return;
@@ -31,7 +46,6 @@ const MemberSelect = (props: any) => {
     };
     return debounce(loadOptions, 800);
   }, []);
-  console.log("fetching = ", fetching);
   return (
     <Select
       showSearch
@@ -39,7 +53,6 @@ const MemberSelect = (props: any) => {
       filterOption={false}
       onSearch={debounceFetcher}
       notFoundContent={fetching ? <Spin size="small" /> : null}
-      // notFoundContent={<Spin size="small" />}
       {...props}
       options={options}
     />
