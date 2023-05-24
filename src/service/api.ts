@@ -41,7 +41,7 @@ export const updateMe = (data: { username: string }) => {
 
 // 修改密碼
 export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
-  return instance.patch("/users/me/password", data);
+  return instance.post("/users/me/password", data);
 };
 
 export const closeMe = () => {
