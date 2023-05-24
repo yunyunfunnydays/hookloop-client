@@ -12,7 +12,7 @@ interface IProps {
 }
 
 const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeRole, deleteMember }) => {
-  console.log("members = ", members);
+  // console.log("members = ", members);
   return (
     <section>
       <div className="flex flex-col mt-4">

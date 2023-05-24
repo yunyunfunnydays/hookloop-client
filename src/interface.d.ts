@@ -22,8 +22,12 @@ declare global {
   }
 
   interface Ikanban {
-    id: string;
-    kanbanName: string;
+    _id: string;
+    name: string;
+    key: string;
+    workspaceId: string;
+    isPinned: boolean;
+    isArchived: boolean;
   }
 
   interface Imember {

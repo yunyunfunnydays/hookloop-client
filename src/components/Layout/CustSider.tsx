@@ -83,9 +83,9 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           icon: <AppstoreOutlined />,
           // 這個 children 用來渲染 kanban
           children: workspace.kanbans.map((kanban) => ({
-            key: workspace.workspaceName + kanban.id,
-            onClick: () => Router.push(`/kanban/${kanban.id}`),
-            label: kanban.kanbanName,
+            key: workspace.workspaceName + kanban._id,
+            onClick: () => Router.push(`/kanban/${kanban._id}`),
+            label: kanban.name,
           })),
         },
         {
