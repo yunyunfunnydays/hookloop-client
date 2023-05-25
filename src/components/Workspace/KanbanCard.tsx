@@ -10,6 +10,7 @@ import {
   ExclamationCircleFilled,
   EditOutlined,
   MinusCircleOutlined,
+  TagsOutlined,
 } from "@ant-design/icons";
 // context
 import GlobalContext from "@/Context/GlobalContext";
@@ -88,6 +89,11 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
       >
         <MinusCircleOutlined className="pr-2" />
         Archived {kanbanData.name}
+      </Typography.Title>
+
+      <Typography.Title className={`${TITlESTYLE} mt-2 `} level={5}>
+        <TagsOutlined className="pr-2" />
+        Tag setting
       </Typography.Title>
     </div>
   );

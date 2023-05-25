@@ -1,6 +1,22 @@
-import React from "react";
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
-import { Row, Col, Input, Avatar, Typography, Button, Select, DatePicker, Tag, Divider } from "antd";
+import {
+  Row,
+  Col,
+  Input,
+  Avatar,
+  Typography,
+  Button,
+  Select,
+  DatePicker,
+  Tag,
+  Divider,
+  Form,
+  Spin,
+  message as msg,
+} from "antd";
 import {
   EditFilled,
   PlusOutlined,
@@ -20,6 +36,9 @@ import User1 from "@/assets/user1.svg";
 import User2 from "@/assets/user2.svg";
 import User3 from "@/assets/user3.svg";
 import User4 from "@/assets/user4.svg";
+import { addCard, getCardById, updateCard } from "@/service/apis/card";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import dayjs from "dayjs";
 // component
 import CommentList from "./CommentList";
 
@@ -64,7 +83,12 @@ const tagRender = (props: CustomTagProps) => {
   );
 };
 
+// 等正式串接時要從 c_workspace 拿到 kanban 資料
 const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
+  // const kanbanData =
+  const [s_isLoaging, set_s_isLoaging] = useState(false);
+  const [form] = Form.useForm();
+  const [messageApi, contextHolder] = msg.useMessage();
   const options = [
     {
       value: "P03",
@@ -103,183 +127,302 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
       ),
     },
   ];
+  const onSubmit = async (values: ICard) => {
+    // const res: AxiosResponse = await addCard(values);
+
+    const newValues: ICard = {
+      ...values,
+      actualStartDate: values.actualDate?.[0] || null,
+      actualEndDate: values.actualDate?.[1] || null,
+      targetStartDate: values.targetDate?.[0] || null,
+      targetEndDate: values.targetDate?.[1] || null,
+    };
+    // console.log("newValues = ", newValues);
+
+    const res: AxiosResponse = await updateCard(form.getFieldValue("_id"), newValues);
+    const { status, message } = res.data as IApiResponse;
+    if (status === "success") {
+      messageApi.success(message);
+    } else {
+      messageApi.error(message);
+    }
+  };
+
+  useEffect(() => {
+    const call_getCardById = async () => {
+      set_s_isLoaging(true);
+      const res: AxiosResponse = await getCardById("646e328d8e59e798344d36a8");
+      const { status, message, data } = res.data as IApiResponse;
+      if (status === "success") {
+        // console.log("cardData = ", data);
+        form.setFieldsValue({
+          ...data,
+          kanbanId: "646cf5e65916bb0a3de48875",
+          actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
+          targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
+        });
+      } else {
+        messageApi.error(message);
+      }
+      set_s_isLoaging(false);
+    };
+    call_getCardById();
+  }, []);
 
   return (
-    <div className="flex flex-col">
-      <section className="flex flex-col gap-4 h-[70vh] overflow-auto no-scrollbar">
-        <GroupTitle>
-          <EditFilled className="mr-1" />
-          Content
-        </GroupTitle>
+    <Spin spinning={s_isLoaging}>
+      <Form
+        form={form}
+        // initialValues={{
+        //   kanbanId: "646cf5e65916bb0a3de48875",
+        //   _id: "",
+        //   name: "",
+        //   description: "",
+        //   reporter: "", // owner
+        //   assignee: [], // member
+        //   targetStartDate: dayjs(),
+        //   targetEndDate: dayjs(),
+        //   actualStartDate: dayjs(),
+        //   actualEndDate: dayjs(),
+        //   priority: null,
+        //   status: null,
+        //   tag: [],
+        // }}
+        onFinish={onSubmit}
+        layout="vertical"
+      >
+        <div className="flex flex-col">
+          {contextHolder}
+          {/* 隱藏欄位 */}
+          <div>
+            <Form.Item name="kanbanId" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="_id" hidden>
+              <Input />
+            </Form.Item>
+          </div>
+          <section className="flex flex-col gap-4 h-[70vh] overflow-auto no-scrollbar">
+            <GroupTitle>
+              <EditFilled className="mr-1" />
+              Content
+            </GroupTitle>
 
-        <Row gutter={[12, 0]}>
-          <Col span={24}>
-            <FieldLabel>Title</FieldLabel>
-          </Col>
-          <Col span={24}>
-            <Input placeholder="Write card name" />
-          </Col>
-        </Row>
+            <Row gutter={[12, 0]}>
+              <Col span={24}>
+                <Form.Item label={<FieldLabel>Title</FieldLabel>} name="name">
+                  <Input placeholder="Write card name" />
+                </Form.Item>
+              </Col>
+            </Row>
 
-        <Row gutter={[12, 0]}>
-          <Col span={24}>
-            <FieldLabel>Description</FieldLabel>
-          </Col>
-          <Col span={24}>
-            <Input.TextArea placeholder="Write Description" />
-          </Col>
-        </Row>
+            <Row gutter={[12, 0]}>
+              <Col span={24}>
+                <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
+                  <Input.TextArea placeholder="Write Description" />
+                </Form.Item>
+              </Col>
+            </Row>
 
-        <Row gutter={[12, 0]} align="bottom">
-          <Col span={3} className="flex flex-col">
-            <FieldLabel>Owner</FieldLabel>
-            <Avatar size={32} src={<Image src={User1} alt="user1" />} />
-          </Col>
+            <Row gutter={[12, 0]} align="bottom">
+              <Col span={3} className="flex flex-col">
+                <FieldLabel>Owner</FieldLabel>
+                <Avatar size={32} src={<Image src={User1} alt="user1" />} />
+              </Col>
 
-          <Col span={4} className="flex flex-col">
-            <FieldLabel>Member</FieldLabel>
-            <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
-              <Avatar src={<Image src={User1} alt="user1" />} />
-              <Avatar src={<Image src={User2} alt="user2" />} />
-              <Avatar src={<Image src={User3} alt="user3" />} />
-              <Avatar src={<Image src={User4} alt="user4" />} />
-            </Avatar.Group>
-          </Col>
+              <Col span={4} className="flex flex-col">
+                <FieldLabel>Member</FieldLabel>
+                <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
+                  <Avatar src={<Image src={User1} alt="user1" />} />
+                  <Avatar src={<Image src={User2} alt="user2" />} />
+                  <Avatar src={<Image src={User3} alt="user3" />} />
+                  <Avatar src={<Image src={User4} alt="user4" />} />
+                </Avatar.Group>
+              </Col>
 
-          <Col span={5} className="flex justify-start">
-            <Button
-              className="bg-[#D9D9D9] float-right text-white"
-              type="primary"
-              size="middle"
-              shape="circle"
-              icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
-            />
-          </Col>
-        </Row>
+              <Col span={5} className="flex justify-start">
+                <Button
+                  className="bg-[#D9D9D9] float-right text-white"
+                  type="primary"
+                  size="middle"
+                  shape="circle"
+                  icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
+                />
+              </Col>
+            </Row>
 
-        <GroupTitle>
-          <SettingFilled className="mr-1" />
-          Setting
-        </GroupTitle>
+            <GroupTitle>
+              <SettingFilled className="mr-1" />
+              Setting
+            </GroupTitle>
 
-        <Row gutter={[12, 12]}>
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Project</FieldLabel>
-            <Select placeholder="please select project" />
-          </Col>
+            <Row gutter={[12, 12]}>
+              <Col span={12} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Project</FieldLabel>} name="project">
+                  <Select placeholder="please select project" />
+                </Form.Item>
+              </Col>
 
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Board</FieldLabel>
-            <Select placeholder="please select board" />
-          </Col>
+              <Col span={12} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Board</FieldLabel>} name="project">
+                  <Select placeholder="please select board" />
+                </Form.Item>
+              </Col>
 
-          <Col span={24} className="flex flex-col">
-            <FieldLabel>Target period</FieldLabel>
-            <DatePicker.RangePicker className="h-[30px]" />
-          </Col>
+              <Col span={24} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
+                  <DatePicker.RangePicker
+                    // value={[s_cardData.targetStartDate, s_cardData.targetEndDate]}
+                    className="h-[30px] w-full"
+                  />
+                </Form.Item>
+              </Col>
 
-          <Col span={24} className="flex flex-col">
-            <FieldLabel>Actual period</FieldLabel>
-            <DatePicker.RangePicker className="h-[30px]" />
-          </Col>
+              <Col span={24} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Actual period</FieldLabel>} name="actualDate">
+                  <DatePicker.RangePicker
+                    // value={[s_cardData.actualStartDate, s_cardData.actualEndDate]}
+                    className="h-[30px] w-full"
+                  />
+                </Form.Item>
+              </Col>
 
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Priority</FieldLabel>
-            <Select placeholder="please select project" />
-          </Col>
+              <Col span={12} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Priority</FieldLabel>} name="priority">
+                  <Select
+                    placeholder="please select project"
+                    // value={s_cardData.priority}
+                    options={[
+                      { label: "Low", value: "Low" },
+                      { label: "Medium", value: "Medium" },
+                      { label: "High", value: "High" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
 
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Status</FieldLabel>
-            <Select placeholder="please select board" />
-          </Col>
+              <Col span={12} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
+                  <Select
+                    placeholder="please select board"
+                    // value={s_cardData.status}
+                    options={[
+                      { label: "Pending", value: "Pending" },
+                      { label: "In Progress", value: "In Progress" },
+                      { label: "Done", value: "Done" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
 
-          <Col span={24} className="flex flex-col">
-            <FieldLabel>Tags</FieldLabel>
-            <Select mode="multiple" showArrow tagRender={tagRender} options={options} />
-          </Col>
-        </Row>
+              <Col span={24} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Tags</FieldLabel>} name="tag">
+                  <Select
+                    mode="multiple"
+                    showArrow
+                    tagRender={tagRender}
+                    options={options}
+                    dropdownRender={(menu) => (
+                      <>
+                        {menu}
+                        <Divider style={{ margin: "8px 0" }} />
+                        <Button type="primary" icon={<PlusOutlined />}>
+                          Add item
+                        </Button>
+                      </>
+                    )}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
-        <GroupTitle>
-          <BookFilled className="mr-1" />
-          Reference
-        </GroupTitle>
+            <GroupTitle>
+              <BookFilled className="mr-1" />
+              Reference
+            </GroupTitle>
 
-        <Row gutter={[12, 8]}>
-          <Col span={24} className="flex gap-3">
-            <FieldLabel>Links</FieldLabel>
-            <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-              Add link
-            </Button>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 1
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 2
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 3
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 4
-            </Typography.Link>
-          </Col>
-        </Row>
+            <Row gutter={[12, 8]}>
+              <Col span={24} className="flex gap-3">
+                <FieldLabel>Links</FieldLabel>
+                <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                  Add link
+                </Button>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 1
+                </Typography.Link>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 2
+                </Typography.Link>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 3
+                </Typography.Link>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 4
+                </Typography.Link>
+              </Col>
+            </Row>
 
-        <Row gutter={[12, 8]}>
-          <Col span={12} className="flex gap-3">
-            <FieldLabel>Files</FieldLabel>
-            <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-              Add file
-            </Button>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 1
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 2
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 3
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 4
-            </Typography.Link>
-          </Col>
-        </Row>
+            <Row gutter={[12, 8]}>
+              <Col span={12} className="flex gap-3">
+                <FieldLabel>Files</FieldLabel>
+                <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                  Add file
+                </Button>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 1
+                </Typography.Link>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 2
+                </Typography.Link>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 3
+                </Typography.Link>
+              </Col>
+              <Col span={24}>
+                <Typography.Link underline href="https://google.com" target="_blank">
+                  reference website 4
+                </Typography.Link>
+              </Col>
+            </Row>
 
-        <GroupTitle>
-          <MessageFilled className="mr-1" />
-          Comment
-        </GroupTitle>
+            <GroupTitle>
+              <MessageFilled className="mr-1" />
+              Comment
+            </GroupTitle>
 
-        <CommentList />
-      </section>
+            <CommentList />
+          </section>
 
-      <Divider className="my-3" />
+          <Divider className="my-3" />
 
-      <Row>
-        <Col span={24} className="flex justify-end gap-1">
-          <Button type="primary" onClick={() => set_s_showCard(false)}>
-            Ok
-          </Button>
-        </Col>
-      </Row>
-    </div>
+          <Row>
+            <Col span={24} className="flex justify-end gap-1">
+              <Button
+                type="primary"
+                htmlType="submit"
+                // onClick={() => set_s_showCard(false)}
+              >
+                Ok
+              </Button>
+            </Col>
+          </Row>
+        </div>
+      </Form>
+    </Spin>
   );
 };
 
