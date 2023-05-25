@@ -13,13 +13,14 @@ import {
   DoubleLeftOutlined,
   PlusOutlined,
   LogoutOutlined,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 // API
-// import { logout } from "@/service/api";
+import { archivedWorkspace } from "@/service/apis/workspace";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // component
-import WorkSpaceModal from "@/components/Workspace/WorkspaceModal";
+import CreateWorkSpaceModal from "@/components/Workspace/CreateWorkSpaceModal";
 import MemberModal from "../Workspace/MemberModal";
 
 interface IProps {
@@ -28,9 +29,16 @@ interface IProps {
 }
 
 const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
-  const { c_workspaces } = useContext(GlobalContext);
-  // API 錯誤時用來讓使用者明確知道錯在哪裡
-  // const [api] = notification.useNotification();
+  const { c_workspaces, c_getAllWorkspace, set_c_user } = useContext(GlobalContext);
+
+  // 目前點選的 workspace
+  const [s_workspace, set_s_workspace] = useState<Iworkspace>({
+    workspaceId: "",
+    workspaceName: "",
+    kanbans: [],
+    members: [],
+    isArchived: false,
+  });
 
   // 顯示新增 workspace 的開關
   const [s_isShowModal, set_s_isShowModal] = useState(false);
@@ -38,65 +46,90 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   // 顯示選擇 Member 的開關
   const [s_isShowMember, set_s_isShowMember] = useState(false);
 
+  const archived = async (workspaceId: string) => {
+    const res: AxiosResponse = await archivedWorkspace(workspaceId);
+    const { status, message } = res.data as IApiResponse;
+    if (status === "success") {
+      msg.success(message);
+      c_getAllWorkspace();
+    }
+  };
+
+  const handleLogout = async () => {
+    msg.success("Log out success");
+    Cookies.set("hookloop-token", "");
+    set_c_user({
+      username: "",
+      email: "",
+      password: "",
+      avatar: "",
+      userId: "",
+    });
+    Router.push("/");
+  };
+
+  // 用來存放要選染在 menu 的資料
   const menuItemX: MenuProps["items"] = c_workspaces?.map((workspace: Iworkspace) => {
     return {
-      key: workspace.id,
+      key: workspace.workspaceId,
       icon: <DesktopOutlined />,
       className: "workspace",
       label: <div className="">{workspace.workspaceName}</div>,
+      // 看板區域
       children: [
         {
           label: <span className="kanbans">Kanbans</span>,
-          key: `${workspace.id}Kanbans`,
+          key: `${workspace.workspaceId}Kanbans`,
           icon: <AppstoreOutlined />,
+          // 這個 children 用來渲染 kanban
           children: workspace.kanbans.map((kanban) => ({
-            key: workspace.workspaceName + kanban.id,
-            label: kanban.kanbanName,
+            key: workspace.workspaceName + kanban._id,
+            onClick: () => Router.push(`/kanban/${kanban._id}`),
+            label: kanban.name,
           })),
         },
         {
           label: <span className="members">Members</span>,
-          key: `${workspace.id}members`,
+          key: `${workspace.workspaceId}members`,
           icon: <UserOutlined />,
-          onClick: () => set_s_isShowMember(true),
+          onClick: () => {
+            set_s_isShowMember(true);
+            set_s_workspace(workspace);
+          },
         },
         {
           label: <span className="settings">Setting</span>,
-          key: `${workspace.id}settings`,
+          key: `${workspace.workspaceId}settings`,
           icon: <SettingOutlined />,
           children: [
             {
-              key: `${workspace.id}Archive`,
+              key: `${workspace.workspaceId}Archive`,
               label: "Archive workspace",
+              onClick: () => {
+                Modal.confirm({
+                  title: "Do you Want to Archive workspace?",
+                  icon: <ExclamationCircleFilled />,
+                  okButtonProps: {
+                    className: "bg-[#262626] rounded-sm",
+                  },
+                  cancelButtonProps: {
+                    className: "rounded-sm hover:border-[#262626] text-[#262626]",
+                  },
+                  onOk() {
+                    archived(workspace.workspaceId);
+                  },
+                });
+              },
             },
             {
-              key: `${workspace.id}Kanban_setting`,
-              label: "Kanban setting",
+              key: `${workspace.workspaceId}Kanban_setting`,
+              label: "Workspace setting",
             },
           ],
         },
       ],
     };
   });
-
-  const handleLogout = async () => {
-    msg.success("Log out success");
-    Cookies.set("hookloop-token", "");
-    Router.push("/");
-    // const res: AxiosResponse = await logout();
-    // const { status, message } = res.data as IApiResponse;
-    // if (status === "success") {
-    //   msg.success(message);
-    //   Cookies.set("hookloop-token", "");
-    //   Router.push("/");
-    // } else {
-    //   api.info({
-    //     message: res.data.message,
-    //     duration: 10,
-    //     placement: "topLeft",
-    //   });
-    // }
-  };
 
   return (
     <Layout.Sider
@@ -128,7 +161,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         />
       </section>
 
-      {/* workspace */}
+      {/* workspace 的 menu */}
       <Menu theme="light" mode="inline" selectable={false} items={menuItemX} />
 
       {/* logout */}
@@ -141,6 +174,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         <span className="font-medium ml-2">Log out</span>
       </section>
 
+      {/* 建立 workspace 的 Modal */}
       <Modal
         title="Create new workspace"
         width="572px"
@@ -148,9 +182,10 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         onCancel={() => set_s_isShowModal(false)}
         footer={null}
       >
-        <WorkSpaceModal set_s_isShowModal={set_s_isShowModal} />
+        {s_isShowModal && <CreateWorkSpaceModal set_s_isShowModal={set_s_isShowModal} />}
       </Modal>
 
+      {/* 選擇人員的 Modal */}
       <Modal
         title="Choose Member"
         width="572px"
@@ -158,7 +193,13 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         onCancel={() => set_s_isShowMember(false)}
         footer={null}
       >
-        <MemberModal set_s_isShowMember={set_s_isShowMember} />
+        {s_isShowMember && (
+          <MemberModal
+            s_workspace={s_workspace}
+            set_s_workspace={set_s_workspace}
+            set_s_isShowMember={set_s_isShowMember}
+          />
+        )}
       </Modal>
     </Layout.Sider>
   );

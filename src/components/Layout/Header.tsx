@@ -1,11 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
-import Router, { useRouter } from "next/router";
+import Router from "next/router";
 import Image from "next/image";
 import { Grid, Button, Avatar, Switch } from "antd";
 import { MenuOutlined, CloseOutlined, UserOutlined, NotificationOutlined } from "@ant-design/icons";
-// API
-import { verifyUserToken } from "@/service/api";
 // logo
 import logo_white from "@/assets/logo_white.svg";
 import logo_black from "@/assets/logo_black.svg";
@@ -15,9 +13,12 @@ import GlobalContext from "@/Context/GlobalContext";
 import Login from "../Login";
 
 const Header: React.FC = () => {
-  const { c_user, set_c_user } = useContext(GlobalContext);
+  const { c_user } = useContext(GlobalContext);
+
+  // 判斷是否有權限
+  const hasAuth = c_user?.email?.length > 0;
+  // antd 用來監聽畫面寬度變化的 API
   const screens = Grid.useBreakpoint();
-  const router = useRouter();
   // rwd 時控制要不要出現選單
   const [s_showMenu, set_s_showMenu] = useState(false);
   // 控制要不要顯示 Login 組件
@@ -35,30 +36,6 @@ const Header: React.FC = () => {
     set_s_showMenu(!s_showMenu);
   };
 
-  // // 第一次渲染判斷 token 是否過期並取得登入人員資訊
-  useEffect(() => {
-    (async () => {
-      if (s_showLogin) return;
-      // step1 调用API检查token是否过期
-      const res: AxiosResponse = await verifyUserToken();
-      const { status, data } = res.data as IApiResponse;
-      const currentPath = router.pathname;
-
-      if (status === "success") {
-        if (currentPath === "/") {
-          Router.push("dashboard");
-        }
-        // console.log("data = ", data);
-        set_c_user(data);
-        return;
-      }
-      if (currentPath !== "/") {
-        Router.push("/");
-      }
-      set_c_user({} as IUser);
-    })();
-  }, [s_showLogin, router.asPath]); // , router.asPath
-
   // 螢幕變成md以上的尺寸時替使用者關閉漢堡選單
   useEffect(() => {
     if (screens.md && s_showMenu) {
@@ -72,17 +49,17 @@ const Header: React.FC = () => {
       className={`
       box-border h-[80px] border-b-[1px] 
       flex justify-between items-center
-      ${Object.keys(c_user).length ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
+      ${hasAuth ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
     `}
     >
       <Image
-        src={Object.keys(c_user).length ? logo_white : logo_black}
+        src={hasAuth ? logo_white : logo_black}
         alt="HOOK LOOP"
         className="cursor-pointer"
         onClick={() => Router.push("/dashboard")}
       />
 
-      {Object.keys(c_user).length ? (
+      {hasAuth ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="bg-[#434343] w-[42px] h-[22px]" />
           <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
