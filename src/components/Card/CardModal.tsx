@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
+import * as icons from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -16,6 +18,7 @@ import {
   Form,
   Spin,
   message as msg,
+  Modal,
 } from "antd";
 import {
   EditFilled,
@@ -36,11 +39,14 @@ import User1 from "@/assets/user1.svg";
 import User2 from "@/assets/user2.svg";
 import User3 from "@/assets/user3.svg";
 import User4 from "@/assets/user4.svg";
+import { getTags } from "@/service/apis/kanban";
 import { addCard, getCardById, updateCard } from "@/service/apis/card";
+import IconRenderer from "@/components/util/IconRender";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from "dayjs";
 // component
 import CommentList from "./CommentList";
+import TagModal from "../Kanban/TagModal";
 
 interface IProps {
   set_s_showCard: ISetStateFunction<boolean>;
@@ -63,6 +69,7 @@ const FieldLabel: React.FC<IFieldProps> = ({ children }) => (
 );
 
 const tagRender = (props: CustomTagProps) => {
+  console.log("props = ", props);
   const { label, value, closable, onClose } = props;
   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
@@ -75,7 +82,7 @@ const tagRender = (props: CustomTagProps) => {
       closable={closable}
       onClose={onClose}
       closeIcon={<CloseOutlined className="ml-1 text-black" />}
-      className="bg-[#edebeb] rounded-xl text-[#595959] text-sm font-medium flex"
+      // className="bg-[#edebeb] rounded-xl text-[#595959] text-sm font-medium flex"
       style={{ marginRight: 3 }}
     >
       {label}
@@ -85,48 +92,16 @@ const tagRender = (props: CustomTagProps) => {
 
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
 const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
-  // const kanbanData =
+  const workspaceId = "646b682074ca962749815393";
+  const kanbanId = "646cf9eabc9294205190f79c";
   const [s_isLoaging, set_s_isLoaging] = useState(false);
+  const [s_showTagModal, set_s_showTagModal] = useState(false);
+  // kanban 上所有 Tag
+  const [s_Tags, set_s_Tags] = useState<ITag[]>([]);
+
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = msg.useMessage();
-  const options = [
-    {
-      value: "P03",
-      label: (
-        <span className="flex items-center gap-1">
-          <TagOutlined />
-          P03
-        </span>
-      ),
-    },
-    {
-      value: "new",
-      label: (
-        <span className="flex items-center gap-1">
-          <ThunderboltOutlined />
-          new
-        </span>
-      ),
-    },
-    {
-      value: "DB",
-      label: (
-        <span className="flex items-center gap-1">
-          <DatabaseOutlined />
-          DB
-        </span>
-      ),
-    },
-    {
-      value: "bug",
-      label: (
-        <span className="flex items-center gap-1">
-          <BugOutlined />
-          bug
-        </span>
-      ),
-    },
-  ];
+
   const onSubmit = async (values: ICard) => {
     // const res: AxiosResponse = await addCard(values);
 
@@ -138,6 +113,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
       targetEndDate: values.targetDate?.[1] || null,
     };
     // console.log("newValues = ", newValues);
+    // return;
 
     const res: AxiosResponse = await updateCard(form.getFieldValue("_id"), newValues);
     const { status, message } = res.data as IApiResponse;
@@ -154,10 +130,12 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
       const res: AxiosResponse = await getCardById("646e328d8e59e798344d36a8");
       const { status, message, data } = res.data as IApiResponse;
       if (status === "success") {
-        // console.log("cardData = ", data);
+        const tmpTag = data.tag?.map((item: ITag) => item._id);
+        console.log("tmpTag = ", tmpTag);
         form.setFieldsValue({
           ...data,
           kanbanId: "646cf5e65916bb0a3de48875",
+          tag: tmpTag,
           actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
           targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
         });
@@ -166,11 +144,23 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
       }
       set_s_isLoaging(false);
     };
+    const call_getTags = async () => {
+      // set_s_isLoaging(true);
+      const res: AxiosResponse = await getTags(kanbanId);
+      const { status, data } = res.data as IApiResponse;
+      if (status === "success") {
+        // console.log("Tags = ", data);
+        set_s_Tags(data);
+      }
+      // set_s_isLoaging(false);
+    };
+    call_getTags();
     call_getCardById();
   }, []);
 
   return (
     <Spin spinning={s_isLoaging}>
+      {/* <IconRenderer iconName="EditFilled" /> */}
       <Form
         form={form}
         // initialValues={{
@@ -257,18 +247,6 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
             </GroupTitle>
 
             <Row gutter={[12, 12]}>
-              <Col span={12} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Project</FieldLabel>} name="project">
-                  <Select placeholder="please select project" />
-                </Form.Item>
-              </Col>
-
-              <Col span={12} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Board</FieldLabel>} name="project">
-                  <Select placeholder="please select board" />
-                </Form.Item>
-              </Col>
-
               <Col span={24} className="flex flex-col">
                 <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
                   <DatePicker.RangePicker
@@ -321,12 +299,21 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
                     mode="multiple"
                     showArrow
                     tagRender={tagRender}
-                    options={options}
+                    options={s_Tags.map((item) => ({
+                      label: (
+                        <span className={`${item.color} px-2 py-1 rounded-[100px] font-medium`}>
+                          <IconRenderer iconName={item.icon as keyof typeof icons} />
+                          <span className="ml-2">{item.name}</span>
+                        </span>
+                      ),
+                      value: item._id,
+                      data: "123",
+                    }))}
                     dropdownRender={(menu) => (
                       <>
                         {menu}
                         <Divider style={{ margin: "8px 0" }} />
-                        <Button type="primary" icon={<PlusOutlined />}>
+                        <Button type="primary" icon={<PlusOutlined />} onClick={() => set_s_showTagModal(true)}>
                           Add item
                         </Button>
                       </>
@@ -422,6 +409,19 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
           </Row>
         </div>
       </Form>
+
+      {/* tags 的 Modal */}
+      <Modal
+        title="Tags setting"
+        width="472px"
+        open={s_showTagModal}
+        destroyOnClose
+        onCancel={() => set_s_showTagModal(false)}
+        maskClosable={false}
+        footer={null}
+      >
+        {s_showTagModal && <TagModal s_Tags={s_Tags} set_s_Tags={set_s_Tags} kanbanId={kanbanId} />}
+      </Modal>
     </Spin>
   );
 };

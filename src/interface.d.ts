@@ -80,4 +80,12 @@ declare global {
       end: string;
     } | null;
   }
+
+  interface ITag {
+    _id?: string;
+    name: string;
+    icon: string;
+    color: string;
+    kanbanId: string;
+  }
 }
