@@ -14,6 +14,7 @@ const Dashboard: React.FC<IProps> = () => {
   const { c_workspaces } = useContext(GlobalContext);
   // 是否開啟卡片(測試用)
   const [s_showCard, set_s_showCard] = useState(false);
+
   return (
     <CustLayout>
       <div className="flex flex-col py-[30px]">
@@ -40,10 +41,12 @@ const Dashboard: React.FC<IProps> = () => {
           style={{
             top: 20,
           }}
+          destroyOnClose
           onCancel={() => set_s_showCard(false)}
           footer={null}
         >
-          {s_showCard && <CardModal set_s_showCard={set_s_showCard} />}
+          {/* {s_showCard && <CardModal set_s_showCard={set_s_showCard} />} */}
+          {s_showCard === true ? <CardModal set_s_showCard={set_s_showCard} /> : null}
         </Modal>
       </div>
     </CustLayout>

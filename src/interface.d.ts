@@ -1,4 +1,6 @@
 import { AxiosResponse as axiosRes } from "axios";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Dayjs } from "dayjs";
 
 declare global {
   interface AxiosResponse extends axiosRes {}
@@ -48,6 +50,23 @@ declare global {
 
   interface ICard {
     id: string;
+    name: string;
+    description: string;
+    reporter: string;
+    assignee: string[];
+    priority: string | null;
+    targetDate?: Dayjs[];
+    targetStartDate: Dayjs | null;
+    targetEndDate: Dayjs | null;
+    actualDate?: Dayjs[];
+    actualStartDate: Dayjs | null;
+    actualEndDate: Dayjs | null;
+    status: string | null;
+    tag: string[];
+  }
+
+  interface ICardBK {
+    id: string;
     title: string;
     preview: any;
     priority: string | null;
@@ -60,5 +79,13 @@ declare global {
       start?: string;
       end: string;
     } | null;
+  }
+
+  interface ITag {
+    _id?: string;
+    name: string;
+    icon: string;
+    color: string;
+    kanbanId: string;
   }
 }

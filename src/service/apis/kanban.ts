@@ -20,3 +20,18 @@ export const renameKanban = (key: string, newName: string) => {
 export const archiveKanban = (key: string, data: Pick<Ikanban, "isArchived">) => {
   return instance.patch(`kanbans/${key}/archive`, data);
 };
+
+// 取得所有 Tags
+export const getTags = (kanbanId: string) => {
+  return instance.get(`kanbans/${kanbanId}/tag`);
+};
+
+// 新增 Tag
+export const createTag = (kanbanId: string, data: Pick<ITag, "name" | "color" | "icon">) => {
+  return instance.post(`kanbans/${kanbanId}/tag`, data);
+};
+
+// 更新 Tag
+export const updateTag = (kanbanId: string, data: Pick<ITag, "name" | "color" | "icon">, tagId: string = "") => {
+  return instance.patch(`kanbans/${kanbanId}/tag/${tagId}`, data);
+};
