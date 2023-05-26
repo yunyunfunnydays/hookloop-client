@@ -31,6 +31,7 @@ const ChangePassword: React.FC<IChangePassword> = (props) => {
       const { message, status } = res.data as IApiResponse;
 
       if (status === "success") {
+        console.log("change password success")
         msg.success(message);
         form.resetFields();
         close();
