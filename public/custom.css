@@ -63,3 +63,38 @@
   width: calc(100% - 4px);
   height: calc(100% - 4px);
 }
+
+.carousel-arrow {
+  width: 30px;
+  height: 30px;
+  top: calc(50% - 15px);
+  border-top: 5px solid #fff;
+  border-left: 5px solid #fff;
+  cursor: pointer;
+}
+.carousel-arrow-left {
+  left: -8%;
+  transform: rotate(-45deg);
+}
+.carousel-arrow-right {
+  right: -8%;
+  transform: rotate(135deg);
+}
+.ant-carousel .slick-dots-bottom {
+  bottom: -20px;
+}
+.ant-carousel .slick-dots li {
+  padding: 0 12px
+}
+.ant-carousel .slick-dots li.slick-active {
+  width: 16px;
+}
+.ant-carousel .slick-dots li button {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  opacity: 1;
+}
+.ant-carousel .slick-dots li.slick-active button {
+  background-color: #FFA940;
+}
