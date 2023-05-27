@@ -235,14 +235,14 @@ const Card = (props: ICardProps) => {
       {(provided2) => (
         <div
           id="first-card"
-          className="py-4 px-3 bg-white cursor-pointer"
+          className="cursor-pointer bg-white px-3 py-4"
           key={card.id}
           ref={provided2.innerRef}
           {...provided2.draggableProps}
           {...provided2.dragHandleProps}
         >
           {/* 小鈴鐺 */}
-          <div className="flex gap-2 text-base mb-3">
+          <div className="mb-3 flex gap-2 text-base">
             <div className="flex items-center gap-1 text-[#FA541C]">
               <BellFilled />
               <span className="text-sm"> 3</span>
@@ -253,36 +253,36 @@ const Card = (props: ICardProps) => {
             </div>
           </div>
           {/* 標題 */}
-          <div className="text-['Roboto'] font-bold text-base text-[#262626]">{card.title}</div>
+          <div className="text-base font-bold text-[#262626] text-['Roboto']">{card.title}</div>
           {(card.preview || card.priority || card.tags.length > 0 || card.reporter) && <div className="mt-4" />}
           {/* 預覽圖 */}
           {card.preview && <Image src={card.preview.src} alt={card.preview.filename} className="mb-4" />}
           {/* 優先度 */}
           {card.priority && (
-            <div className="flex gap-2 mb-3">
+            <div className="mb-3 flex gap-2">
               {card.priority === "High" && (
-                <div className="py-0.5 px-2 bg-[#FFF1F0] border rounded border-[#CF1322]">
-                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#CF1322] whitespace-nowrap">
+                <div className="rounded border border-[#CF1322] bg-[#FFF1F0] px-2 py-0.5">
+                  <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#CF1322] text-['Roboto']">
                     Priority:&nbsp;High
                   </div>
                 </div>
               )}
               {card.priority === "Medium" && (
-                <div className="py-0.5 px-2 bg-[#FFF7E6] border rounded border-[#D46B08]">
-                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#D46B08] whitespace-nowrap">
+                <div className="rounded border border-[#D46B08] bg-[#FFF7E6] px-2 py-0.5">
+                  <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#D46B08] text-['Roboto']">
                     Priority:&nbsp;Medium
                   </div>
                 </div>
               )}
               {card.priority === "Low" && (
-                <div className="py-0.5 px-2 bg-[#F6FFED] border rounded border-[#389E0D]">
-                  <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#389E0D] whitespace-nowrap">
+                <div className="rounded border border-[#389E0D] bg-[#F6FFED] px-2 py-0.5">
+                  <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#389E0D] text-['Roboto']">
                     Priority:&nbsp;Low
                   </div>
                 </div>
               )}
-              <div className="py-0.5 px-2 bg-[#FAFAFA] border rounded border-[#BFBFBF]">
-                <div className="text-['Roboto'] font-medium text-[14px] leading-[22px] tracking-tight text-[#595959] whitespace-nowrap">
+              <div className="rounded border border-[#BFBFBF] bg-[#FAFAFA] px-2 py-0.5">
+                <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#595959] text-['Roboto']">
                   Status:&nbsp;{card.status}
                 </div>
               </div>
@@ -290,11 +290,11 @@ const Card = (props: ICardProps) => {
           )}
           {/* 標籤 */}
           {card.tags.length > 0 && (
-            <div className="flex gap-2 flex-wrap mb-6">
+            <div className="mb-6 flex flex-wrap gap-2">
               {card.tags.map((tag: { id: string; name: string }) => {
                 if (tag.name === "bug") {
                   return (
-                    <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']" key={tag.id}>
+                    <div className="flex gap-1 rounded-[32px] bg-[#F5F5F5] px-3 py-0.5 text-['Roboto']" key={tag.id}>
                       <BugOutlined className="text-[13px]" />
                       <span className="text-sm leading-[22px]">{tag.name}</span>
                     </div>
@@ -302,14 +302,14 @@ const Card = (props: ICardProps) => {
                 }
                 if (tag.name === "new") {
                   return (
-                    <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']" key={tag.id}>
+                    <div className="flex gap-1 rounded-[32px] bg-[#F5F5F5] px-3 py-0.5 text-['Roboto']" key={tag.id}>
                       <ThunderboltOutlined className="text-[13px]" />
                       <span className="text-sm leading-[22px]">{tag.name}</span>
                     </div>
                   );
                 }
                 return (
-                  <div className="bg-[#F5F5F5] py-0.5 px-3 rounded-[32px] flex gap-1 text-['Roboto']" key={tag.id}>
+                  <div className="flex gap-1 rounded-[32px] bg-[#F5F5F5] px-3 py-0.5 text-['Roboto']" key={tag.id}>
                     <TagOutlined className="text-[13px]" />
                     <span className="text-sm leading-[22px]">{tag.name}</span>
                   </div>
@@ -323,7 +323,7 @@ const Card = (props: ICardProps) => {
               <div className="flex space-x-[-12px]">
                 <Image
                   src={card.reporter.avatar}
-                  className="h-8 w-8 rounded-full z-40 outline outline-2 outline-[#FA8C16]"
+                  className="z-40 h-8 w-8 rounded-full outline outline-2 outline-[#FA8C16]"
                   alt="reporter"
                 />
                 {card.assignees.map((assignee: any, index2: number) => (
@@ -339,7 +339,7 @@ const Card = (props: ICardProps) => {
             )}
             {/* 時間 */}
             {card.dueDate && (
-              <div className="flex gap-1 text-['Roboto'] text-[14px] leading-[22px] text-[#595959]">
+              <div className="flex gap-1 text-[14px] leading-[22px] text-[#595959] text-['Roboto']">
                 <ClockCircleOutlined />
                 {card.dueDate.type === "daterange" && (
                   <span>
@@ -380,20 +380,20 @@ const List = (props: IListProps) => {
           <Droppable droppableId={list.id} type="card">
             {(provided) => (
               <div
-                className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]"
+                className="min-w-[330px] bg-[#F5F5F5] px-5 py-4"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
                 {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
-                <div className="flex justify-between items-center">
-                  <span className="text-['Roboto'] font-medium text-xl text-[#262626]">{list.title}</span>
-                  <EllipsisOutlined className="text-xl cursor-pointer" />
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-medium text-[#262626] text-['Roboto']">{list.title}</span>
+                  <EllipsisOutlined className="cursor-pointer text-xl" />
                 </div>
-                <div className="text-['Roboto'] font-medium text-sm text-[#8C8C8C] mb-2">
+                <div className="mb-2 text-sm font-medium text-[#8C8C8C] text-['Roboto']">
                   {cards.length} {cards.length === 1 ? "card" : "cards"}
                 </div>
                 {cards.length > 0 && (
-                  <div className="flex flex-col space-y-6 mb-4">
+                  <div className="mb-4 flex flex-col space-y-6">
                     {cards.map((card: ICard, index: number) => (
                       <Card key={card.id} card={card} index={index} />
                     ))}
@@ -412,8 +412,8 @@ const List = (props: IListProps) => {
 
 const AddList = () => {
   return (
-    <div className="min-w-[330px] px-5 py-4 bg-[#F5F5F5]">
-      <div className="text-['Roboto'] font-medium text-base text-[#595959] cursor-pointer">
+    <div className="min-w-[330px] bg-[#F5F5F5] px-5 py-4">
+      <div className="cursor-pointer text-base font-medium text-[#595959] text-['Roboto']">
         <PlusOutlined />
         <span> Add a list</span>
       </div>
@@ -459,12 +459,12 @@ const CustContent = () => {
   // line 477 新增 mt-[64px] overflow-x-auto
   return (
     <section className="flex flex-col">
-      <div className="w-full h-24 bg-yellow-500 flex justify-end">test</div>
-      <section className="overflow-x-auto h-full">
+      <div className="flex h-24 w-full justify-end bg-yellow-500">test</div>
+      <section className="h-full overflow-x-auto">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="all-lists" direction="horizontal" type="list">
             {(provided) => (
-              <div className="flex space-x-6 items-start" ref={provided.innerRef} {...provided.droppableProps}>
+              <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
                 {data.listOrder.map((listId: string, index2: number) => {
                   const list = data.lists[listId];
                   const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
