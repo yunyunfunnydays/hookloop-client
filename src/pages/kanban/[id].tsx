@@ -209,21 +209,11 @@ interface IData {
   listOrder: string[];
 }
 
-interface ICardProps {
+type CardProps = {
   card: ICard;
   index: number;
-}
-
-interface IListProps {
-  list: IList;
-  cards: ICard[];
-  index2: number;
-  setData: React.Dispatch<IData>;
-}
-
-const Card = (props: ICardProps) => {
-  const { card, index } = props;
-
+};
+const Card: React.FC<CardProps> = ({ card, index }) => {
   return (
     <Draggable draggableId={card.id} index={index} key={card.id}>
       {(provided2) => (
@@ -350,7 +340,7 @@ const Card = (props: ICardProps) => {
   );
 };
 
-const AddCard = () => {
+const AddCard: React.FC = () => {
   return (
     <div id="add-card" className="cursor-pointer">
       <PlusOutlined />
@@ -359,6 +349,12 @@ const AddCard = () => {
   );
 };
 
+type IListProps = {
+  list: IList;
+  cards: ICard[];
+  index2: number;
+  setData: React.Dispatch<IData>;
+};
 const List: React.FC<IListProps> = ({ list, cards, index2, setData }) => {
   const [s_isEditingList, set_s_isEditingList] = useState(false);
   const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
@@ -393,7 +389,6 @@ const List: React.FC<IListProps> = ({ list, cards, index2, setData }) => {
       const { status, message, data } = res.data as IApiResponse;
 
       console.log(status, message, data);
-
     } catch (errorInfo) {
       console.error(errorInfo);
     } finally {
@@ -456,7 +451,11 @@ const List: React.FC<IListProps> = ({ list, cards, index2, setData }) => {
   );
 };
 
-const AddList: React.FC<{ kanbanId: string; setData: React.Dispatch<IData> }> = ({ kanbanId, setData }) => {
+type AddListProps = {
+  kanbanId: string;
+  setData: React.Dispatch<IData>;
+};
+const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
   const router = useRouter();
   const inputRef = useRef<Input>(null);
   const [s_isAddingList, set_s_isAddingList] = useState(false);
@@ -538,7 +537,7 @@ const AddList: React.FC<{ kanbanId: string; setData: React.Dispatch<IData> }> = 
   );
 };
 
-const Kanban = () => {
+const Kanban: React.FC = () => {
   const [data, setData] = useState<IData>(initialData);
   const router = useRouter();
   const kanbanId = router.query.id;
