@@ -98,4 +98,10 @@ declare global {
     createdAt: string;
     updatedAt: string;
   }
+
+  interface IOwner {
+    _id?: string;
+    username: string;
+    avatar: string;
+  }
 }

@@ -24,21 +24,12 @@ import {
   EditFilled,
   PlusOutlined,
   SettingFilled,
-  TagOutlined,
-  ThunderboltOutlined,
-  DatabaseOutlined,
-  BugOutlined,
   CloseOutlined,
   BookFilled,
   LinkOutlined,
   MessageFilled,
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
-// image
-import User1 from "@/assets/user1.svg";
-import User2 from "@/assets/user2.svg";
-import User3 from "@/assets/user3.svg";
-import User4 from "@/assets/user4.svg";
 import { getTags } from "@/service/apis/kanban";
 import { addCard, getCardById, updateCard } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
@@ -47,6 +38,8 @@ import dayjs from "dayjs";
 // component
 import CommentList from "./CommentList";
 import TagModal from "../Kanban/TagModal";
+import Reporter from "./Reporter";
+import Assignee from "./Assignee";
 
 interface IProps {
   set_s_showCard: ISetStateFunction<boolean>;
@@ -69,7 +62,7 @@ const FieldLabel: React.FC<IFieldProps> = ({ children }) => (
 );
 
 const tagRender = (props: CustomTagProps) => {
-  console.log("props = ", props);
+  // console.log("props = ", props);
   const { label, value, closable, onClose } = props;
   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
@@ -94,10 +87,20 @@ const tagRender = (props: CustomTagProps) => {
 const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
   const workspaceId = "646b682074ca962749815393";
   const kanbanId = "646cf9eabc9294205190f79c";
+  const cardId = "646e328d8e59e798344d36a8";
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
   // kanban 上所有 Tag
   const [s_Tags, set_s_Tags] = useState<ITag[]>([]);
+  // 卡片的 reporter
+  const [s_reporter, set_s_reporter] = useState<IOwner>({
+    _id: "",
+    username: "",
+    avatar: "",
+  });
+
+  // 卡片的 assignee
+  const [s_assignee, set_s_assignee] = useState<IOwner[]>([]);
 
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = msg.useMessage();
@@ -124,21 +127,58 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
     }
   };
 
+  // 選擇owner
+  const chooseOwner = (_: any, data: IOwner) => {
+    // console.log(data);
+    set_s_reporter({
+      _id: data._id,
+      username: data.username,
+      avatar: data.avatar,
+    });
+
+    form.setFieldsValue({
+      reporter: data._id,
+    });
+  };
+
+  const chooseAssignee = (data: IOwner[]) => {
+    const assignee_Ids = data?.map((item) => item._id) || [];
+    form.setFieldsValue({
+      assignee: assignee_Ids,
+    });
+    set_s_assignee(data);
+  };
+
   useEffect(() => {
     const call_getCardById = async () => {
       set_s_isLoaging(true);
-      const res: AxiosResponse = await getCardById("646e328d8e59e798344d36a8");
+      const res: AxiosResponse = await getCardById(cardId);
       const { status, message, data } = res.data as IApiResponse;
       if (status === "success") {
         const tmpTag = data.tag?.map((item: ITag) => item._id);
-        console.log("tmpTag = ", tmpTag);
+        const tmpAssignee = data.assignee?.map((item: IOwner) => item._id);
+        // const tmpTag = data.tag?.map((item: ITag) => item._id);
         form.setFieldsValue({
           ...data,
-          kanbanId: "646cf5e65916bb0a3de48875",
+          // kanbanId: "646cf5e65916bb0a3de48875",
+          kanbanId,
           tag: tmpTag,
+          // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+          reporter: data.reporter?._id || "",
+          assignee: tmpAssignee,
           actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
           targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
         });
+
+        // 如果有reporter就獨立開一個state儲存
+        if (data.reporter?._id?.length > 0) {
+          set_s_reporter(data.reporter);
+        }
+        // 如果有assignee就獨立開一個state儲存
+        if (data.assignee?.length > 0) {
+          // console.log("data.assignee = ", data.assignee);
+          set_s_assignee(data.assignee);
+        }
       } else {
         messageApi.error(message);
       }
@@ -160,27 +200,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
 
   return (
     <Spin spinning={s_isLoaging}>
-      {/* <IconRenderer iconName="EditFilled" /> */}
-      <Form
-        form={form}
-        // initialValues={{
-        //   kanbanId: "646cf5e65916bb0a3de48875",
-        //   _id: "",
-        //   name: "",
-        //   description: "",
-        //   reporter: "", // owner
-        //   assignee: [], // member
-        //   targetStartDate: dayjs(),
-        //   targetEndDate: dayjs(),
-        //   actualStartDate: dayjs(),
-        //   actualEndDate: dayjs(),
-        //   priority: null,
-        //   status: null,
-        //   tag: [],
-        // }}
-        onFinish={onSubmit}
-        layout="vertical"
-      >
+      <Form form={form} onFinish={onSubmit} layout="vertical">
         <div className="flex flex-col">
           {contextHolder}
           {/* 隱藏欄位 */}
@@ -189,6 +209,12 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
               <Input />
             </Form.Item>
             <Form.Item name="_id" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="reporter" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="assignee" hidden>
               <Input />
             </Form.Item>
           </div>
@@ -217,20 +243,22 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
             <Row gutter={[12, 0]} align="bottom">
               <Col span={3} className="flex flex-col">
                 <FieldLabel>Owner</FieldLabel>
-                <Avatar size={32} src={<Image src={User1} alt="user1" />} />
+                {/* reporter */}
+                <Reporter reporter={s_reporter} afterChoose={chooseOwner} />
               </Col>
 
-              <Col span={4} className="flex flex-col">
+              <Col span={9} className="flex flex-col">
                 <FieldLabel>Member</FieldLabel>
-                <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
+                <Assignee assignee={s_assignee} afterChoose={chooseAssignee} />
+                {/* <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
                   <Avatar src={<Image src={User1} alt="user1" />} />
                   <Avatar src={<Image src={User2} alt="user2" />} />
                   <Avatar src={<Image src={User3} alt="user3" />} />
                   <Avatar src={<Image src={User4} alt="user4" />} />
-                </Avatar.Group>
+                </Avatar.Group> */}
               </Col>
 
-              <Col span={5} className="flex justify-start">
+              {/* <Col span={5} className="flex justify-start">
                 <Button
                   className="bg-[#D9D9D9] float-right text-white"
                   type="primary"
@@ -238,7 +266,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
                   shape="circle"
                   icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
                 />
-              </Col>
+              </Col> */}
             </Row>
 
             <GroupTitle>
