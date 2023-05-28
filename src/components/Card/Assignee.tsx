@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import { Avatar, Button, Modal, Tooltip, message as msg, Divider } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import MemberSelect from "@/components/Member/MemberSelect";
@@ -23,13 +23,15 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
   useEffect(() => {
     set_s_tmpAssignee(assignee);
   }, [assignee]);
+
   return (
     <div className="flex gap-2">
       {contextHolder}
       <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
         {s_tmpAssignee.map((item) => (
           <Tooltip key={item.username} title={item.username}>
-            <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}>
+            {/* <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
+            <Avatar size={32} src={item.avatar.length > 0 && item.avatar} className="bg-gray-200">
               {item?.avatar.length === 0 ? item.username[0] : null}
             </Avatar>
           </Tooltip>
@@ -79,7 +81,8 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
           {s_tmpAssignee?.map((item: IOwner) => (
             <div key={item.username} className="flex justify-between">
               <div className="flex items-center gap-2">
-                <Avatar size={28} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}>
+                {/* <Avatar size={28} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
+                <Avatar size={28} src={item.avatar.length > 0 && item.avatar} className="bg-gray-200">
                   {item?.avatar.length === 0 ? item.username[0] : null}
                 </Avatar>
                 {item.username}

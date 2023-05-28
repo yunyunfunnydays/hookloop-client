@@ -2,13 +2,13 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import * as icons from "@ant-design/icons";
 import {
   Row,
   Col,
   Input,
-  Avatar,
+  Upload,
   Typography,
   Button,
   Select,
@@ -21,6 +21,7 @@ import {
   Modal,
 } from "antd";
 import {
+  DeleteOutlined,
   EditFilled,
   PlusOutlined,
   SettingFilled,
@@ -31,7 +32,7 @@ import {
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 import { getTags } from "@/service/apis/kanban";
-import { addCard, getCardById, updateCard } from "@/service/apis/card";
+import { addCard, getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from "dayjs";
@@ -40,6 +41,7 @@ import CommentList from "./CommentList";
 import TagModal from "../Kanban/TagModal";
 import Reporter from "./Reporter";
 import Assignee from "./Assignee";
+import Link from "./Link";
 
 interface IProps {
   set_s_showCard: ISetStateFunction<boolean>;
@@ -90,8 +92,14 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
   const cardId = "646e328d8e59e798344d36a8";
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
+  // 是否顯示建立 Link 的地方
+  const [s_showLink, set_s_showLink] = useState(false);
+  // kanban 上所有 Link
+  const [s_Links, set_s_Links] = useState<ILink[]>([]);
   // kanban 上所有 Tag
   const [s_Tags, set_s_Tags] = useState<ITag[]>([]);
+  // 卡片上傳的檔案
+  const [s_attachments, set_s_attachments] = useState<any>([]);
   // 卡片的 reporter
   const [s_reporter, set_s_reporter] = useState<IOwner>({
     _id: "",
@@ -110,6 +118,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
 
     const newValues: ICard = {
       ...values,
+      webLink: s_Links,
       actualStartDate: values.actualDate?.[0] || null,
       actualEndDate: values.actualDate?.[1] || null,
       targetStartDate: values.targetDate?.[0] || null,
@@ -149,15 +158,42 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
     set_s_assignee(data);
   };
 
+  const createLink = (data: { name: string; url: string }) => {
+    // console.log("link = ", data);
+    const _links = [...s_Links].concat({ name: data.name, url: data.url });
+    // const _linkIds = [...form.getFieldValue('webLink')].concat();
+    set_s_Links(_links);
+    set_s_showLink(false);
+  };
+
+  const removeLink = (key: string) => {
+    const _links = s_Links.filter((item) => item.name + item.url !== key);
+    set_s_Links(_links);
+  };
+
+  const removeAttachment = async (attachmentId: string) => {
+    const res: AxiosResponse = await deleteAttachment(cardId, attachmentId);
+    const { status, message, data } = res.data as IApiResponse;
+    if (status === "success") {
+      set_s_attachments(data.target.attachment);
+      messageApi.success(message);
+    } else {
+      messageApi.error(message);
+    }
+  };
+
   useEffect(() => {
     const call_getCardById = async () => {
       set_s_isLoaging(true);
       const res: AxiosResponse = await getCardById(cardId);
       const { status, message, data } = res.data as IApiResponse;
+      // console.log("card data = ", data);
       if (status === "success") {
+        // form只要存_id就好
         const tmpTag = data.tag?.map((item: ITag) => item._id);
+        // form只要存_id就好
         const tmpAssignee = data.assignee?.map((item: IOwner) => item._id);
-        // const tmpTag = data.tag?.map((item: ITag) => item._id);
+
         form.setFieldsValue({
           ...data,
           // kanbanId: "646cf5e65916bb0a3de48875",
@@ -178,6 +214,14 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
         if (data.assignee?.length > 0) {
           // console.log("data.assignee = ", data.assignee);
           set_s_assignee(data.assignee);
+        }
+
+        if (data.attachment?.length > 0) {
+          set_s_attachments(data.attachment);
+        }
+
+        if (data?.webLink.length > 0) {
+          set_s_Links(data.webLink);
         }
       } else {
         messageApi.error(message);
@@ -217,6 +261,9 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
             <Form.Item name="assignee" hidden>
               <Input />
             </Form.Item>
+            <Form.Item name="webLink" hidden>
+              <Input />
+            </Form.Item>
           </div>
           <section className="flex flex-col gap-4 h-[70vh] overflow-auto no-scrollbar">
             <GroupTitle>
@@ -250,23 +297,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
               <Col span={9} className="flex flex-col">
                 <FieldLabel>Member</FieldLabel>
                 <Assignee assignee={s_assignee} afterChoose={chooseAssignee} />
-                {/* <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
-                  <Avatar src={<Image src={User1} alt="user1" />} />
-                  <Avatar src={<Image src={User2} alt="user2" />} />
-                  <Avatar src={<Image src={User3} alt="user3" />} />
-                  <Avatar src={<Image src={User4} alt="user4" />} />
-                </Avatar.Group> */}
               </Col>
-
-              {/* <Col span={5} className="flex justify-start">
-                <Button
-                  className="bg-[#D9D9D9] float-right text-white"
-                  type="primary"
-                  size="middle"
-                  shape="circle"
-                  icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
-                />
-              </Col> */}
             </Row>
 
             <GroupTitle>
@@ -277,19 +308,13 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
             <Row gutter={[12, 12]}>
               <Col span={24} className="flex flex-col">
                 <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
-                  <DatePicker.RangePicker
-                    // value={[s_cardData.targetStartDate, s_cardData.targetEndDate]}
-                    className="h-[30px] w-full"
-                  />
+                  <DatePicker.RangePicker className="h-[30px] w-full" />
                 </Form.Item>
               </Col>
 
               <Col span={24} className="flex flex-col">
                 <Form.Item label={<FieldLabel>Actual period</FieldLabel>} name="actualDate">
-                  <DatePicker.RangePicker
-                    // value={[s_cardData.actualStartDate, s_cardData.actualEndDate]}
-                    className="h-[30px] w-full"
-                  />
+                  <DatePicker.RangePicker className="h-[30px] w-full" />
                 </Form.Item>
               </Col>
 
@@ -359,59 +384,66 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
             <Row gutter={[12, 8]}>
               <Col span={24} className="flex gap-3">
                 <FieldLabel>Links</FieldLabel>
-                <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                <Button
+                  size="small"
+                  className="text-black flex items-center"
+                  onClick={() => set_s_showLink(true)}
+                  icon={<LinkOutlined />}
+                >
                   Add link
                 </Button>
               </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 1
-                </Typography.Link>
-              </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 2
-                </Typography.Link>
-              </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 3
-                </Typography.Link>
-              </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 4
-                </Typography.Link>
-              </Col>
+              <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
+              {s_Links?.map((item) => (
+                <Col key={item.url + item.name} span={24}>
+                  <DeleteOutlined className="cursor-pointer mr-2" onClick={() => removeLink(item.name + item.url)} />
+                  <Typography.Link underline href={item.url} target="_blank">
+                    {item.name}
+                  </Typography.Link>
+                </Col>
+              ))}
             </Row>
 
             <Row gutter={[12, 8]}>
               <Col span={12} className="flex gap-3">
                 <FieldLabel>Files</FieldLabel>
-                <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
                   Add file
-                </Button>
+                </Button> */}
+                <Upload
+                  itemRender={() => <div />}
+                  listType="picture"
+                  beforeUpload={() => false}
+                  onChange={async ({ file }) => {
+                    set_s_isLoaging(true);
+                    const formData = new FormData();
+                    formData.append("file", file as any);
+                    const res: AxiosResponse = await addAttachment(form.getFieldValue("_id"), formData);
+                    const { status, message, data } = res.data as IApiResponse;
+                    if (status === "success") {
+                      // console.log("data = ", data);
+                      set_s_attachments(data.target.attachment);
+                      messageApi.success(message);
+                    } else {
+                      messageApi.error(message);
+                    }
+                    set_s_isLoaging(false);
+                  }}
+                >
+                  <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                    Add file
+                  </Button>
+                </Upload>
               </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 1
-                </Typography.Link>
-              </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 2
-                </Typography.Link>
-              </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 3
-                </Typography.Link>
-              </Col>
-              <Col span={24}>
-                <Typography.Link underline href="https://google.com" target="_blank">
-                  reference website 4
-                </Typography.Link>
-              </Col>
+
+              {s_attachments?.map((item: any) => (
+                <Col key={item.fileId} span={24}>
+                  <DeleteOutlined className="cursor-pointer mr-2" onClick={() => removeAttachment(item.fileId)} />
+                  <Typography.Link underline href={item.url} target="_blank">
+                    {item.name}
+                  </Typography.Link>
+                </Col>
+              ))}
             </Row>
 
             <GroupTitle>

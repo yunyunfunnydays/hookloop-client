@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import { PlusOutlined } from "@ant-design/icons";
 import { Avatar, Button, Modal, Tooltip } from "antd";
 import MemberSelect from "@/components/Member/MemberSelect";
@@ -21,8 +21,9 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
           <Avatar
             onClick={() => set_s_showModal(true)}
             size={32}
-            className="cursor-pointer"
-            src={reporter.avatar.length > 0 && <Image src={reporter.avatar} alt="user1" />}
+            className="cursor-pointer bg-gray-200"
+            // src={reporter.avatar.length > 0 && <Image src={reporter.avatar} alt="user1" />}
+            src={reporter.avatar.length > 0 && reporter.avatar}
           >
             {reporter?.avatar.length === 0 ? reporter.username[0] : null}
           </Avatar>

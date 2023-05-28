@@ -54,6 +54,7 @@ declare global {
     description: string;
     reporter: string;
     assignee: string[];
+    webLink: ILink[];
     priority: string | null;
     targetDate?: Dayjs[];
     targetStartDate: Dayjs | null;
@@ -103,5 +104,11 @@ declare global {
     _id?: string;
     username: string;
     avatar: string;
+  }
+
+  interface ILink {
+    _id?: string;
+    name: string;
+    url: string;
   }
 }
