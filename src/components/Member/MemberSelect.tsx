@@ -18,7 +18,9 @@ const MemberSelect = (props: any) => {
           key: member.email,
           label: (
             <span className="flex gap-1">
-              <Avatar size="small">{member.username[0]}</Avatar>
+              <Avatar size="small" className="bg-gray-200" src={member.avatar.length > 0 && member.avatar}>
+                {member.username[0]}
+              </Avatar>
               {member.username}
             </span>
           ),

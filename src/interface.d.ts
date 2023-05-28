@@ -54,6 +54,7 @@ declare global {
     description: string;
     reporter: string;
     assignee: string[];
+    webLink: ILink[];
     priority: string | null;
     targetDate?: Dayjs[];
     targetStartDate: Dayjs | null;
@@ -97,5 +98,17 @@ declare global {
     isArchived: boolean;
     createdAt: string;
     updatedAt: string;
+  }
+
+  interface IOwner {
+    _id?: string;
+    username: string;
+    avatar: string;
+  }
+
+  interface ILink {
+    _id?: string;
+    name: string;
+    url: string;
   }
 }

@@ -15,3 +15,17 @@ export const getCardById = (cardId: string) => {
 export const updateCard = (cardId: string, data: ICard) => {
   return instance.patch(`cards/${cardId}`, data);
 };
+
+// 上傳檔案
+export const addAttachment = (cardId: string, data: any) => {
+  return instance.post(`cards/${cardId}/attachment`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// 刪除檔案
+export const deleteAttachment = (cardId: string, attachmentId: string) => {
+  return instance.delete(`cards/${cardId}/attachment/${attachmentId}`);
+};
