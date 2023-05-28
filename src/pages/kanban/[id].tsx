@@ -209,6 +209,40 @@ interface IData {
   listOrder: string[];
 }
 
+type PriorityBadgeProps = {
+  priority: "High" | "Medium" | "Low";
+};
+const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority }) => {
+  if (priority === "High") {
+    return (
+      <div className="rounded border border-[#CF1322] bg-[#FFF1F0] px-2 py-0.5">
+        <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#CF1322] text-['Roboto']">
+          Priority:&nbsp;High
+        </div>
+      </div>
+    );
+  }
+  if (priority === "Medium") {
+    return (
+      <div className="rounded border border-[#D46B08] bg-[#FFF7E6] px-2 py-0.5">
+        <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#D46B08] text-['Roboto']">
+          Priority:&nbsp;Medium
+        </div>
+      </div>
+    );
+  }
+  if (priority === "Low") {
+    return (
+      <div className="rounded border border-[#389E0D] bg-[#F6FFED] px-2 py-0.5">
+        <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#389E0D] text-['Roboto']">
+          Priority:&nbsp;Low
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 type CardProps = {
   card: ICard;
   index: number;
@@ -244,27 +278,7 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
           {/* 優先度 */}
           {card.priority && (
             <div className="mb-3 flex gap-2">
-              {card.priority === "High" && (
-                <div className="rounded border border-[#CF1322] bg-[#FFF1F0] px-2 py-0.5">
-                  <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#CF1322] text-['Roboto']">
-                    Priority:&nbsp;High
-                  </div>
-                </div>
-              )}
-              {card.priority === "Medium" && (
-                <div className="rounded border border-[#D46B08] bg-[#FFF7E6] px-2 py-0.5">
-                  <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#D46B08] text-['Roboto']">
-                    Priority:&nbsp;Medium
-                  </div>
-                </div>
-              )}
-              {card.priority === "Low" && (
-                <div className="rounded border border-[#389E0D] bg-[#F6FFED] px-2 py-0.5">
-                  <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#389E0D] text-['Roboto']">
-                    Priority:&nbsp;Low
-                  </div>
-                </div>
-              )}
+              <PriorityBadge priority={card.priority} />
               <div className="rounded border border-[#BFBFBF] bg-[#FAFAFA] px-2 py-0.5">
                 <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#595959] text-['Roboto']">
                   Status:&nbsp;{card.status}
@@ -341,8 +355,13 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
 };
 
 const AddCard: React.FC = () => {
+  const handleAddCard = () => {
+    console.log("handleAddCard");
+    return;
+  };
+
   return (
-    <div id="add-card" className="cursor-pointer">
+    <div id="add-card" className="cursor-pointer" onClick={handleAddCard}>
       <PlusOutlined />
       <span> Add a card</span>
     </div>
@@ -537,7 +556,7 @@ const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
   );
 };
 
-const Kanban: React.FC = () => {
+const Board: React.FC = () => {
   const [data, setData] = useState<IData>(initialData);
   const router = useRouter();
   const kanbanId = router.query.id;
@@ -576,26 +595,36 @@ const Kanban: React.FC = () => {
 
   // line 477 新增 mt-[64px] overflow-x-auto
   return (
+    <section className="h-full">
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="all-lists" direction="horizontal" type="list">
+          {(provided) => (
+            <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
+              {data.listOrder.map((listId: string, index2: number) => {
+                const list = data.lists[listId];
+                const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
+                return <List key={list._id} list={list} cards={cards} index2={index2} setData={setData} />;
+              })}
+              {provided.placeholder}
+              <AddList kanbanId={kanbanId} setData={setData} />
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </section>
+  );
+};
+
+const Filter: React.FC = () => {
+  return <div className="flex h-24 w-full justify-end bg-yellow-500">test</div>;
+};
+
+const Kanban: React.FC = () => {
+  return (
     <CustLayout>
       <section className="flex flex-col">
-        <div className="flex h-24 w-full justify-end bg-yellow-500">test</div>
-        <section className="h-full">
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="all-lists" direction="horizontal" type="list">
-              {(provided) => (
-                <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
-                  {data.listOrder.map((listId: string, index2: number) => {
-                    const list = data.lists[listId];
-                    const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
-                    return <List key={list._id} list={list} cards={cards} index2={index2} setData={setData} />;
-                  })}
-                  {provided.placeholder}
-                  <AddList kanbanId={kanbanId} setData={setData} />
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </section>
+        <Filter />
+        <Board />
       </section>
     </CustLayout>
   );
