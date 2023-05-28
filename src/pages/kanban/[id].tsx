@@ -20,10 +20,11 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea
 import { produce } from "immer";
 import { Input } from "antd";
 import { useRouter } from "next/router";
-import { addList, renameList } from "@/service/apis/list";
+import { moveCard } from "@/service/apis/card";
+import { addList, moveList, renameList } from "@/service/apis/list";
 import CustLayout from "@/components/Layout";
 
-const initialData: IData = {
+const initialListsCards: IListsCards = {
   cards: {
     "card-1": {
       id: "card-1",
@@ -203,7 +204,7 @@ const initialData: IData = {
   listOrder: ["list-1", "list-2", "list-3", "list-5", "list-6"],
 };
 
-interface IData {
+interface IListsCards {
   cards: { [key: string]: ICard };
   lists: { [key: string]: IList };
   listOrder: string[];
@@ -372,9 +373,10 @@ type IListProps = {
   list: IList;
   cards: ICard[];
   index2: number;
-  setData: React.Dispatch<IData>;
+  set_s_listsCards: React.Dispatch<IListsCards>;
 };
-const List: React.FC<IListProps> = ({ list, cards, index2, setData }) => {
+
+const List: React.FC<IListProps> = ({ list, cards, index2 }) => {
   const [s_isEditingList, set_s_isEditingList] = useState(false);
   const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
     name: "",
@@ -471,17 +473,13 @@ const List: React.FC<IListProps> = ({ list, cards, index2, setData }) => {
 };
 
 type AddListProps = {
-  kanbanId: string;
-  setData: React.Dispatch<IData>;
+  s_kanbanId: string;
+  set_s_listsCards: React.Dispatch<IListsCards>;
 };
-const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
-  const router = useRouter();
+const AddList: React.FC<AddListProps> = ({ s_kanbanId, set_s_listsCards }) => {
   const inputRef = useRef<Input>(null);
   const [s_isAddingList, set_s_isAddingList] = useState(false);
-  const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "kanbanId">>({
-    name: "",
-    kanbanId: router.query.id as string,
-  });
+  const [s_listName, set_s_listName] = useState<string | null>(null);
 
   useEffect(() => {
     if (s_isAddingList && inputRef.current) {
@@ -489,18 +487,8 @@ const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
     }
   }, [s_isAddingList]);
 
-  useEffect(() => {
-    set_s_newData({
-      name: "",
-      kanbanId: router.query.id as string,
-    });
-  }, [router.query.id]);
-
   const handleListNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    set_s_newData({
-      ...s_newData,
-      name: e.target.value,
-    });
+    set_s_listName(e.target.value);
   };
 
   const handleAddList = () => {
@@ -509,14 +497,18 @@ const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
 
   const handleInputEnd = async () => {
     try {
-      if (s_newData.name === "" || s_newData.kanbanId === "") return;
+      if (s_listName === "" || s_listName === null) return;
+      if (s_kanbanId === "" || s_kanbanId === null) return;
 
-      const res: AxiosResponse = await addList(s_newData);
+      const res: AxiosResponse = await addList({
+        name: s_listName,
+        kanbanId: s_kanbanId,
+      });
       const { status, message, data } = res.data as IApiResponse;
 
       if (status === "success") {
-        setData((prevData: IData) =>
-          produce(prevData, (draft) => {
+        set_s_listsCards((prevData) =>
+          produce((draft) => {
             draft.lists[data._id] = data;
             draft.listOrder.push(data._id);
           }),
@@ -524,10 +516,7 @@ const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
       } else {
         console.error(message);
       }
-      set_s_newData({
-        name: "",
-        kanbanId,
-      });
+      set_s_listName(null);
     } catch (errorInfo) {
       console.error(errorInfo);
     } finally {
@@ -538,7 +527,7 @@ const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
   return s_isAddingList ? (
     <Input
       ref={inputRef}
-      value={s_newData.name}
+      value={s_listName || ""}
       name="listName"
       bordered={false}
       onChange={handleListNameChange}
@@ -557,56 +546,115 @@ const AddList: React.FC<AddListProps> = ({ kanbanId, setData }) => {
 };
 
 const Board: React.FC = () => {
-  const [data, setData] = useState<IData>(initialData);
   const router = useRouter();
-  const kanbanId = router.query.id;
+  const [s_listsCards, set_s_listsCards] = useState<IListsCards>(initialListsCards);
+  const [s_kanbanId, set_s_kanbanId] = useState<string | undefined>(undefined);
+  const [s_isDragging, set_s_isDragging] = useState<boolean>(false);
 
-  const handleDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId, type } = result;
+  useEffect(() => {
+    set_s_kanbanId(router.query.id as string);
+  }, [router.query.id]);
 
-    // 沒有任何移動
-    if (!destination) {
-      console.info("沒有任何移動");
-      return;
-    }
+  const handleDragStart = () => {
+    set_s_isDragging(true);
+  };
 
-    // 移動到原本的位置
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      console.info("移動到原本的位置");
-      return;
-    }
+  const handleDragEnd = async (result: DropResult) => {
+    try {
+      const { destination, source, draggableId, type } = result;
+      // designation：移動到的位置，沒有則為null：{droppableId: "6461fc9dd15e2103a1ae1f60", index: 1}
+      // source：移動前的位置，沒有則為null：{droppableId: "6461fc9dd15e2103a1ae1f60", index: 0}
+      // draggableId：移動的元素
+      // type：移動的類型
 
-    if (type === "card") {
-      setData((prevData) =>
-        produce(prevData, (draft) => {
-          draft.lists[source.droppableId].cardOrder.splice(source.index, 1);
-          draft.lists[destination.droppableId].cardOrder.splice(destination.index, 0, draggableId);
-        }),
-      );
-    } else if (type === "list") {
-      setData((prevData) =>
-        produce(prevData, (draft) => {
-          draft.listOrder.splice(source.index, 1);
-          draft.listOrder.splice(destination.index, 0, draggableId);
-        }),
-      );
+      // 沒有取得到 s_kanbanId
+      if (!s_kanbanId) return;
+
+      // 沒有任何移動
+      if (!destination) return;
+
+      // 移動到原本的位置
+      if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+      if (type === "card") {
+        // TODO: ENDPOINT cards/move，傳到後端的資料格式如下
+        //   {
+        //     "newListId": "64621508d474bd1535ae76d7",
+        //     "oldListId": "646201bf97acc5268322d8f5",
+        //     "newCardOrder":[
+        //         "6462191cfc88d32944beb8e6"
+        //     ],
+        //     "oldCardOrder":[
+        //         "646219c0fc88d32944beb8f1"
+        //     ]
+        // }
+
+        const res: AxiosResponse = await moveCard({
+          newListId: destination.droppableId,
+          oldListId: source.droppableId,
+          newCardOrder: s_listsCards.lists[destination.droppableId].cardOrder,
+          oldCardOrder: s_listsCards.lists[source.droppableId].cardOrder,
+        });
+
+        const { status } = res.data as IApiResponse;
+
+        if (status !== "success") return;
+
+        set_s_listsCards((prevData) =>
+          produce(prevData, (draft) => {
+            draft.lists[source.droppableId].cardOrder.splice(source.index, 1);
+            draft.lists[destination.droppableId].cardOrder.splice(destination.index, 0, draggableId);
+          }),
+        );
+      } else if (type === "list") {
+        // TODO: ENDPOINT lists/move，傳到後端的資料格式如下
+        //   {
+        //     "kanbanId": "6461fc9dd15e2103a1ae1f60",
+        //     "listOrder":[
+        //         "646241e1d28f1972ffc34c5a",
+        //         "646201bf97acc5268322d8f5",
+        //         "64621508d474bd1535ae76d7"
+        //     ]
+        // }
+
+        const res: AxiosResponse = await moveList({
+          kanbanId: s_kanbanId,
+          listOrder: s_listsCards.listOrder,
+        });
+        const { status } = res.data as IApiResponse;
+
+        if (status !== "success") return;
+
+        set_s_listsCards((prevData) =>
+          produce(prevData, (draft) => {
+            draft.listOrder.splice(source.index, 1);
+            draft.listOrder.splice(destination.index, 0, draggableId);
+          }),
+        );
+      }
+    } catch (errorInfo) {
+      console.error(errorInfo);
+    } finally {
+      set_s_isDragging(false);
     }
   };
 
   // line 477 新增 mt-[64px] overflow-x-auto
   return (
     <section className="h-full">
-      <DragDropContext onDragEnd={handleDragEnd}>
+      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <Droppable droppableId="all-lists" direction="horizontal" type="list">
           {(provided) => (
             <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
-              {data.listOrder.map((listId: string, index2: number) => {
-                const list = data.lists[listId];
-                const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
-                return <List key={list._id} list={list} cards={cards} index2={index2} setData={setData} />;
+              {s_listsCards.listOrder.map((listId: string, index2: number) => {
+                const list = s_listsCards.lists[listId];
+                const cards = list.cardOrder.map((cardId: string) => s_listsCards.cards[cardId]);
+                return (
+                  <List key={list._id} list={list} cards={cards} index2={index2} set_s_listsCards={set_s_listsCards} />
+                );
               })}
               {provided.placeholder}
-              <AddList kanbanId={kanbanId} setData={setData} />
+              <AddList s_kanbanId={s_kanbanId} set_s_listsCards={set_s_listsCards} />
             </div>
           )}
         </Droppable>

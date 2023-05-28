@@ -29,3 +29,13 @@ export const addAttachment = (cardId: string, data: any) => {
 export const deleteAttachment = (cardId: string, attachmentId: string) => {
   return instance.delete(`cards/${cardId}/attachment/${attachmentId}`);
 };
+
+// 移動卡片
+export const moveCard = (data: {
+  newListId: string;
+  oldListId: string;
+  newCardOrder: string[];
+  oldCardOrder: string[];
+}) => {
+  return instance.patch("cards/move", data);
+};
