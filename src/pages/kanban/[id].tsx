@@ -20,7 +20,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea
 import { produce } from "immer";
 import { Input } from "antd";
 import { useRouter } from "next/router";
-import { addList } from "@/service/apis/list";
+import { addList, renameList } from "@/service/apis/list";
 import CustLayout from "@/components/Layout";
 
 const initialData: IData = {
@@ -218,6 +218,7 @@ interface IListProps {
   list: IList;
   cards: ICard[];
   index2: number;
+  setData: React.Dispatch<IData>;
 }
 
 const Card = (props: ICardProps) => {
@@ -358,8 +359,47 @@ const AddCard = () => {
   );
 };
 
-const List = (props: IListProps) => {
-  const { list, cards, index2 } = props;
+const List: React.FC<IListProps> = ({ list, cards, index2, setData }) => {
+  const [s_isEditingList, set_s_isEditingList] = useState(false);
+  const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
+    name: "",
+    _id: list._id,
+  });
+  const inputRef = useRef<Input>(null);
+
+  useEffect(() => {
+    if (s_isEditingList && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [s_isEditingList]);
+
+  const handleEditList = () => {
+    set_s_newData({ name: list.name, _id: list._id });
+    set_s_isEditingList(true);
+  };
+
+  const handleListNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    set_s_newData({
+      ...s_newData,
+      name: e.target.value,
+    });
+  };
+
+  const handleInputEnd = async () => {
+    try {
+      if (s_newData.name === "" || s_newData._id === "") return;
+
+      const res: AxiosResponse = await renameList(s_newData);
+      const { status, message, data } = res.data as IApiResponse;
+
+      console.log(status, message, data);
+
+    } catch (errorInfo) {
+      console.error(errorInfo);
+    } finally {
+      set_s_isEditingList(false);
+    }
+  };
 
   return (
     <Draggable draggableId={list._id} index={index2}>
@@ -378,10 +418,23 @@ const List = (props: IListProps) => {
                 {...provided.droppableProps}
               >
                 {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
-                <div className="flex items-center justify-between">
-                  <span className="text-xl font-medium text-[#262626] text-['Roboto']">{list.name}</span>
-                  <EllipsisOutlined className="cursor-pointer text-xl" />
-                </div>
+                {s_isEditingList ? (
+                  <Input
+                    ref={inputRef}
+                    value={s_newData.name}
+                    onChange={handleListNameChange}
+                    onBlur={handleInputEnd}
+                    onPressEnter={handleInputEnd}
+                    className="h-[28px] min-w-[290px] bg-[#F5F5F5] p-0 text-xl font-medium text-[#262626] text-['Roboto']"
+                  />
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <span className="grow text-xl font-medium text-[#262626] text-['Roboto']" onClick={handleEditList}>
+                      {list.name}
+                    </span>
+                    <EllipsisOutlined className="cursor-pointer text-xl" />
+                  </div>
+                )}
                 <div className="mb-2 text-sm font-medium text-[#8C8C8C] text-['Roboto']">
                   {cards.length} {cards.length === 1 ? "card" : "cards"}
                 </div>
@@ -403,7 +456,7 @@ const List = (props: IListProps) => {
   );
 };
 
-const AddList: React.FC<{ kanbanId: string; setData: React.Dispatch<any> }> = ({ kanbanId, setData }) => {
+const AddList: React.FC<{ kanbanId: string; setData: React.Dispatch<IData> }> = ({ kanbanId, setData }) => {
   const router = useRouter();
   const inputRef = useRef<Input>(null);
   const [s_isAddingList, set_s_isAddingList] = useState(false);
@@ -535,7 +588,7 @@ const Kanban = () => {
                   {data.listOrder.map((listId: string, index2: number) => {
                     const list = data.lists[listId];
                     const cards = list.cardOrder.map((cardId: string) => data.cards[cardId]);
-                    return <List key={list._id} list={list} cards={cards} index2={index2} />;
+                    return <List key={list._id} list={list} cards={cards} index2={index2} setData={setData} />;
                   })}
                   {provided.placeholder}
                   <AddList kanbanId={kanbanId} setData={setData} />
