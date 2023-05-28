@@ -88,4 +88,14 @@ declare global {
     color: string;
     kanbanId: string;
   }
+
+  interface IList {
+    _id: string;
+    name: string;
+    cardOrder: string[];
+    kanbanId: string;
+    isArchived: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }
 }
