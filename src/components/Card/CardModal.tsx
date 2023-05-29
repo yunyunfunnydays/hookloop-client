@@ -451,7 +451,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
               Comment
             </GroupTitle>
 
-            <CommentList />
+            <CommentList cardId={cardId} />
           </section>
 
           <Divider className="my-3" />

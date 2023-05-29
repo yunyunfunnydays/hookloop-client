@@ -111,4 +111,11 @@ declare global {
     name: string;
     url: string;
   }
+
+  interface Icomment {
+    _id?: string;
+    createdAt?: Dayjs;
+    currentComment: string;
+    userId: IUser;
+  }
 }
