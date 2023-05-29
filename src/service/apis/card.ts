@@ -39,3 +39,13 @@ export const moveCard = (data: {
 }) => {
   return instance.patch("cards/move", data);
 };
+
+// 取得 card 上所有 commits
+export const getComments = (cardId: string) => {
+  return instance.get(`cards/${cardId}/comment`);
+};
+
+// 新增 card 留言
+export const addComment = (cardId: string, data: { currentComment: string; userId: string }) => {
+  return instance.post(`cards/${cardId}/comment`, data);
+};
