@@ -52,3 +52,8 @@ export const updatePassword = (data: { oldPassword: string; newPassword: string 
 export const closeMe = () => {
   return instance.patch("/users/me/isActive");
 };
+
+// 忘記密碼
+export const forgetPassword = (data: { email: string }) => {
+  return instance.post(`/auth/forgetPassword`, data);
+};
