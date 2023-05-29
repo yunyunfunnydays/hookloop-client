@@ -21,7 +21,7 @@ interface ILogin {
 
 const { useBreakpoint } = Grid;
 
-const { Title, Text, Link } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const Login: React.FC<ILogin> = (props) => {
   /*
@@ -41,6 +41,7 @@ const Login: React.FC<ILogin> = (props) => {
   // const [s_passwordVisible, set_s_passwordVisible] = useState(false);
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
+  const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
 
   // const ICON_STYLE = "cursor-pointer mb-2";
 
@@ -159,6 +160,7 @@ const Login: React.FC<ILogin> = (props) => {
       const res: AxiosResponse = await forgetPassword({ email: values.email });
       const { status } = res.data as IApiResponse;
       if (status === "success") {
+        set_s_reset_password_email_status(true);
         handleResponse(res.data);
       } else {
         handleError(res.data);
@@ -316,6 +318,17 @@ const Login: React.FC<ILogin> = (props) => {
               {s_editType === "login" ? "Sign up" : "Log in"}
             </Button>
           </div>
+          {s_reset_password_email_status && (
+            <div className="w-full h-[105px] mt-[20px] bg-[#F5F5F5] flex-center flex-col p-[25px]">
+              <Title level={5} type="danger">
+                An email has been sent to your email.
+              </Title>
+              <Paragraph type="danger">
+                Follow the directions in the email to reset your password. <br />
+                The email reset authorization is availablefor 10 minutes.
+              </Paragraph>
+            </div>
+          )}
         </div>
       </Spin>
     </Modal>
