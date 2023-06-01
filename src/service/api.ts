@@ -44,6 +44,14 @@ export const updateMe = (data: { username: string }) => {
   return instance.patch("/users/me", data);
 };
 
+export const updateAvatar = (data: any) => {
+  return instance.patch("/users/me", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 // 修改密碼
 export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
   return instance.patch("/users/me/password", data);

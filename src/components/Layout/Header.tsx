@@ -47,9 +47,9 @@ const Header: React.FC = () => {
   return (
     <header
       className={`
-      box-border h-[80px] border-b-[1px] 
-      flex justify-between items-center
-      ${hasAuth ? "bg-[#262626] px-[25px]" : "bg-white mx-[25px]"}
+      box-border flex h-[80px] 
+      items-center justify-between border-b-[1px]
+      ${hasAuth ? "bg-[#262626] px-[25px]" : "mx-[25px] bg-white"}
     `}
     >
       <Image
@@ -61,19 +61,30 @@ const Header: React.FC = () => {
 
       {hasAuth ? (
         <div className="flex items-center gap-[24px]">
-          <Switch className="bg-[#434343] w-[42px] h-[22px]" />
+          <Switch className="h-[22px] w-[42px] bg-[#434343]" />
           <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
-          <Avatar
-            className="bg-white text-black cursor-pointer"
-            size={32}
-            onClick={() => Router.push("profile")}
-            icon={<UserOutlined />}
-          />
+          {c_user.avatar ? (
+            <Image
+              src={`https://cdn.filestackcontent.com/${c_user.avatar}`}
+              alt="avatar"
+              style={{ borderRadius: "100%" }}
+              onClick={() => Router.push("profile")}
+              width="45"
+              height="45"
+            />
+          ) : (
+            <Avatar
+              className="cursor-pointer bg-white text-black"
+              size={32}
+              onClick={() => Router.push("profile")}
+              icon={<UserOutlined />}
+            />
+          )}
         </div>
       ) : (
         <>
           {/* 大尺寸螢幕使用的 menu */}
-          <div className="hidden md:flex gap-[24px]">
+          <div className="hidden gap-[24px] md:flex">
             <Button className={`${BTN_STYLE} text-black`} onClick={() => set_s_showLogin(true)}>
               Log in
             </Button>
@@ -85,9 +96,9 @@ const Header: React.FC = () => {
           {/* 漢堡選單 */}
           <div className="md:hidden">
             {s_showMenu ? (
-              <CloseOutlined onClick={toggle} className="text-[28px] cursor-pointer" />
+              <CloseOutlined onClick={toggle} className="cursor-pointer text-[28px]" />
             ) : (
-              <MenuOutlined onClick={toggle} className="text-[28px] cursor-pointer" />
+              <MenuOutlined onClick={toggle} className="cursor-pointer text-[28px]" />
             )}
           </div>
 
@@ -95,10 +106,10 @@ const Header: React.FC = () => {
           <section
             className={`${
               s_showMenu ? "visibile bg-opacity-20" : "invisible bg-opacity-0"
-            } h-screen fixed top-[80px] left-0 right-0 bg-[#262626] transition-all`}
+            } fixed left-0 right-0 top-[80px] h-screen bg-[#262626] transition-all`}
           >
             <div
-              className={`bg-white flex justify-end items-center gap-[24px] pr-[24px] overflow-hidden transition-all ${
+              className={`flex items-center justify-end gap-[24px] overflow-hidden bg-white pr-[24px] transition-all ${
                 s_showMenu ? "h-[80px]" : "h-[0px]"
               }`}
             >
