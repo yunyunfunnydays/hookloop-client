@@ -20,6 +20,7 @@ import carousel1 from "@/assets/carousel-1.png";
 
 import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
+import PlanComponent from "@/components/Plan";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
@@ -161,68 +162,9 @@ const Home: React.FC = () => {
         </section>
 
         {/* plan */}
-        <section id="Plan" className="py-[40px] px-[12px] flex flex-col items-center gap-[40px]">
+        <section id="Plan" className="w-[90%] lg:w-[960px] mx-auto py-[40px] px-[12px] flex flex-col items-center gap-[40px]">
           <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat']">PLAN & PRICING</h1>
-
-          <div className="flex flex-col md:flex-row flex-wrap justify-center gap-[20px]">
-            {/* box */}
-            <section className="w-[350px] md:w-[300px] min-h-[340px] rounded-lg overflow-hidden flex flex-col items-center border border-[#D9D9D9]">
-              <div className="w-full h-[80px] flex-center bg-[#FFA940] text-white">
-                <h5 className="font-bold text-[30px]">Premium</h5>
-              </div>
-              <div className="pt-[25px] w-[250px] flex flex-col items-center">
-                <div className="flex-center">
-                  <strong className="font-medium font-['Roboto'] text-[30px]">NT&nbsp;$&nbsp;207.5</strong>
-                  <span className="ml-[16px] text-[24px]">/&nbsp;month</span>
-                </div>
-                <span className="text-[#595959] mt-[8px]">NT $ 2490.0 / year</span>
-                <div className="w-full border-0 border-b-2 mt-[20px]" />
-                <ul className="mt-[20px] list-disc text-[20px]">
-                  <li>
-                    <strong>Unlimited</strong> Workspace
-                  </li>
-                </ul>
-                <Button type="primary" className="mt-[25px] w-[115px] h-[40px] font-bold">
-                  Best choice!
-                </Button>
-              </div>
-            </section>
-
-            {/* box */}
-            <section className="w-[350px] md:w-[300px] min-h-[340px] rounded-lg overflow-hidden flex flex-col items-center border border-[#D9D9D9]">
-              <div className="w-full h-[80px] flex-center bg-[#FFF7E6] text-black border-0 border-b">
-                <h5 className="font-bold text-[30px] text-[#D46B08]">Standard</h5>
-              </div>
-              <div className="pt-[25px] w-[250px] flex flex-col items-center">
-                <div className="flex-center">
-                  <strong className="font-medium font-['Roboto'] text-[30px]">NT&nbsp;$&nbsp;310.0</strong>
-                  <span className="ml-[16px] text-[24px]">/&nbsp;month</span>
-                </div>
-                <div className="w-full border-0 border-b-2 mt-[50px]" />
-                <ul className="mt-[20px] list-disc text-[20px]">
-                  <li>10 workspace</li>
-                </ul>
-                <Button className="mt-[25px] w-[115px] h-[40px] font-bold text-black">Select it</Button>
-              </div>
-            </section>
-
-            {/* box */}
-            <section className="w-[350px] md:w-[300px] min-h-[340px] rounded-lg overflow-hidden flex flex-col items-center border border-[#D9D9D9]">
-              <div className="w-full h-[80px] flex-center bg-[#D9D9D9] text-black">
-                <h5 className="font-bold text-[30px]">Free</h5>
-              </div>
-              <div className="pt-[25px] w-[250px] flex flex-col items-center">
-                <div className="flex-center">
-                  <strong className="font-medium font-['Roboto'] text-[30px]">NT&nbsp;$&nbsp;0</strong>
-                </div>
-                <div className="w-full border-0 border-b-2 mt-[50px]" />
-                <ul className="mt-[20px] list-disc text-[20px]">
-                  <li>1 Workspace</li>
-                </ul>
-                <Button className="mt-[25px] w-[115px] h-[40px] font-bold text-black">Select it</Button>
-              </div>
-            </section>
-          </div>
+          <PlanComponent type="index" />
         </section>
 
         {/* slider */}
