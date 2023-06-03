@@ -69,7 +69,10 @@ const Plan = () => {
       content:
         <section className="flex flex-col text-center" >
           <h1 className="text-[32px] font-bold">Oops! Something went wrong!</h1>
-          <p className="mt-6">Sorry, there was an issue with your payment. Please try again or contact customer support for assistance. You can contact our customer support team via email at yulaie1012@gmail.com.</p>
+          <p className="my-6">Sorry, there was an issue with your payment. Please try again or contact customer support for assistance. You can contact our customer support team via email at yulaie1012@gmail.com.</p>
+          <Button type="primary" className="w-46 mx-auto">
+            Try again
+          </Button>
         </section>
     },
     {
@@ -121,7 +124,7 @@ const Plan = () => {
       <section className="w-[80%] lg:w-[860px] mx-auto h-full flex flex-col justify-center mt-8">
         <Steps current={s_current} items={items} />
         <div className="my-8">{steps[s_current].content}</div>
-        <div className="mx-auto mt-8 mb-4">
+        <div className="mx-auto mt-16 mb-4">
           {s_current < 1 && (
             <Button className="mr-2">
               Cancel
@@ -134,12 +137,12 @@ const Plan = () => {
           )}
           {s_current < steps.length - 1 && (
             <Button type="primary" onClick={() => next()}>
-              Next
+              Confirm
             </Button>
           )}
           {s_current === steps.length - 1 && (
             <Button type="primary" onClick={() => message.success('You have successfully subscribed!')}>
-              Done
+              Go to dashboard
             </Button>
           )}
         </div>
