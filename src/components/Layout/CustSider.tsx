@@ -84,7 +84,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           // 這個 children 用來渲染 kanban
           children: workspace.kanbans.map((kanban) => ({
             key: workspace.workspaceName + kanban._id,
-            onClick: () => Router.push(`/kanban/${kanban._id}`),
+            onClick: () => Router.push(`/kanban/${kanban.key}`),
             label: kanban.name,
           })),
         },
@@ -136,23 +136,23 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       trigger={null}
       width={235}
       collapsedWidth={0}
-      className="border-r-[1px] transition-all duration-500 overflow-hidden"
+      className="overflow-hidden border-r-[1px] transition-all duration-500"
       collapsible
       collapsed={s_collapsed}
     >
       {/* Home */}
-      <section className="w-full py-5 px-7 text-[#595959] text-base">
+      <section className="w-full px-7 py-5 text-base text-[#595959]">
         <HomeOutlined />
-        <span className="font-medium ml-2">Home</span>
+        <span className="ml-2 font-medium">Home</span>
         <DoubleLeftOutlined className="float-right mt-1 cursor-pointer" onClick={() => set_s_collapsed(!s_collapsed)} />
       </section>
 
       {/* create workspace */}
-      <section className=" w-full py-5 px-7 text-[#262626] bg-[#F5F5F5] text-base">
+      <section className=" w-full bg-[#F5F5F5] px-7 py-5 text-base text-[#262626]">
         <DesktopOutlined />
-        <span className="font-medium ml-2">Workspace</span>
+        <span className="ml-2 font-medium">Workspace</span>
         <Button
-          className="bg-[#FFA940] float-right text-white"
+          className="float-right bg-[#FFA940] text-white"
           type="primary"
           size="small"
           shape="circle"
@@ -167,11 +167,11 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       {/* logout */}
       <section
         role="presentation"
-        className="w-full py-5 px-7 text-[#595959] text-base cursor-pointer hover:bg-[#F5F5F5]"
+        className="w-full cursor-pointer px-7 py-5 text-base text-[#595959] hover:bg-[#F5F5F5]"
         onClick={handleLogout}
       >
         <LogoutOutlined />
-        <span className="font-medium ml-2">Log out</span>
+        <span className="ml-2 font-medium">Log out</span>
       </section>
 
       {/* 建立 workspace 的 Modal */}

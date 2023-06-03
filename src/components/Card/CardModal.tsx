@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
-// import Image from "next/image";
+import { useRouter } from "next/router";
 import * as icons from "@ant-design/icons";
 import {
   Row,
@@ -44,6 +44,9 @@ import Assignee from "./Assignee";
 import Link from "./Link";
 
 interface IProps {
+  card: ICard;
+  c_Tags: ITag[];
+  set_c_Tags: ISetStateFunction<ITag[]>;
   set_s_showCard: ISetStateFunction<boolean>;
 }
 
@@ -86,10 +89,13 @@ const tagRender = (props: CustomTagProps) => {
 };
 
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
-const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
-  const workspaceId = "646b682074ca962749815393";
-  const kanbanId = "646cf9eabc9294205190f79c";
-  const cardId = "646e328d8e59e798344d36a8";
+const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard }) => {
+  const router = useRouter();
+  // const workspaceId = "646b682074ca962749815393";
+  // const kanbanId = "646cf9eabc9294205190f79c";
+  const kanbanId = router.query.id as string;
+  // console.log("kanbanId = ", kanbanId);
+  // const cardId = "646e328d8e59e798344d36a8";
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
   // 是否顯示建立 Link 的地方
@@ -97,7 +103,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
   // kanban 上所有 Link
   const [s_Links, set_s_Links] = useState<ILink[]>([]);
   // kanban 上所有 Tag
-  const [s_Tags, set_s_Tags] = useState<ITag[]>([]);
+  // const [s_Tags, set_s_Tags] = useState<ITag[]>([]);
   // 卡片上傳的檔案
   const [s_attachments, set_s_attachments] = useState<any>([]);
   // 卡片的 reporter
@@ -127,7 +133,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
     // console.log("newValues = ", newValues);
     // return;
 
-    const res: AxiosResponse = await updateCard(form.getFieldValue("_id"), newValues);
+    const res: AxiosResponse = await updateCard(card._id, newValues);
     const { status, message } = res.data as IApiResponse;
     if (status === "success") {
       messageApi.success(message);
@@ -172,7 +178,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
   };
 
   const removeAttachment = async (attachmentId: string) => {
-    const res: AxiosResponse = await deleteAttachment(cardId, attachmentId);
+    const res: AxiosResponse = await deleteAttachment(card._id, attachmentId);
     const { status, message, data } = res.data as IApiResponse;
     if (status === "success") {
       set_s_attachments(data.target.attachment);
@@ -185,7 +191,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
   useEffect(() => {
     const call_getCardById = async () => {
       set_s_isLoaging(true);
-      const res: AxiosResponse = await getCardById(cardId);
+      const res: AxiosResponse = await getCardById(card._id);
       const { status, message, data } = res.data as IApiResponse;
       // console.log("card data = ", data);
       if (status === "success") {
@@ -228,17 +234,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
       }
       set_s_isLoaging(false);
     };
-    const call_getTags = async () => {
-      // set_s_isLoaging(true);
-      const res: AxiosResponse = await getTags(kanbanId);
-      const { status, data } = res.data as IApiResponse;
-      if (status === "success") {
-        // console.log("Tags = ", data);
-        set_s_Tags(data);
-      }
-      // set_s_isLoaging(false);
-    };
-    call_getTags();
+
     call_getCardById();
   }, []);
 
@@ -265,7 +261,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
               <Input />
             </Form.Item>
           </div>
-          <section className="flex flex-col gap-4 h-[70vh] overflow-auto no-scrollbar">
+          <section className="no-scrollbar flex h-[70vh] flex-col gap-4 overflow-auto">
             <GroupTitle>
               <EditFilled className="mr-1" />
               Content
@@ -352,9 +348,9 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
                     mode="multiple"
                     showArrow
                     tagRender={tagRender}
-                    options={s_Tags.map((item) => ({
+                    options={c_Tags?.map((item) => ({
                       label: (
-                        <span className={`${item.color} px-2 py-1 rounded-[100px] font-medium`}>
+                        <span className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
                           <IconRenderer iconName={item.icon as keyof typeof icons} />
                           <span className="ml-2">{item.name}</span>
                         </span>
@@ -386,7 +382,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
                 <FieldLabel>Links</FieldLabel>
                 <Button
                   size="small"
-                  className="text-black flex items-center"
+                  className="flex items-center text-black"
                   onClick={() => set_s_showLink(true)}
                   icon={<LinkOutlined />}
                 >
@@ -396,7 +392,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
               <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
               {s_Links?.map((item) => (
                 <Col key={item.url + item.name} span={24}>
-                  <DeleteOutlined className="cursor-pointer mr-2" onClick={() => removeLink(item.name + item.url)} />
+                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeLink(item.name + item.url)} />
                   <Typography.Link underline href={item.url} target="_blank">
                     {item.name}
                   </Typography.Link>
@@ -430,7 +426,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
                     set_s_isLoaging(false);
                   }}
                 >
-                  <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                  <Button size="small" className="flex items-center text-black" icon={<LinkOutlined />}>
                     Add file
                   </Button>
                 </Upload>
@@ -438,7 +434,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
 
               {s_attachments?.map((item: any) => (
                 <Col key={item.fileId} span={24}>
-                  <DeleteOutlined className="cursor-pointer mr-2" onClick={() => removeAttachment(item.fileId)} />
+                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
                   <Typography.Link underline href={item.url} target="_blank">
                     {item.name}
                   </Typography.Link>
@@ -451,7 +447,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
               Comment
             </GroupTitle>
 
-            <CommentList cardId={cardId} />
+            <CommentList cardId={card._id} />
           </section>
 
           <Divider className="my-3" />
@@ -480,7 +476,7 @@ const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
         maskClosable={false}
         footer={null}
       >
-        {s_showTagModal && <TagModal s_Tags={s_Tags} set_s_Tags={set_s_Tags} kanbanId={kanbanId} />}
+        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={kanbanId} />}
       </Modal>
     </Spin>
   );

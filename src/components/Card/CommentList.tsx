@@ -60,7 +60,7 @@ const CommentList: React.FC<IProps> = ({ cardId }) => {
       <div className="flex flex-col">
         {contextHolder}
         {/* 輸入 comment 的位置 */}
-        <section className="w-full flex items-center gap-2">
+        <section className="flex w-full items-center gap-2">
           <Avatar size={36} className="bg-gray-200" src={c_user.avatar.length > 0 && c_user.avatar}>
             {c_user?.avatar.length === 0 ? c_user.username[0] : null}
           </Avatar>
@@ -70,12 +70,12 @@ const CommentList: React.FC<IProps> = ({ cardId }) => {
             placeholder="Write a comment..."
             onChange={(e) => set_s_newComment(e.target.value)}
           />
-          <Button size="large" className="text-black font-medium" onClick={sentData}>
+          <Button size="large" className="font-medium text-black" onClick={sentData}>
             Send
           </Button>
         </section>
 
-        <section className="w-full pt-5 flex flex-col gap-3">
+        <section className="flex w-full flex-col gap-3 pt-5">
           <Comment comments={s_allComments} />
         </section>
       </div>

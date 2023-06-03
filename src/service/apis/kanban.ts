@@ -1,6 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import instance from "../instance";
 
+// 取得看板資料
+export const getKanban = (kanbanId: string) => {
+  return instance.get(`kanbans/${kanbanId}`);
+};
+
 // 新建 kanban
 export const addkanban = (data: Pick<Ikanban, "name" | "key" | "workspaceId">) => {
   return instance.post("kanbans", data);
@@ -35,3 +40,8 @@ export const createTag = (kanbanId: string, data: Pick<ITag, "name" | "color" | 
 export const updateTag = (kanbanId: string, data: Pick<ITag, "name" | "color" | "icon">, tagId: string = "") => {
   return instance.patch(`kanbans/${kanbanId}/tag/${tagId}`, data);
 };
+
+// 取得看板下所有 lists
+// export const getKanbanLists = (kanbanId: string) => {
+//   return instance.get(`kanbans/${kanbanId}/lists`);
+// };
