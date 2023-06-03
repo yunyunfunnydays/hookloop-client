@@ -27,6 +27,7 @@ declare global {
     _id: string;
     name: string;
     key: string;
+    listOrder: IList[];
     workspaceId: string;
     isPinned: boolean;
     isArchived: boolean;
@@ -49,13 +50,15 @@ declare global {
   }
 
   interface ICard {
-    id: string;
+    _id: string;
     name: string;
     description: string;
-    reporter: string;
-    assignee: string[];
+    reporter: IUser;
+    listId: string;
+    kanbanId: string;
+    assignee: IUser[];
     webLink: ILink[];
-    priority: string | null;
+    priority: "Medium" | "Low" | "High";
     targetDate?: Dayjs[];
     targetStartDate: Dayjs | null;
     targetEndDate: Dayjs | null;
@@ -93,11 +96,9 @@ declare global {
   interface IList {
     _id: string;
     name: string;
-    cardOrder: string[];
+    cardOrder: ICard[];
     kanbanId: string;
     isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
   }
 
   interface IOwner {
@@ -117,5 +118,28 @@ declare global {
     createdAt?: Dayjs;
     currentComment: string;
     userId: IUser;
+  }
+
+  interface IListsCards {
+    cards: { [key: string]: ICard };
+    lists: { [key: string]: IList };
+    listOrder: string[];
+  }
+
+  interface ICard1 {
+    id: string;
+    text: string;
+  }
+
+  interface IList1 {
+    id: string;
+    cards: ICard1[];
+  }
+  interface IDragItem {
+    private _id(arg0: number, length: number, _id: any, id: string): unknown;
+    id: string;
+    type: string;
+    currentListId: string;
+    currentCardIndex?: number;
   }
 }

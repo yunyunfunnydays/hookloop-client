@@ -37,7 +37,7 @@ const WorkspaceModal: React.FC<IProps> = ({ set_s_isShowModal }) => {
     if (Object.keys(target).length > 0) {
       messageApi.warning(
         <span>
-          user <span className="text-red-500 font-bold">{data.username}</span> is existing
+          user <span className="font-bold text-red-500">{data.username}</span> is existing
         </span>,
       );
       return;
@@ -122,7 +122,7 @@ const WorkspaceModal: React.FC<IProps> = ({ set_s_isShowModal }) => {
       <section className="flex flex-col">
         {contextHolder}
         <div className="flex flex-col">
-          <p className="text-base font-medium mb-1">Workspace name</p>
+          <p className="mb-1 text-base font-medium">Workspace name</p>
           <Input
             value={s_newDate.workspaceName}
             onChange={(e) => {

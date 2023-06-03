@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
-import { DatePicker, Input, Button, Modal } from "antd";
+// import { DatePicker, Input, Button, Modal } from "antd";
+import { Button, Modal } from "antd";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // component
@@ -22,8 +23,8 @@ const Dashboard: React.FC<IProps> = () => {
           <Button type="primary" size="large" onClick={() => set_s_showCard(true)}>
             測試卡片
           </Button>
-          <DatePicker className="w-[250px]" />
-          <Input.Search placeholder="input search text" enterButton style={{ width: 250 }} />
+          {/* <DatePicker className="w-[250px]" />
+          <Input.Search placeholder="input search text" enterButton style={{ width: 250 }} /> */}
         </section>
 
         <section className="mt-5 flex flex-col gap-8">
@@ -46,7 +47,7 @@ const Dashboard: React.FC<IProps> = () => {
           footer={null}
         >
           {/* {s_showCard && <CardModal set_s_showCard={set_s_showCard} />} */}
-          {s_showCard === true ? <CardModal set_s_showCard={set_s_showCard} /> : null}
+          {s_showCard === true ? <CardModal cardId="646e328d8e59e798344d36a8" set_s_showCard={set_s_showCard} /> : null}
         </Modal>
       </div>
     </CustLayout>

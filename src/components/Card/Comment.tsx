@@ -15,11 +15,11 @@ const Comment: React.FC<IProps> = ({ comments }) => {
     }
   }, [comments]);
   return (
-    <div ref={divRef} className="h-[200px] overflow-auto flex flex-col gap-3">
+    <div ref={divRef} className="flex h-[200px] flex-col gap-3 overflow-auto">
       {comments?.map((item) => (
         <div key={item._id} className="flex flex-col gap-1">
-          <section className="flex justify-between items-center">
-            <h5 className="text-base font-bold flex items-center gap-1">
+          <section className="flex items-center justify-between">
+            <h5 className="flex items-center gap-1 text-base font-bold">
               {/* <Image src={User2} className="w-8 h-8" alt="user2" /> */}
               <Avatar size={36} className="bg-gray-200" src={item.userId?.avatar.length > 0 && item.userId?.avatar}>
                 {item.userId?.avatar.length === 0 ? item.userId?.username[0] : null}

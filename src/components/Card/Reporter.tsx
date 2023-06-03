@@ -30,7 +30,7 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
         </Tooltip>
       ) : (
         <Button
-          className="bg-[#D9D9D9] float-right text-white"
+          className="float-right bg-[#D9D9D9] text-white"
           onClick={() => set_s_showModal(true)}
           type="primary"
           size="middle"

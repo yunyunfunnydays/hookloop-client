@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useContext } from "react";
+import Router from "next/router";
 import { message as msg, Spin, Popover, Typography, Modal } from "antd";
 import {
   EllipsisOutlined,
@@ -17,6 +18,8 @@ import GlobalContext from "@/Context/GlobalContext";
 // api
 import { pinKanban, archiveKanban } from "@/service/apis/kanban";
 import ReNameKanbanModal from "@/components/Kanban/ReNameKanbanModal";
+
+type ClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 interface IProps {
   kanbanData: Ikanban;
@@ -39,7 +42,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
   const TITlESTYLE = "p-1 cursor-pointer hover:bg-zinc-200 hover:rounded-md transition-all";
 
   // 加入我的最愛 or 取消我的最愛
-  const toggleFavorites = async () => {
+  const toggleFavorites = async (event: ClickEvent) => {
     set_s_isLoaging(true);
     const res: AxiosResponse = await pinKanban(kanbanData.key, { isPinned: !kanbanData.isPinned });
     const { status, message } = res.data as IApiResponse;
@@ -50,6 +53,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
     }
     c_getAllWorkspace();
     set_s_isLoaging(false);
+    event.stopPropagation();
   };
 
   const archived = async () => {
@@ -63,7 +67,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
 
   // popver 內容
   const popoverContent = () => (
-    <div className="w-52 border-0 border-t pt-3">
+    <div className="w-52 border-0 border-t pt-3" role="presentation" onClick={(e) => e.stopPropagation()}>
       <Typography.Title className={TITlESTYLE} level={5} onClick={() => set_s_showNameModal(!s_showNameModal)}>
         <EditOutlined className="pr-2" />
         rename {kanbanData.name}
@@ -100,10 +104,17 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
 
   return (
     <Spin spinning={s_isLoaging}>
-      <div className={`${CARD_BASICSTYLE} px-3 py-4 flex flex-col justify-between items-end border`}>
+      <div
+        className={`${CARD_BASICSTYLE} flex flex-col items-end justify-between border px-3 py-4`}
+        role="presentation"
+        onClick={(e) => {
+          Router.push(`/kanban/${kanbanData.key}`);
+          e.stopPropagation();
+        }}
+      >
         {contextHolder}
-        <div className="w-full flex justify-between">
-          <p className="text-[#262626] font-medium text-base">{kanbanData.name}</p>
+        <div className="flex w-full justify-between" onClick={(e) => e.stopPropagation()}>
+          <p className="text-base font-medium text-[#262626]">{kanbanData.name}</p>
           <Popover
             placement="bottomLeft"
             trigger="hover"
@@ -115,9 +126,9 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         </div>
 
         {kanbanData.isPinned ? (
-          <StarFilled onClick={toggleFavorites} className={`${ICON_BASICSTYLE} text-[#FFA940]`} />
+          <StarFilled onClick={(e: ClickEvent) => toggleFavorites(e)} className={`${ICON_BASICSTYLE} text-[#FFA940]`} />
         ) : (
-          <StarOutlined onClick={toggleFavorites} className={ICON_BASICSTYLE} />
+          <StarOutlined onClick={(e: ClickEvent) => toggleFavorites(e)} className={ICON_BASICSTYLE} />
         )}
       </div>
 
@@ -138,8 +149,8 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
 // 建立看板的UI component
 export const CreateKanbanCard: React.FC<CreateKanbanCardProps> = ({ onClick }) => {
   return (
-    <div onClick={onClick} className={`${CARD_BASICSTYLE} group flex-center border-dashed border-2 border-[#BFBFBF]`}>
-      <PlusOutlined className="group-hover:transition-all group-hover:scale-125 text-3xl text-[#595959]" />
+    <div onClick={onClick} className={`${CARD_BASICSTYLE} flex-center group border-2 border-dashed border-[#BFBFBF]`}>
+      <PlusOutlined className="text-3xl text-[#595959] group-hover:scale-125 group-hover:transition-all" />
     </div>
   );
 };

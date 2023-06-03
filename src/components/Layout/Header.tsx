@@ -1,20 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import Image from "next/image";
-import { Grid, Button, Avatar, Switch } from "antd";
-import { MenuOutlined, CloseOutlined, UserOutlined, NotificationOutlined } from "@ant-design/icons";
+import { Grid, Button, Avatar, Switch, Breadcrumb } from "antd";
+import { MenuOutlined, CloseOutlined, NotificationOutlined } from "@ant-design/icons";
 // logo
 import logo_white from "@/assets/logo_white.svg";
 import logo_black from "@/assets/logo_black.svg";
 // context
 import GlobalContext from "@/Context/GlobalContext";
+// init value
+import { kanbanInitValue, workspaceInitValue } from "@/components/util/initValue";
 // component
 import Login from "../Login";
 
 const Header: React.FC = () => {
-  const { c_user } = useContext(GlobalContext);
-
+  const { c_user, c_workspaces } = useContext(GlobalContext);
+  const router = useRouter();
   // 判斷是否有權限
   const hasAuth = c_user?.email?.length > 0;
   // antd 用來監聽畫面寬度變化的 API
@@ -23,6 +25,7 @@ const Header: React.FC = () => {
   const [s_showMenu, set_s_showMenu] = useState(false);
   // 控制要不要顯示 Login 組件
   const [s_showLogin, set_s_showLogin] = useState(false);
+  const [s_Breadcrumbs, set_s_Breadcrumbs] = useState<any[]>([]);
 
   // Header 上按鈕的基礎樣式
   const BTN_STYLE = "h-[32px] w-[105px] font-bold";
@@ -35,6 +38,22 @@ const Header: React.FC = () => {
   const toggle = (): void => {
     set_s_showMenu(!s_showMenu);
   };
+
+  useEffect(() => {
+    if (!router.query.id || !c_workspaces) {
+      set_s_Breadcrumbs([]);
+      return;
+    }
+    if (!c_workspaces) return;
+    // 目標看板
+    const kanbanData: Ikanban =
+      c_workspaces?.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban.key === router.query.id) ||
+      kanbanInitValue;
+    // workspace資料
+    const workspaceData: Iworkspace =
+      c_workspaces.find((workspace) => workspace.workspaceId === kanbanData?.workspaceId) || workspaceInitValue;
+    set_s_Breadcrumbs([{ title: workspaceData.workspaceName }, { title: kanbanData.name }]);
+  }, [router.query, c_workspaces]);
 
   // 螢幕變成md以上的尺寸時替使用者關閉漢堡選單
   useEffect(() => {
@@ -52,34 +71,29 @@ const Header: React.FC = () => {
       ${hasAuth ? "bg-[#262626] px-[25px]" : "mx-[25px] bg-white"}
     `}
     >
-      <Image
-        src={hasAuth ? logo_white : logo_black}
-        alt="HOOK LOOP"
-        className="cursor-pointer"
-        onClick={() => Router.push("/dashboard")}
-      />
+      <div className="flex items-center gap-2">
+        <Image
+          src={hasAuth ? logo_white : logo_black}
+          alt="HOOK LOOP"
+          className="cursor-pointer"
+          onClick={() => Router.push("/dashboard")}
+        />
+
+        {s_Breadcrumbs.length > 0 && <Breadcrumb items={s_Breadcrumbs} />}
+      </div>
 
       {hasAuth ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="h-[22px] w-[42px] bg-[#434343]" />
           <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
-          {c_user.avatar ? (
-            <Image
-              src={`https://cdn.filestackcontent.com/${c_user.avatar}`}
-              alt="avatar"
-              style={{ borderRadius: "100%" }}
-              onClick={() => Router.push("profile")}
-              width="45"
-              height="45"
-            />
-          ) : (
-            <Avatar
-              className="cursor-pointer bg-white text-black"
-              size={32}
-              onClick={() => Router.push("profile")}
-              icon={<UserOutlined />}
-            />
-          )}
+
+          <Avatar
+            size={28}
+            src={c_user.avatar.length > 0 && c_user.avatar}
+            className="cursor-pointer bg-white text-black"
+          >
+            {c_user?.avatar.length === 0 ? c_user.username[0] : null}
+          </Avatar>
         </div>
       ) : (
         <>
