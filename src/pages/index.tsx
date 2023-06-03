@@ -162,8 +162,8 @@ const Home: React.FC = () => {
         </section>
 
         {/* plan */}
-        <section id="Plan" className="w-[90%] lg:w-[960px] mx-auto py-[40px] px-[12px] flex flex-col items-center gap-[40px]">
-          <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat']">PLAN & PRICING</h1>
+        <section id="Plan" className="w-[90%] md:w-[960px] mx-auto py-[40px] px-[12px] flex flex-col items-center gap-[40px]">
+          <h1 className="font-black text-[24px] md:text-[40px] font-['Montserrat']">PLAN & PRICING</h1>
           <PlanComponent type="index" />
         </section>
 
