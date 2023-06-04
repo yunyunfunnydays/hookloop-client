@@ -20,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   // 所有 workspace
   const [c_workspaces, set_c_workspaces] = useState<Iworkspace[]>([]);
+
   const [s_isLoading, set_s_isLoading] = useState(false);
   // 存登入人員的資訊
   const [c_user, set_c_user] = useState<IUser>({
@@ -52,7 +53,7 @@ export default function App({ Component, pageProps }: AppProps) {
       //   // 其他情况下，保持原有顺序
       //   return 0;
       // });
-      console.log("c_workspaces = ", _data);
+      // console.log("c_workspaces = ", _data);
       set_c_workspaces(_data);
     }
     set_s_isLoading(false);

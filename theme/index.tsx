@@ -13,9 +13,17 @@ const withTheme = (node: JSX.Element) => (
           colorSubItemBg: "#FFF",
           colorItemBgHover: "rgba(0, 0, 0, 0.06)",
           colorItemBgSelected: "rgba(0, 0, 0, 0.06)",
+          // colorItemBgSelected: ｀#eeeeee",
           colorItemText: "#595959",
           colorSplit: "transprant",
           margin: 4,
+        },
+        Breadcrumb: {
+          colorText: "#FFF",
+          colorTextDescription: "#FFF",
+        },
+        Select: {
+          controlItemBgActive: "#eeeeee",
         },
         Layout: {
           colorBgLayout: "#FFF",

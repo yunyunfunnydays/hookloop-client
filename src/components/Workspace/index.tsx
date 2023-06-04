@@ -29,7 +29,7 @@ const Workspace: React.FC<IProps> = ({ workspaceData }) => {
     <div className="flex flex-col justify-start">
       {/* 資訊欄區域 */}
       <section className="flex justify-between">
-        <h5 className="text-[24px] text-[#595959] font-medium">
+        <h5 className="text-[24px] font-medium text-[#595959]">
           <DesktopOutlined />
           <span className="ml-2">{workspaceName}</span>
         </h5>

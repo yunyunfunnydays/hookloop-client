@@ -38,7 +38,7 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
         ))}
       </Avatar.Group>
       <Button
-        className="bg-[#D9D9D9] float-right text-white"
+        className="float-right bg-[#D9D9D9] text-white"
         type="primary"
         size="middle"
         shape="circle"
@@ -77,7 +77,7 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
           }}
         />
 
-        <div className="flex flex-col gap-2 mt-2">
+        <div className="mt-2 flex flex-col gap-2">
           {s_tmpAssignee?.map((item: IOwner) => (
             <div key={item.username} className="flex justify-between">
               <div className="flex items-center gap-2">
@@ -87,7 +87,7 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
                 </Avatar>
                 {item.username}
               </div>
-              <DeleteOutlined className="text-base cursor-pointer" onClick={() => deleteAsignee(item)} />
+              <DeleteOutlined className="cursor-pointer text-base" onClick={() => deleteAsignee(item)} />
             </div>
           ))}
         </div>

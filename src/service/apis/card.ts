@@ -2,7 +2,7 @@
 import instance from "../instance";
 
 // 新建 kanban
-export const addCard = (data: ICard) => {
+export const addCard = (data: Pick<ICard, "name" | "kanbanId" | "listId">) => {
   return instance.post("cards", data);
 };
 
@@ -37,5 +37,15 @@ export const moveCard = (data: {
   newCardOrder: string[];
   oldCardOrder: string[];
 }) => {
-  return instance.patch("cards/move", data);
+  return instance.patch("cards/qwererqrw/move", data);
+};
+
+// 取得 card 上所有 commits
+export const getComments = (cardId: string) => {
+  return instance.get(`cards/${cardId}/comment`);
+};
+
+// 新增 card 留言
+export const addComment = (cardId: string, data: { currentComment: string; userId: string }) => {
+  return instance.post(`cards/${cardId}/comment`, data);
 };

@@ -1,16 +1,19 @@
+import Image from "next/image";
+import { UploadFile, UploadChangeParam } from "antd/lib/upload";
 import ChangePassword from "@/components/ChangePassword";
-import { getMe, updateMe, closeMe } from "@/service/api";
+import { getMe, updateMe, closeMe, updateAvatar } from "@/service/api";
 import { IApiResponse } from "@/service/instance";
 import React, { useEffect, useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
-import { Button, Form, Row, Col, Typography, Input, Divider, Avatar, message as msg } from "antd";
+import { Button, Form, Row, Col, Typography, Input, Divider, Avatar, message as msg, Upload } from "antd";
 import Router from "next/router";
 import Cookies from "js-cookie";
 
 const { Title } = Typography;
 
 const Profile = () => {
-  const [s_showChangePassword, set_s_showChangePassword] = useState(false);
+  const [s_showChangePassword, set_s_showChangePassword] = useState<boolean>(false);
+  const [s_avatarUrl, set_s_avatarUrl] = useState<string>("");
   const [form] = Form.useForm();
 
   const closeChangePassword = (): void => {
@@ -26,6 +29,7 @@ const Profile = () => {
           username: data.userData.username,
           email: data.userData.email,
         });
+        set_s_avatarUrl(data.userData.avatar);
       } else {
         msg.error("Failed to get user data");
       }
@@ -62,12 +66,56 @@ const Profile = () => {
     })();
   };
 
+  const handleChangeAvatar = async (info: UploadChangeParam<UploadFile<any>>) => {
+    const { file } = info;
+
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file as any);
+
+      const res: AxiosResponse = await updateAvatar(formData);
+      const { status, message, data } = res.data as IApiResponse;
+
+      if (status === "success") {
+        msg.success(message);
+        set_s_avatarUrl(data.userData.avatar);
+      } else {
+        msg.error(message);
+      }
+    } catch (err) {
+      // error
+    }
+  };
+
   return (
-    <section className="h-full flex justify-center">
-      <div className="w-[685px] mt-8">
-        <div className="w-full flex-center mb-2">
-          <Avatar size={80} icon={<UserOutlined />} />
-        </div>
+    <section className="flex h-full justify-center">
+      <div className="mt-8 w-[685px]">
+        <Row justify="center">
+          <Col>
+            <Upload
+              name="avatar"
+              listType="picture-circle"
+              className="avatar-uploader flex-center"
+              showUploadList={false}
+              beforeUpload={() => false}
+              onChange={(info) => {
+                handleChangeAvatar(info);
+              }}
+            >
+              {s_avatarUrl ? (
+                <Image
+                  src={`https://cdn.filestackcontent.com/${s_avatarUrl}`}
+                  alt="avatar"
+                  style={{ borderRadius: "100%" }}
+                  width="100"
+                  height="100"
+                />
+              ) : (
+                <Avatar size={80} icon={<UserOutlined />} />
+              )}
+            </Upload>
+          </Col>
+        </Row>
         <section className="mb-8">
           <Title level={2}>Basic Info</Title>
           <Divider />
@@ -76,7 +124,7 @@ const Profile = () => {
             labelCol={{ span: 6 }}
             labelAlign="left"
             onFinish={handleFinish}
-            className="w-full flex flex-col gap-[20px] mb-4"
+            className="mb-4 flex w-full flex-col gap-[20px]"
           >
             <Form.Item name="username" label="Username" className="w-full">
               <Input />
@@ -86,7 +134,7 @@ const Profile = () => {
                 Password:
               </Col>
               <Col span={18}>
-                <Button type="text" onClick={() => set_s_showChangePassword(true)} className="font-bold p-0">
+                <Button type="text" onClick={() => set_s_showChangePassword(true)} className="p-0 font-bold">
                   Change Password
                 </Button>
               </Col>
@@ -108,7 +156,7 @@ const Profile = () => {
             labelCol={{ span: 6 }}
             labelAlign="left"
             onFinish={handleFinish}
-            className="w-full flex flex-col gap-[20px] mb-4"
+            className="mb-4 flex w-full flex-col gap-[20px]"
             initialValues={{ language: "English (United States) [Default]", colorTheme: "Normal" }}
           >
             <Form.Item name="language" label="Language" className="w-full">
@@ -122,12 +170,12 @@ const Profile = () => {
         <section>
           <Title level={2}>Groups</Title>
           <Divider />
-          <Row className="w-full mb-[20px]">
+          <Row className="mb-[20px] w-full">
             <Col span={6} className="leading-[32px]">
               Workspaces:
             </Col>
             <Col span={18}>
-              <Button type="text" onClick={() => set_s_showChangePassword(true)} className="font-bold p-0">
+              <Button type="text" onClick={() => set_s_showChangePassword(true)} className="p-0 font-bold">
                 Workspace1
               </Button>
             </Col>
@@ -137,7 +185,7 @@ const Profile = () => {
               Members:
             </Col>
             <Col span={18}>
-              <Button type="text" onClick={() => set_s_showChangePassword(true)} className="font-bold p-0">
+              <Button type="text" onClick={() => set_s_showChangePassword(true)} className="p-0 font-bold">
                 Member1
               </Button>
             </Col>
