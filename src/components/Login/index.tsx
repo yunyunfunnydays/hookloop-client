@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import Router from "next/router";
 import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
@@ -13,6 +13,7 @@ import GlobalContext from "@/Context/GlobalContext";
 // api
 import { IApiResponse } from "@/service/instance";
 import { createUser, forgetPassword, login } from "@/service/api";
+import useTimer from "@/hooks/useTimer";
 
 interface ILogin {
   open: boolean;
@@ -42,6 +43,7 @@ const Login: React.FC<ILogin> = (props) => {
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
   const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
+  const [s_reset_password_timer, set_s_reset_password_timer] = useState<number>(0);
 
   // const ICON_STYLE = "cursor-pointer mb-2";
 
@@ -158,16 +160,19 @@ const Login: React.FC<ILogin> = (props) => {
     if (s_editType === "forgetPassword") {
       set_s_loading(true);
       const res: AxiosResponse = await forgetPassword({ email: values.email });
-      const { status } = res.data as IApiResponse;
+      const { status, message } = res.data as IApiResponse;
       if (status === "success") {
         set_s_reset_password_email_status(true);
-        handleResponse(res.data);
+        msg.success(message);
       } else {
+        set_s_reset_password_email_status(false);
         handleError(res.data);
       }
       set_s_loading(false);
     }
   };
+
+  // useEffect(() => {}, [us]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
@@ -319,7 +324,7 @@ const Login: React.FC<ILogin> = (props) => {
             </Button>
           </div>
           {s_reset_password_email_status && (
-            <div className="w-full h-[105px] mt-[20px] bg-[#F5F5F5] flex-center flex-col p-[25px]">
+            <div className="w-full mt-[20px] bg-[#ffe8eb] flex-center flex-col p-[20px]">
               <Title level={5} type="danger">
                 An email has been sent to your email.
               </Title>
@@ -330,6 +335,7 @@ const Login: React.FC<ILogin> = (props) => {
             </div>
           )}
         </div>
+        {useTimer(600000).minute}:{useTimer(600000).second}
       </Spin>
     </Modal>
   );
