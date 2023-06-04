@@ -6,6 +6,7 @@ declare global {
   interface AxiosResponse extends axiosRes {}
 
   interface IUser {
+    _id?: string;
     username: string;
     email: string;
     password: string;
@@ -58,6 +59,7 @@ declare global {
     kanbanId: string;
     assignee: IUser[];
     webLink: ILink[];
+    attachment?: string[];
     priority: "Medium" | "Low" | "High";
     targetDate?: Dayjs[];
     targetStartDate: Dayjs | null;
@@ -66,7 +68,7 @@ declare global {
     actualStartDate: Dayjs | null;
     actualEndDate: Dayjs | null;
     status: string | null;
-    tag: string[];
+    tag: ITag[];
   }
 
   interface ICardBK {

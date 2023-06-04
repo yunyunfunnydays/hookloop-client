@@ -119,7 +119,6 @@ const TagModal: React.FC<IProps> = ({ c_Tags, set_c_Tags, kanbanId }) => {
           <div className="flex gap-2">
             <Tag
               key={tag._id}
-              // color={tag.color}
               color="#edebeb"
               className={`${tag.color} flex-center h-3/5 flex-1 gap-3 rounded-md px-5 py-2 text-[20px] font-medium`}
               style={{ marginRight: 3 }}

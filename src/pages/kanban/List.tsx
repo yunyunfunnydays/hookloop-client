@@ -105,7 +105,7 @@ const List: React.FC<IListProps> = ({ list, s_ListsData, set_s_ListsData, cards,
                 {cards.length > 0 && (
                   <div className="mb-4 flex h-[calc(100vh_-_230px_-_90px)] flex-col space-y-6 overflow-auto">
                     {cards.map((card: ICard, index: number) => (
-                      <Card key={card._id} card={card} index={index} />
+                      <Card key={card._id} s_kanbanId={s_kanbanId} card={card} index={index} />
                     ))}
                   </div>
                 )}
