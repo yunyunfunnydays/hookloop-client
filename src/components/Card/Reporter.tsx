@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 // import Image from "next/image";
 import { PlusOutlined } from "@ant-design/icons";
-import { Avatar, Button, Modal, Tooltip } from "antd";
+import { Button, Modal, Tooltip } from "antd";
 import MemberSelect from "@/components/Member/MemberSelect";
+import CustAvatar from "../util/CustAvatar";
 
 interface IProps {
   reporter: IOwner;
@@ -18,7 +19,7 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
     <>
       {hasOwner ? (
         <Tooltip title={reporter.username}>
-          <Avatar
+          {/* <Avatar
             onClick={() => set_s_showModal(true)}
             size={32}
             className="cursor-pointer bg-gray-200"
@@ -26,7 +27,8 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
             src={reporter.avatar.length > 0 && reporter.avatar}
           >
             {reporter?.avatar.length === 0 ? reporter.username[0] : null}
-          </Avatar>
+          </Avatar> */}
+          <CustAvatar info={reporter} />
         </Tooltip>
       ) : (
         <Button
