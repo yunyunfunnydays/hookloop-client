@@ -17,7 +17,7 @@
 }
 @layer components {
   #__next {
-    @apply w-screen h-screen bg-white;
+    @apply h-screen w-screen bg-white;
   }
   html,
   blockquote,
@@ -41,6 +41,10 @@
   }
 
   .flex-center {
-    @apply flex justify-center items-center;
+    @apply flex items-center justify-center;
   }
+}
+
+.member-chackbox > .ant-checkbox {
+  margin-top: 5px !important;
 }

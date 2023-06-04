@@ -18,6 +18,7 @@ import GlobalContext from "@/Context/GlobalContext";
 // api
 import { pinKanban, archiveKanban } from "@/service/apis/kanban";
 import ReNameKanbanModal from "@/components/Kanban/ReNameKanbanModal";
+import TagWrapper from "./TagWrapper";
 
 type ClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
@@ -38,6 +39,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   // 改變名稱的彈窗的開關
   const [s_showNameModal, set_s_showNameModal] = useState(false);
+  const [s_showTagModal, set_s_showTagModal] = useState(false);
 
   const TITlESTYLE = "p-1 cursor-pointer hover:bg-zinc-200 hover:rounded-md transition-all";
 
@@ -95,7 +97,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         Archived {kanbanData.name}
       </Typography.Title>
 
-      <Typography.Title className={`${TITlESTYLE} mt-2 `} level={5}>
+      <Typography.Title className={`${TITlESTYLE} mt-2 `} level={5} onClick={() => set_s_showTagModal(true)}>
         <TagsOutlined className="pr-2" />
         Tag setting
       </Typography.Title>
@@ -141,6 +143,19 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         footer={null}
       >
         {s_showNameModal && <ReNameKanbanModal kanbanData={kanbanData} set_s_showNameModal={set_s_showNameModal} />}
+      </Modal>
+
+      {/* tags 的 Modal */}
+      <Modal
+        title="Tags setting"
+        width="472px"
+        open={s_showTagModal}
+        destroyOnClose
+        onCancel={() => set_s_showTagModal(false)}
+        maskClosable={false}
+        footer={null}
+      >
+        {s_showTagModal && <TagWrapper kanbanId={kanbanData._id} />}
       </Modal>
     </Spin>
   );

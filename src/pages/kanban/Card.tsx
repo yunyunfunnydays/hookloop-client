@@ -2,15 +2,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useRef, useState, useEffect, useContext } from "react";
 import type { InputRef } from "antd";
-import { Modal, Input, Avatar, Tooltip, Tag } from "antd";
+import { Modal, Input, Avatar, Tooltip } from "antd";
 import { addCard } from "@/service/apis/card";
 import { BellFilled, MessageOutlined, PlusOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
-import KanbanContext from "@/Context/KanbanContext";
 import CardModal from "@/components/Card/CardModal";
 import IconRenderer from "@/components/util/IconRender";
+import KanbanContext from "@/Context/KanbanContext";
 
 type CardProps = {
+  s_kanbanId: string;
   card: ICard;
   index: number;
 };
@@ -32,9 +33,7 @@ const CardPriority: React.FC<CardPriorityProps> = ({ priority }) => {
   );
 };
 
-const Card: React.FC<CardProps> = ({ card, index }) => {
-  const { c_Tags, set_c_Tags } = useContext(KanbanContext);
-  // console.log("c_Tags = ", card.tag);
+const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
 
   return (
@@ -99,8 +98,8 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
                 {card.assignee?.map((user: IUser) => (
                   <Tooltip key={user?.username} title={user?.username}>
                     {/* <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
-                    <Avatar size={32} src={user?.avatar.length > 0 && user?.avatar} className="bg-gray-200">
-                      {user?.avatar.length === 0 ? user?.username[0] : null}
+                    <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
+                      {user?.avatar?.length === 0 ? user?.username[0] : null}
                     </Avatar>
                   </Tooltip>
                 ))}
@@ -197,9 +196,7 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
         footer={null}
       >
         {/* {s_showCard && <CardModal set_s_showCard={set_s_showCard} />} */}
-        {s_showCard === true ? (
-          <CardModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} card={card} set_s_showCard={set_s_showCard} />
-        ) : null}
+        {s_showCard === true ? <CardModal s_kanbanId={s_kanbanId} card={card} set_s_showCard={set_s_showCard} /> : null}
       </Modal>
     </>
   );
@@ -208,11 +205,12 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
 type AddCardProps = {
   s_kanbanId: string;
   listData: IList;
-  set_s_ListsData: ISetStateFunction<IList[]>;
+  // set_s_ListsData: ISetStateFunction<IList[]>;
 };
 
-export const AddCard: React.FC<AddCardProps> = ({ s_kanbanId, listData, set_s_ListsData }) => {
+export const AddCard: React.FC<AddCardProps> = ({ s_kanbanId, listData }) => {
   const inputRef = useRef<InputRef>(null);
+  const { c_getKanbanByKey } = useContext(KanbanContext);
   const [s_isAddingCard, set_s_isAddingCard] = useState(false);
   const [s_cardName, set_s_cardName] = useState<string>("");
 
@@ -236,10 +234,11 @@ export const AddCard: React.FC<AddCardProps> = ({ s_kanbanId, listData, set_s_Li
         kanbanId: s_kanbanId,
         listId: listData._id,
       });
-      const { status, message, data } = res.data as IApiResponse;
+      const { status, message } = res.data as IApiResponse;
       // console.log("data = ", data);
       if (status === "success") {
-        set_s_ListsData(data.listOrder);
+        // set_s_ListsData(data.listOrder);
+        c_getKanbanByKey();
       } else {
         console.error(message);
       }

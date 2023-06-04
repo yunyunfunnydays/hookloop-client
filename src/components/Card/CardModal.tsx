@@ -31,11 +31,12 @@ import {
   MessageFilled,
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
-import { getTags } from "@/service/apis/kanban";
-import { addCard, getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
+// import { getTags } from "@/service/apis/kanban";
+import { getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from "dayjs";
+import KanbanContext from "@/Context/KanbanContext";
 // component
 import CommentList from "./CommentList";
 import TagModal from "../Kanban/TagModal";
@@ -44,9 +45,8 @@ import Assignee from "./Assignee";
 import Link from "./Link";
 
 interface IProps {
+  s_kanbanId: string;
   card: ICard;
-  c_Tags: ITag[];
-  set_c_Tags: ISetStateFunction<ITag[]>;
   set_s_showCard: ISetStateFunction<boolean>;
 }
 
@@ -89,13 +89,9 @@ const tagRender = (props: CustomTagProps) => {
 };
 
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
-const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard }) => {
+const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const router = useRouter();
-  // const workspaceId = "646b682074ca962749815393";
-  // const kanbanId = "646cf9eabc9294205190f79c";
-  const kanbanId = router.query.id as string;
-  // console.log("kanbanId = ", kanbanId);
-  // const cardId = "646e328d8e59e798344d36a8";
+  const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
   // 是否顯示建立 Link 的地方
@@ -132,13 +128,17 @@ const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard 
     };
     // console.log("newValues = ", newValues);
     // return;
-
+    delete newValues.targetDate;
+    delete newValues.actualDate;
     const res: AxiosResponse = await updateCard(card._id, newValues);
     const { status, message } = res.data as IApiResponse;
     if (status === "success") {
       messageApi.success(message);
+      c_getKanbanByKey();
+      set_s_showCard(false);
     } else {
       messageApi.error(message);
+      set_s_showCard(false);
     }
   };
 
@@ -203,7 +203,7 @@ const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard 
         form.setFieldsValue({
           ...data,
           // kanbanId: "646cf5e65916bb0a3de48875",
-          kanbanId,
+          // kanbanId: s_kanbanId,
           tag: tmpTag,
           // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
           reporter: data.reporter?._id || "",
@@ -235,7 +235,36 @@ const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard 
       set_s_isLoaging(false);
     };
 
-    call_getCardById();
+    // call_getCardById();
+    form.setFieldsValue({
+      ...card,
+      // kanbanId: "646cf5e65916bb0a3de48875",
+      // kanbanId: s_kanbanId,
+      tag: card.tag?.map((item: ITag) => item?._id) || [],
+      // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+      reporter: card.reporter?._id || "",
+      assignee: card.assignee?.map((item: IOwner) => item._id),
+      actualDate: [dayjs(card.actualStartDate), dayjs(card.actualEndDate)],
+      targetDate: [dayjs(card.targetStartDate), dayjs(card.targetEndDate)],
+    });
+
+    // 如果有reporter就獨立開一個state儲存
+    if ((card.reporter?._id || "").length > 0) {
+      set_s_reporter(card.reporter);
+    }
+    // 如果有assignee就獨立開一個state儲存
+    if (card.assignee?.length > 0) {
+      // console.log("data.assignee = ", data.assignee);
+      set_s_assignee(card.assignee);
+    }
+
+    if ((card?.attachment || "")?.length > 0) {
+      set_s_attachments(card.attachment);
+    }
+
+    if ((card?.webLink || "")?.length > 0) {
+      set_s_Links(card.webLink);
+    }
   }, []);
 
   return (
@@ -245,12 +274,12 @@ const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard 
           {contextHolder}
           {/* 隱藏欄位 */}
           <div>
-            <Form.Item name="kanbanId" hidden>
+            {/* <Form.Item name="kanbanId" hidden>
               <Input />
-            </Form.Item>
-            <Form.Item name="_id" hidden>
+            </Form.Item> */}
+            {/* <Form.Item name="_id" hidden>
               <Input />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name="reporter" hidden>
               <Input />
             </Form.Item>
@@ -317,7 +346,7 @@ const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard 
               <Col span={12} className="flex flex-col">
                 <Form.Item label={<FieldLabel>Priority</FieldLabel>} name="priority">
                   <Select
-                    placeholder="please select project"
+                    placeholder="please select priority"
                     // value={s_cardData.priority}
                     options={[
                       { label: "Low", value: "Low" },
@@ -331,7 +360,7 @@ const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard 
               <Col span={12} className="flex flex-col">
                 <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
                   <Select
-                    placeholder="please select board"
+                    placeholder="please select status"
                     // value={s_cardData.status}
                     options={[
                       { label: "Pending", value: "Pending" },
@@ -476,7 +505,7 @@ const CardModal: React.FC<IProps> = ({ card, c_Tags, set_c_Tags, set_s_showCard 
         maskClosable={false}
         footer={null}
       >
-        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={kanbanId} />}
+        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={s_kanbanId} />}
       </Modal>
     </Spin>
   );

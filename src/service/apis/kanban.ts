@@ -2,8 +2,8 @@
 import instance from "../instance";
 
 // 取得看板資料
-export const getKanban = (kanbanId: string) => {
-  return instance.get(`kanbans/${kanbanId}`);
+export const getKanbanByKey = (kanbanId: string, query?: any) => {
+  return instance.get(`kanbans/${kanbanId}`, { params: query });
 };
 
 // 新建 kanban
