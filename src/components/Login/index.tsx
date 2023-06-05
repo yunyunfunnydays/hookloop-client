@@ -2,7 +2,21 @@
 import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import Router from "next/router";
-import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
+import {
+  Grid,
+  Row,
+  Col,
+  Modal,
+  Typography,
+  Form,
+  Input,
+  Button,
+  Tag,
+  notification,
+  message as msg,
+  Spin,
+  Space,
+} from "antd";
 // import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/icons";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Cookies from "js-cookie";
@@ -13,7 +27,7 @@ import GlobalContext from "@/Context/GlobalContext";
 // api
 import { IApiResponse } from "@/service/instance";
 import { createUser, forgetPassword, login } from "@/service/api";
-import useTimer from "@/hooks/useTimer";
+import Timer from "@/components/Timer";
 
 interface ILogin {
   open: boolean;
@@ -163,6 +177,7 @@ const Login: React.FC<ILogin> = (props) => {
       const { status, message } = res.data as IApiResponse;
       if (status === "success") {
         set_s_reset_password_email_status(true);
+        set_s_reset_password_timer(true);
         msg.success(message);
       } else {
         set_s_reset_password_email_status(false);
@@ -172,7 +187,13 @@ const Login: React.FC<ILogin> = (props) => {
     }
   };
 
-  // useEffect(() => {}, [us]);
+  useEffect(() => {
+    if (open) {
+      set_s_editType("login");
+      set_s_reset_password_email_status(false);
+      set_s_reset_password_timer(false);
+    }
+  }, [open]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
@@ -184,7 +205,7 @@ const Login: React.FC<ILogin> = (props) => {
             name="basic"
             form={form}
             onFinish={onFinish}
-            className="w-full flex flex-col items-center gap-[40px]"
+            className="flex w-full flex-col items-center gap-[40px]"
           >
             <Image src={logo} alt="HOOK LOOP" className="mt-5" />
 
@@ -285,10 +306,17 @@ const Login: React.FC<ILogin> = (props) => {
                     type="primary"
                     className={s_editType === "forgetPassword" ? RESET_PASSWORD_SUBMIT_BTN : SUBMIT_BTN}
                     htmlType="submit"
+                    disabled={s_editType === "forgetPassword" && s_reset_password_timer === true}
                   >
                     {s_editType === "login" && "Log in"}
                     {s_editType === "signUp" && "Sign up"}
-                    {s_editType === "forgetPassword" && "Send Reset Password Email"}
+                    {s_editType === "forgetPassword" && s_reset_password_timer === true && (
+                      <Space>
+                        Re-Send Email in
+                        <Timer setTimerTrigger={set_s_reset_password_timer} />
+                      </Space>
+                    )}
+                    {s_editType === "forgetPassword" && s_reset_password_timer === false && "Send Reset Password Email"}
                   </Button>
                 </Form.Item>
               </Col>
@@ -298,7 +326,7 @@ const Login: React.FC<ILogin> = (props) => {
                   <Text
                     type="secondary"
                     underline
-                    className="cursor-pointer flex-center"
+                    className="flex-center cursor-pointer"
                     onClick={() => toggleEditType("forgetPassword")}
                   >
                     Forget your password?
@@ -308,7 +336,7 @@ const Login: React.FC<ILogin> = (props) => {
             </Row>
           </Form>
 
-          <div className="w-full h-[105px] mt-[40px] bg-[#F5F5F5] flex-center flex-col gap-2">
+          <div className="flex-center mt-[40px] h-[105px] w-full flex-col gap-2 bg-[#F5F5F5]">
             <Title level={5}>{s_editType === "login" ? "Not have account yet?" : "Already have an account?"}</Title>
             <Button
               className={`text-black ${SUBMIT_BTN}`}
@@ -324,7 +352,7 @@ const Login: React.FC<ILogin> = (props) => {
             </Button>
           </div>
           {s_reset_password_email_status && (
-            <div className="w-full mt-[20px] bg-[#ffe8eb] flex-center flex-col p-[20px]">
+            <div className="flex-center mt-[20px] w-full flex-col bg-[#ffe8eb] p-[20px]">
               <Title level={5} type="danger">
                 An email has been sent to your email.
               </Title>
@@ -335,7 +363,7 @@ const Login: React.FC<ILogin> = (props) => {
             </div>
           )}
         </div>
-        {useTimer(600000, set_s_reset_password_timer).minute}:{useTimer(600000, set_s_reset_password_timer).second}
+        {/* {useTimer(10000, set_s_reset_password_timer).minute}:{useTimer(10000, set_s_reset_password_timer).second} */}
       </Spin>
     </Modal>
   );
