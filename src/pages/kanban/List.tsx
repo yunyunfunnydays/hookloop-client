@@ -110,7 +110,7 @@ const List: React.FC<IListProps> = ({ list, s_ListsData, set_s_ListsData, cards,
                   </div>
                 )}
                 {provided.placeholder}
-                <AddCard s_kanbanId={s_kanbanId} listData={list} set_s_ListsData={set_s_ListsData} />
+                <AddCard s_kanbanId={s_kanbanId} listData={list} />
               </div>
             )}
           </Droppable>
