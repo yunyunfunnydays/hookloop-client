@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import GlobalContext from "@/Context/GlobalContext";
-import { Checkbox, Row, Col, Avatar, Typography, Divider, Select, Radio } from "antd";
+import { Checkbox, Row, Col, Typography, Divider, Select, Radio } from "antd";
+import type { CheckboxValueType } from "antd/es/checkbox/Group";
+import type { RadioChangeEvent } from "antd";
 import IconRenderer from "@/components/util/IconRender";
 import * as icons from "@ant-design/icons";
 // init value
@@ -19,14 +21,19 @@ const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_
 
   const [s_members, set_s_members] = useState<Imember[]>([]);
   // console.log("c_Tags = ", c_Tags);
-  const onChange = (values: string[]) => {
+  const onChange = (values: CheckboxValueType[]) => {
     // console.log("val", value);
     set_c_query((prev: any) => ({
       ...prev,
       values,
     }));
   };
-  const RadioOnChange = () => {};
+  const RadioOnChange = (value: RadioChangeEvent) => {
+    set_c_query({
+      ...c_query,
+      member: value,
+    });
+  };
 
   useEffect(() => {
     if (!s_kanbanId) return;
@@ -43,7 +50,7 @@ const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_
   // console.log("s_members = ", s_members);
   return (
     <div className="flex flex-col">
-      <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+      <Checkbox.Group style={{ width: "100%" }} value={c_query.member} onChange={onChange}>
         <Row gutter={[12, 12]}>
           <Col span={24}>
             <Typography.Title level={5}>Members</Typography.Title>
