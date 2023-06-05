@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 // import Image from "next/image";
 import { Avatar, Button, Modal, Tooltip, message as msg, Divider } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import CustAvatar from "@/components/util/CustAvatar";
 import MemberSelect from "@/components/Member/MemberSelect";
 
 interface IProps {
@@ -30,10 +31,14 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
       <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
         {s_tmpAssignee.map((item) => (
           <Tooltip key={item.username} title={item.username}>
-            {/* <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
-            <Avatar size={32} src={item.avatar.length > 0 && item.avatar} className="bg-gray-200">
+            {/* <Avatar
+              size={32}
+              src={item.avatar.length > 0 && `https://cdn.filestackcontent.com/${item.avatar}`}
+              className="bg-gray-200"
+            >
               {item?.avatar.length === 0 ? item.username[0] : null}
-            </Avatar>
+            </Avatar> */}
+            <CustAvatar info={item} />
           </Tooltip>
         ))}
       </Avatar.Group>

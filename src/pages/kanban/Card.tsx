@@ -9,6 +9,7 @@ import { Draggable } from "@hello-pangea/dnd";
 import CardModal from "@/components/Card/CardModal";
 import IconRenderer from "@/components/util/IconRender";
 import KanbanContext from "@/Context/KanbanContext";
+import CustAvatar from "@/components/util/CustAvatar";
 
 type CardProps = {
   s_kanbanId: string;
@@ -84,23 +85,24 @@ const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
               <Avatar.Group maxCount={5} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
                 {card.reporter && (
                   <Tooltip key={card.reporter?.username} title={card.reporter?.username}>
-                    {/* <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
-                    <Avatar
+                    {/* <Avatar
                       size={32}
                       src={card.reporter?.avatar?.length > 0 && card.reporter?.avatar}
                       className="border-2 border-orange-400 bg-gray-200"
                     >
                       {card.reporter?.avatar?.length === 0 ? card.reporter?.username[0] : null}
-                    </Avatar>
+                    </Avatar> */}
+                    <CustAvatar info={card.reporter} className="border-2 border-orange-400 bg-gray-200" />
                   </Tooltip>
                 )}
 
                 {card.assignee?.map((user: IUser) => (
                   <Tooltip key={user?.username} title={user?.username}>
                     {/* <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
-                    <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
+                    {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
                       {user?.avatar?.length === 0 ? user?.username[0] : null}
-                    </Avatar>
+                    </Avatar> */}
+                    <CustAvatar info={user} />
                   </Tooltip>
                 ))}
               </Avatar.Group>

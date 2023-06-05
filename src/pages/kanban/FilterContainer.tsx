@@ -5,6 +5,7 @@ import IconRenderer from "@/components/util/IconRender";
 import * as icons from "@ant-design/icons";
 // init value
 import { workspaceInitValue, kanbanInitValue } from "@/components/util/initValue";
+import CustAvatar from "@/components/util/CustAvatar";
 
 interface IProps {
   s_kanbanId: string;
@@ -50,9 +51,10 @@ const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_
           {s_members?.map((user: Imember) => (
             <Col span={24} key={user?.username}>
               <Checkbox value={user.userId} className="member-chackbox flex items-end">
-                <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
+                {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
                   {user?.avatar?.length === 0 ? user?.username[0] : null}
-                </Avatar>
+                </Avatar> */}
+                <CustAvatar info={user} />
                 <span className="ml-2">{user.username}</span>
               </Checkbox>
             </Col>
