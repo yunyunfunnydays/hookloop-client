@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import Image from "next/image";
 import Router from "next/router";
 import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
-// import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/icons";
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import Cookies from "js-cookie";
 // logo
 import logo from "@/assets/logo_black.svg";
@@ -43,7 +41,7 @@ const Login: React.FC<ILogin> = (props) => {
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
   const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
-  const [s_reset_password_timer, set_s_reset_password_timer] = useState<number>(0);
+  // const [s_reset_password_timer, set_s_reset_password_timer] = useState<number>(0);
 
   // const ICON_STYLE = "cursor-pointer mb-2";
 
@@ -184,7 +182,7 @@ const Login: React.FC<ILogin> = (props) => {
             name="basic"
             form={form}
             onFinish={onFinish}
-            className="w-full flex flex-col items-center gap-[40px]"
+            className="flex w-full flex-col items-center gap-[40px]"
           >
             <Image src={logo} alt="HOOK LOOP" className="mt-5" />
 
@@ -298,7 +296,7 @@ const Login: React.FC<ILogin> = (props) => {
                   <Text
                     type="secondary"
                     underline
-                    className="cursor-pointer flex-center"
+                    className="flex-center cursor-pointer"
                     onClick={() => toggleEditType("forgetPassword")}
                   >
                     Forget your password?
@@ -308,7 +306,7 @@ const Login: React.FC<ILogin> = (props) => {
             </Row>
           </Form>
 
-          <div className="w-full h-[105px] mt-[40px] bg-[#F5F5F5] flex-center flex-col gap-2">
+          <div className="flex-center mt-[40px] h-[105px] w-full flex-col gap-2 bg-[#F5F5F5]">
             <Title level={5}>{s_editType === "login" ? "Not have account yet?" : "Already have an account?"}</Title>
             <Button
               className={`text-black ${SUBMIT_BTN}`}
@@ -324,7 +322,7 @@ const Login: React.FC<ILogin> = (props) => {
             </Button>
           </div>
           {s_reset_password_email_status && (
-            <div className="w-full mt-[20px] bg-[#ffe8eb] flex-center flex-col p-[20px]">
+            <div className="flex-center mt-[20px] w-full flex-col bg-[#ffe8eb] p-[20px]">
               <Title level={5} type="danger">
                 An email has been sent to your email.
               </Title>

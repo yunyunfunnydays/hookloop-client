@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from "react";
 import { Layout } from "antd";
 import { DoubleRightOutlined } from "@ant-design/icons";
@@ -26,6 +25,7 @@ const Index: React.FC<IProps> = ({ children }) => {
         {/* 收合sider的按鈕，因使用絕對定位所以放在最下方 */}
         {s_collapsed && (
           <div
+            role="presentation"
             className="flex-center absolute left-0 top-0 h-[64px] w-[64px] cursor-pointer bg-[#F5F5F5]"
             onClick={() => set_s_collapsed((prev: boolean) => !prev)}
           >
