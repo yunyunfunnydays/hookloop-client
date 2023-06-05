@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-console */
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "antd";
@@ -110,7 +109,7 @@ const List: React.FC<IListProps> = ({ list, s_ListsData, set_s_ListsData, cards,
                   </div>
                 )}
                 {provided.placeholder}
-                <AddCard s_kanbanId={s_kanbanId} listData={list} set_s_ListsData={set_s_ListsData} />
+                <AddCard s_kanbanId={s_kanbanId} listData={list} />
               </div>
             )}
           </Droppable>

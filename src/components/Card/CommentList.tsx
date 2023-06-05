@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useContext, useEffect } from "react";
-import { Input, Button, Avatar, message as msg, Spin } from "antd";
+import { Input, Button, message as msg, Spin } from "antd";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // api
 import { addComment, getComments } from "@/service/apis/card";
 // component
+import CustAvatar from "@/components/util/CustAvatar";
 import Comment from "./Comment";
 
 interface IProps {
@@ -61,9 +62,10 @@ const CommentList: React.FC<IProps> = ({ cardId }) => {
         {contextHolder}
         {/* 輸入 comment 的位置 */}
         <section className="flex w-full items-center gap-2">
-          <Avatar size={36} className="bg-gray-200" src={c_user.avatar.length > 0 && c_user.avatar}>
+          {/* <Avatar size={36} className="bg-gray-200" src={c_user.avatar.length > 0 && c_user.avatar}>
             {c_user?.avatar.length === 0 ? c_user.username[0] : null}
-          </Avatar>
+          </Avatar> */}
+          <CustAvatar info={c_user} size={36} />
 
           <Input
             className="flex-1"

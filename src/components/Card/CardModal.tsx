@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useContext } from "react";
-import { useRouter } from "next/router";
+import React, { useState, useEffect, useContext, ReactNode } from "react";
 import * as icons from "@ant-design/icons";
 import {
   Row,
@@ -32,7 +29,7 @@ import {
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 // import { getTags } from "@/service/apis/kanban";
-import { getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
+import { updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from "dayjs";
@@ -90,7 +87,7 @@ const tagRender = (props: CustomTagProps) => {
 
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
 const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
-  const router = useRouter();
+  // const router = useRouter();
   const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
@@ -98,8 +95,6 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const [s_showLink, set_s_showLink] = useState(false);
   // kanban 上所有 Link
   const [s_Links, set_s_Links] = useState<ILink[]>([]);
-  // kanban 上所有 Tag
-  // const [s_Tags, set_s_Tags] = useState<ITag[]>([]);
   // 卡片上傳的檔案
   const [s_attachments, set_s_attachments] = useState<any>([]);
   // 卡片的 reporter
@@ -189,53 +184,6 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   };
 
   useEffect(() => {
-    const call_getCardById = async () => {
-      set_s_isLoaging(true);
-      const res: AxiosResponse = await getCardById(card._id);
-      const { status, message, data } = res.data as IApiResponse;
-      // console.log("card data = ", data);
-      if (status === "success") {
-        // form只要存_id就好
-        const tmpTag = data.tag?.map((item: ITag) => item._id);
-        // form只要存_id就好
-        const tmpAssignee = data.assignee?.map((item: IOwner) => item._id);
-
-        form.setFieldsValue({
-          ...data,
-          // kanbanId: "646cf5e65916bb0a3de48875",
-          // kanbanId: s_kanbanId,
-          tag: tmpTag,
-          // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
-          reporter: data.reporter?._id || "",
-          assignee: tmpAssignee,
-          actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
-          targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
-        });
-
-        // 如果有reporter就獨立開一個state儲存
-        if (data.reporter?._id?.length > 0) {
-          set_s_reporter(data.reporter);
-        }
-        // 如果有assignee就獨立開一個state儲存
-        if (data.assignee?.length > 0) {
-          // console.log("data.assignee = ", data.assignee);
-          set_s_assignee(data.assignee);
-        }
-
-        if (data.attachment?.length > 0) {
-          set_s_attachments(data.attachment);
-        }
-
-        if (data?.webLink.length > 0) {
-          set_s_Links(data.webLink);
-        }
-      } else {
-        messageApi.error(message);
-      }
-      set_s_isLoaging(false);
-    };
-
-    // call_getCardById();
     form.setFieldsValue({
       ...card,
       // kanbanId: "646cf5e65916bb0a3de48875",
@@ -266,6 +214,16 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
       set_s_Links(card.webLink);
     }
   }, []);
+
+  const dropdownRender = (menu: ReactNode) => (
+    <>
+      {menu}
+      <Divider style={{ margin: "8px 0" }} />
+      <Button type="primary" icon={<PlusOutlined />} onClick={() => set_s_showTagModal(true)}>
+        Add item
+      </Button>
+    </>
+  );
 
   return (
     <Spin spinning={s_isLoaging}>
@@ -387,15 +345,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
                       value: item._id,
                       data: "123",
                     }))}
-                    dropdownRender={(menu) => (
-                      <>
-                        {menu}
-                        <Divider style={{ margin: "8px 0" }} />
-                        <Button type="primary" icon={<PlusOutlined />} onClick={() => set_s_showTagModal(true)}>
-                          Add item
-                        </Button>
-                      </>
-                    )}
+                    dropdownRender={dropdownRender}
                   />
                 </Form.Item>
               </Col>
@@ -436,7 +386,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
                   Add file
                 </Button> */}
                 <Upload
-                  itemRender={() => <div />}
+                  itemRender={() => null}
                   listType="picture"
                   beforeUpload={() => false}
                   onChange={async ({ file }) => {

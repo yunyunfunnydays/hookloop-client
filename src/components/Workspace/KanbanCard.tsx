@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
+
 import React, { useState, useContext } from "react";
 import Router from "next/router";
 import { message as msg, Spin, Popover, Typography, Modal } from "antd";
@@ -115,7 +115,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         }}
       >
         {contextHolder}
-        <div className="flex w-full justify-between" onClick={(e) => e.stopPropagation()}>
+        <div className="flex w-full justify-between" role="presentation" onClick={(e) => e.stopPropagation()}>
           <p className="text-base font-medium text-[#262626]">{kanbanData.name}</p>
           <Popover
             placement="bottomLeft"
@@ -164,7 +164,11 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
 // 建立看板的UI component
 export const CreateKanbanCard: React.FC<CreateKanbanCardProps> = ({ onClick }) => {
   return (
-    <div onClick={onClick} className={`${CARD_BASICSTYLE} flex-center group border-2 border-dashed border-[#BFBFBF]`}>
+    <div
+      onClick={onClick}
+      role="presentation"
+      className={`${CARD_BASICSTYLE} flex-center group border-2 border-dashed border-[#BFBFBF]`}
+    >
       <PlusOutlined className="text-3xl text-[#595959] group-hover:scale-125 group-hover:transition-all" />
     </div>
   );

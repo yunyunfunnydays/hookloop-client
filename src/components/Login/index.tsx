@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import Image from "next/image";
 import Router from "next/router";
+
 import {
   Grid,
   Row,
@@ -19,6 +19,7 @@ import {
 } from "antd";
 // import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/icons";
 // eslint-disable-next-line import/no-extraneous-dependencies
+
 import Cookies from "js-cookie";
 // logo
 import logo from "@/assets/logo_black.svg";
@@ -58,6 +59,7 @@ const Login: React.FC<ILogin> = (props) => {
   const [s_loading, set_s_loading] = useState(false);
   const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
   const [s_reset_password_timer, set_s_reset_password_timer] = useState(false);
+
 
   // const ICON_STYLE = "cursor-pointer mb-2";
 

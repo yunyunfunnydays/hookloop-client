@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState, useContext, useEffect } from "react";
 import Router, { useRouter } from "next/router";
 import { Row, Col, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";

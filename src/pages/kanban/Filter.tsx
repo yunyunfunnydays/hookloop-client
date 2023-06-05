@@ -4,6 +4,7 @@ import { Tooltip, Avatar, Button } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 // init value
 import { workspaceInitValue, kanbanInitValue } from "@/components/util/initValue";
+import CustAvatar from "@/components/util/CustAvatar";
 
 interface IProps {
   s_kanbanId: string;
@@ -36,9 +37,7 @@ const Filter: React.FC<IProps> = ({ s_kanbanId, set_s_open }) => {
       <Avatar.Group maxCount={3} size={42} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
         {s_members?.map((user: Imember) => (
           <Tooltip key={user?.username} title={user?.username}>
-            <Avatar size={42} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
-              {user?.avatar?.length === 0 ? user?.username[0] : null}
-            </Avatar>
+            <CustAvatar info={user} />
           </Tooltip>
         ))}
       </Avatar.Group>
