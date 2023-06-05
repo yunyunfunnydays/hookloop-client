@@ -77,7 +77,7 @@ const ResetPassword = () => {
   };
 
   useEffect(() => {
-    console.log("🚀 ~ file: index.tsx:114 ~ useEffect ~ window.location.href:", window.location.href);
+    // console.log("🚀 ~ file: index.tsx:114 ~ useEffect ~ window.location.href:", window.location.href);
     router.replace(window.location.href);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
