@@ -1,8 +1,9 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Select, Spin, Avatar } from "antd";
+import { Select, Spin } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from "lodash/debounce";
 import { getMember } from "@/service/api";
+import CustAvatar from "../util/CustAvatar";
 
 const MemberSelect = (props: any) => {
   const [fetching, setFetching] = useState(false);
@@ -18,7 +19,10 @@ const MemberSelect = (props: any) => {
           key: member.email,
           label: (
             <span className="flex gap-1">
-              <Avatar size="small">{member.username[0]}</Avatar>
+              {/* <Avatar size="small" className="bg-gray-200" src={member.avatar.length > 0 && member.avatar}>
+                {member.username[0]}
+              </Avatar> */}
+              <CustAvatar info={member} size="small" />
               {member.username}
             </span>
           ),

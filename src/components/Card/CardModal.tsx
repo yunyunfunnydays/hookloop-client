@@ -1,29 +1,52 @@
-import React from "react";
-import Image from "next/image";
-import { Row, Col, Input, Avatar, Typography, Button, Select, DatePicker, Tag, Divider } from "antd";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useContext } from "react";
+import { useRouter } from "next/router";
+import * as icons from "@ant-design/icons";
 import {
+  Row,
+  Col,
+  Input,
+  Upload,
+  Typography,
+  Button,
+  Select,
+  DatePicker,
+  Tag,
+  Divider,
+  Form,
+  Spin,
+  message as msg,
+  Modal,
+} from "antd";
+import {
+  DeleteOutlined,
   EditFilled,
   PlusOutlined,
   SettingFilled,
-  TagOutlined,
-  ThunderboltOutlined,
-  DatabaseOutlined,
-  BugOutlined,
   CloseOutlined,
   BookFilled,
   LinkOutlined,
   MessageFilled,
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
-// image
-import User1 from "@/assets/user1.svg";
-import User2 from "@/assets/user2.svg";
-import User3 from "@/assets/user3.svg";
-import User4 from "@/assets/user4.svg";
+// import { getTags } from "@/service/apis/kanban";
+import { getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
+import IconRenderer from "@/components/util/IconRender";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import dayjs from "dayjs";
+import KanbanContext from "@/Context/KanbanContext";
 // component
 import CommentList from "./CommentList";
+import TagModal from "../Kanban/TagModal";
+import Reporter from "./Reporter";
+import Assignee from "./Assignee";
+import Link from "./Link";
 
 interface IProps {
+  s_kanbanId: string;
+  card: ICard;
   set_s_showCard: ISetStateFunction<boolean>;
 }
 
@@ -44,6 +67,7 @@ const FieldLabel: React.FC<IFieldProps> = ({ children }) => (
 );
 
 const tagRender = (props: CustomTagProps) => {
+  // console.log("props = ", props);
   const { label, value, closable, onClose } = props;
   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
@@ -56,7 +80,7 @@ const tagRender = (props: CustomTagProps) => {
       closable={closable}
       onClose={onClose}
       closeIcon={<CloseOutlined className="ml-1 text-black" />}
-      className="bg-[#edebeb] rounded-xl text-[#595959] text-sm font-medium flex"
+      // className="bg-[#edebeb] rounded-xl text-[#595959] text-sm font-medium flex"
       style={{ marginRight: 3 }}
     >
       {label}
@@ -64,222 +88,426 @@ const tagRender = (props: CustomTagProps) => {
   );
 };
 
-const CardModal: React.FC<IProps> = ({ set_s_showCard }) => {
-  const options = [
-    {
-      value: "P03",
-      label: (
-        <span className="flex items-center gap-1">
-          <TagOutlined />
-          P03
-        </span>
-      ),
-    },
-    {
-      value: "new",
-      label: (
-        <span className="flex items-center gap-1">
-          <ThunderboltOutlined />
-          new
-        </span>
-      ),
-    },
-    {
-      value: "DB",
-      label: (
-        <span className="flex items-center gap-1">
-          <DatabaseOutlined />
-          DB
-        </span>
-      ),
-    },
-    {
-      value: "bug",
-      label: (
-        <span className="flex items-center gap-1">
-          <BugOutlined />
-          bug
-        </span>
-      ),
-    },
-  ];
+// 等正式串接時要從 c_workspace 拿到 kanban 資料
+const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
+  const router = useRouter();
+  const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
+  const [s_isLoaging, set_s_isLoaging] = useState(false);
+  const [s_showTagModal, set_s_showTagModal] = useState(false);
+  // 是否顯示建立 Link 的地方
+  const [s_showLink, set_s_showLink] = useState(false);
+  // kanban 上所有 Link
+  const [s_Links, set_s_Links] = useState<ILink[]>([]);
+  // kanban 上所有 Tag
+  // const [s_Tags, set_s_Tags] = useState<ITag[]>([]);
+  // 卡片上傳的檔案
+  const [s_attachments, set_s_attachments] = useState<any>([]);
+  // 卡片的 reporter
+  const [s_reporter, set_s_reporter] = useState<IOwner>({
+    _id: "",
+    username: "",
+    avatar: "",
+  });
+
+  // 卡片的 assignee
+  const [s_assignee, set_s_assignee] = useState<IOwner[]>([]);
+
+  const [form] = Form.useForm();
+  const [messageApi, contextHolder] = msg.useMessage();
+
+  const onSubmit = async (values: ICard) => {
+    // const res: AxiosResponse = await addCard(values);
+
+    const newValues: ICard = {
+      ...values,
+      webLink: s_Links,
+      actualStartDate: values.actualDate?.[0] || null,
+      actualEndDate: values.actualDate?.[1] || null,
+      targetStartDate: values.targetDate?.[0] || null,
+      targetEndDate: values.targetDate?.[1] || null,
+    };
+    // console.log("newValues = ", newValues);
+    // return;
+    delete newValues.targetDate;
+    delete newValues.actualDate;
+    const res: AxiosResponse = await updateCard(card._id, newValues);
+    const { status, message } = res.data as IApiResponse;
+    if (status === "success") {
+      messageApi.success(message);
+      c_getKanbanByKey();
+      set_s_showCard(false);
+    } else {
+      messageApi.error(message);
+      set_s_showCard(false);
+    }
+  };
+
+  // 選擇owner
+  const chooseOwner = (_: any, data: IOwner) => {
+    // console.log(data);
+    set_s_reporter({
+      _id: data._id,
+      username: data.username,
+      avatar: data.avatar,
+    });
+
+    form.setFieldsValue({
+      reporter: data._id,
+    });
+  };
+
+  const chooseAssignee = (data: IOwner[]) => {
+    const assignee_Ids = data?.map((item) => item._id) || [];
+    form.setFieldsValue({
+      assignee: assignee_Ids,
+    });
+    set_s_assignee(data);
+  };
+
+  const createLink = (data: { name: string; url: string }) => {
+    // console.log("link = ", data);
+    const _links = [...s_Links].concat({ name: data.name, url: data.url });
+    // const _linkIds = [...form.getFieldValue('webLink')].concat();
+    set_s_Links(_links);
+    set_s_showLink(false);
+  };
+
+  const removeLink = (key: string) => {
+    const _links = s_Links.filter((item) => item.name + item.url !== key);
+    set_s_Links(_links);
+  };
+
+  const removeAttachment = async (attachmentId: string) => {
+    const res: AxiosResponse = await deleteAttachment(card._id, attachmentId);
+    const { status, message, data } = res.data as IApiResponse;
+    if (status === "success") {
+      set_s_attachments(data.target.attachment);
+      messageApi.success(message);
+    } else {
+      messageApi.error(message);
+    }
+  };
+
+  useEffect(() => {
+    const call_getCardById = async () => {
+      set_s_isLoaging(true);
+      const res: AxiosResponse = await getCardById(card._id);
+      const { status, message, data } = res.data as IApiResponse;
+      // console.log("card data = ", data);
+      if (status === "success") {
+        // form只要存_id就好
+        const tmpTag = data.tag?.map((item: ITag) => item._id);
+        // form只要存_id就好
+        const tmpAssignee = data.assignee?.map((item: IOwner) => item._id);
+
+        form.setFieldsValue({
+          ...data,
+          // kanbanId: "646cf5e65916bb0a3de48875",
+          // kanbanId: s_kanbanId,
+          tag: tmpTag,
+          // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+          reporter: data.reporter?._id || "",
+          assignee: tmpAssignee,
+          actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
+          targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
+        });
+
+        // 如果有reporter就獨立開一個state儲存
+        if (data.reporter?._id?.length > 0) {
+          set_s_reporter(data.reporter);
+        }
+        // 如果有assignee就獨立開一個state儲存
+        if (data.assignee?.length > 0) {
+          // console.log("data.assignee = ", data.assignee);
+          set_s_assignee(data.assignee);
+        }
+
+        if (data.attachment?.length > 0) {
+          set_s_attachments(data.attachment);
+        }
+
+        if (data?.webLink.length > 0) {
+          set_s_Links(data.webLink);
+        }
+      } else {
+        messageApi.error(message);
+      }
+      set_s_isLoaging(false);
+    };
+
+    // call_getCardById();
+    form.setFieldsValue({
+      ...card,
+      // kanbanId: "646cf5e65916bb0a3de48875",
+      // kanbanId: s_kanbanId,
+      tag: card.tag?.map((item: ITag) => item?._id) || [],
+      // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+      reporter: card.reporter?._id || "",
+      assignee: card.assignee?.map((item: IOwner) => item._id),
+      actualDate: [dayjs(card.actualStartDate), dayjs(card.actualEndDate)],
+      targetDate: [dayjs(card.targetStartDate), dayjs(card.targetEndDate)],
+    });
+
+    // 如果有reporter就獨立開一個state儲存
+    if ((card.reporter?._id || "").length > 0) {
+      set_s_reporter(card.reporter);
+    }
+    // 如果有assignee就獨立開一個state儲存
+    if (card.assignee?.length > 0) {
+      // console.log("data.assignee = ", data.assignee);
+      set_s_assignee(card.assignee);
+    }
+
+    if ((card?.attachment || "")?.length > 0) {
+      set_s_attachments(card.attachment);
+    }
+
+    if ((card?.webLink || "")?.length > 0) {
+      set_s_Links(card.webLink);
+    }
+  }, []);
 
   return (
-    <div className="flex flex-col">
-      <section className="flex flex-col gap-4 h-[70vh] overflow-auto no-scrollbar">
-        <GroupTitle>
-          <EditFilled className="mr-1" />
-          Content
-        </GroupTitle>
+    <Spin spinning={s_isLoaging}>
+      <Form form={form} onFinish={onSubmit} layout="vertical">
+        <div className="flex flex-col">
+          {contextHolder}
+          {/* 隱藏欄位 */}
+          <div>
+            {/* <Form.Item name="kanbanId" hidden>
+              <Input />
+            </Form.Item> */}
+            {/* <Form.Item name="_id" hidden>
+              <Input />
+            </Form.Item> */}
+            <Form.Item name="reporter" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="assignee" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="webLink" hidden>
+              <Input />
+            </Form.Item>
+          </div>
+          <section className="no-scrollbar flex h-[70vh] flex-col gap-4 overflow-auto">
+            <GroupTitle>
+              <EditFilled className="mr-1" />
+              Content
+            </GroupTitle>
 
-        <Row gutter={[12, 0]}>
-          <Col span={24}>
-            <FieldLabel>Title</FieldLabel>
-          </Col>
-          <Col span={24}>
-            <Input placeholder="Write card name" />
-          </Col>
-        </Row>
+            <Row gutter={[12, 0]}>
+              <Col span={24}>
+                <Form.Item label={<FieldLabel>Title</FieldLabel>} name="name">
+                  <Input placeholder="Write card name" />
+                </Form.Item>
+              </Col>
+            </Row>
 
-        <Row gutter={[12, 0]}>
-          <Col span={24}>
-            <FieldLabel>Description</FieldLabel>
-          </Col>
-          <Col span={24}>
-            <Input.TextArea placeholder="Write Description" />
-          </Col>
-        </Row>
+            <Row gutter={[12, 0]}>
+              <Col span={24}>
+                <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
+                  <Input.TextArea placeholder="Write Description" />
+                </Form.Item>
+              </Col>
+            </Row>
 
-        <Row gutter={[12, 0]} align="bottom">
-          <Col span={3} className="flex flex-col">
-            <FieldLabel>Owner</FieldLabel>
-            <Avatar size={32} src={<Image src={User1} alt="user1" />} />
-          </Col>
+            <Row gutter={[12, 0]} align="bottom">
+              <Col span={3} className="flex flex-col">
+                <FieldLabel>Owner</FieldLabel>
+                {/* reporter */}
+                <Reporter reporter={s_reporter} afterChoose={chooseOwner} />
+              </Col>
 
-          <Col span={4} className="flex flex-col">
-            <FieldLabel>Member</FieldLabel>
-            <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
-              <Avatar src={<Image src={User1} alt="user1" />} />
-              <Avatar src={<Image src={User2} alt="user2" />} />
-              <Avatar src={<Image src={User3} alt="user3" />} />
-              <Avatar src={<Image src={User4} alt="user4" />} />
-            </Avatar.Group>
-          </Col>
+              <Col span={9} className="flex flex-col">
+                <FieldLabel>Member</FieldLabel>
+                <Assignee assignee={s_assignee} afterChoose={chooseAssignee} />
+              </Col>
+            </Row>
 
-          <Col span={5} className="flex justify-start">
-            <Button
-              className="bg-[#D9D9D9] float-right text-white"
-              type="primary"
-              size="middle"
-              shape="circle"
-              icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
-            />
-          </Col>
-        </Row>
+            <GroupTitle>
+              <SettingFilled className="mr-1" />
+              Setting
+            </GroupTitle>
 
-        <GroupTitle>
-          <SettingFilled className="mr-1" />
-          Setting
-        </GroupTitle>
+            <Row gutter={[12, 12]}>
+              <Col span={24} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
+                  <DatePicker.RangePicker className="h-[30px] w-full" />
+                </Form.Item>
+              </Col>
 
-        <Row gutter={[12, 12]}>
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Project</FieldLabel>
-            <Select placeholder="please select project" />
-          </Col>
+              <Col span={24} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Actual period</FieldLabel>} name="actualDate">
+                  <DatePicker.RangePicker className="h-[30px] w-full" />
+                </Form.Item>
+              </Col>
 
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Board</FieldLabel>
-            <Select placeholder="please select board" />
-          </Col>
+              <Col span={12} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Priority</FieldLabel>} name="priority">
+                  <Select
+                    placeholder="please select priority"
+                    // value={s_cardData.priority}
+                    options={[
+                      { label: "Low", value: "Low" },
+                      { label: "Medium", value: "Medium" },
+                      { label: "High", value: "High" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
 
-          <Col span={24} className="flex flex-col">
-            <FieldLabel>Target period</FieldLabel>
-            <DatePicker.RangePicker className="h-[30px]" />
-          </Col>
+              <Col span={12} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
+                  <Select
+                    placeholder="please select status"
+                    // value={s_cardData.status}
+                    options={[
+                      { label: "Pending", value: "Pending" },
+                      { label: "In Progress", value: "In Progress" },
+                      { label: "Done", value: "Done" },
+                    ]}
+                  />
+                </Form.Item>
+              </Col>
 
-          <Col span={24} className="flex flex-col">
-            <FieldLabel>Actual period</FieldLabel>
-            <DatePicker.RangePicker className="h-[30px]" />
-          </Col>
+              <Col span={24} className="flex flex-col">
+                <Form.Item label={<FieldLabel>Tags</FieldLabel>} name="tag">
+                  <Select
+                    mode="multiple"
+                    showArrow
+                    tagRender={tagRender}
+                    options={c_Tags?.map((item) => ({
+                      label: (
+                        <span className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
+                          <IconRenderer iconName={item.icon as keyof typeof icons} />
+                          <span className="ml-2">{item.name}</span>
+                        </span>
+                      ),
+                      value: item._id,
+                      data: "123",
+                    }))}
+                    dropdownRender={(menu) => (
+                      <>
+                        {menu}
+                        <Divider style={{ margin: "8px 0" }} />
+                        <Button type="primary" icon={<PlusOutlined />} onClick={() => set_s_showTagModal(true)}>
+                          Add item
+                        </Button>
+                      </>
+                    )}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Priority</FieldLabel>
-            <Select placeholder="please select project" />
-          </Col>
+            <GroupTitle>
+              <BookFilled className="mr-1" />
+              Reference
+            </GroupTitle>
 
-          <Col span={12} className="flex flex-col">
-            <FieldLabel>Status</FieldLabel>
-            <Select placeholder="please select board" />
-          </Col>
+            <Row gutter={[12, 8]}>
+              <Col span={24} className="flex gap-3">
+                <FieldLabel>Links</FieldLabel>
+                <Button
+                  size="small"
+                  className="flex items-center text-black"
+                  onClick={() => set_s_showLink(true)}
+                  icon={<LinkOutlined />}
+                >
+                  Add link
+                </Button>
+              </Col>
+              <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
+              {s_Links?.map((item) => (
+                <Col key={item.url + item.name} span={24}>
+                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeLink(item.name + item.url)} />
+                  <Typography.Link underline href={item.url} target="_blank">
+                    {item.name}
+                  </Typography.Link>
+                </Col>
+              ))}
+            </Row>
 
-          <Col span={24} className="flex flex-col">
-            <FieldLabel>Tags</FieldLabel>
-            <Select mode="multiple" showArrow tagRender={tagRender} options={options} />
-          </Col>
-        </Row>
+            <Row gutter={[12, 8]}>
+              <Col span={12} className="flex gap-3">
+                <FieldLabel>Files</FieldLabel>
+                {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                  Add file
+                </Button> */}
+                <Upload
+                  itemRender={() => <div />}
+                  listType="picture"
+                  beforeUpload={() => false}
+                  onChange={async ({ file }) => {
+                    set_s_isLoaging(true);
+                    const formData = new FormData();
+                    formData.append("file", file as any);
+                    const res: AxiosResponse = await addAttachment(form.getFieldValue("_id"), formData);
+                    const { status, message, data } = res.data as IApiResponse;
+                    if (status === "success") {
+                      // console.log("data = ", data);
+                      set_s_attachments(data.target.attachment);
+                      messageApi.success(message);
+                    } else {
+                      messageApi.error(message);
+                    }
+                    set_s_isLoaging(false);
+                  }}
+                >
+                  <Button size="small" className="flex items-center text-black" icon={<LinkOutlined />}>
+                    Add file
+                  </Button>
+                </Upload>
+              </Col>
 
-        <GroupTitle>
-          <BookFilled className="mr-1" />
-          Reference
-        </GroupTitle>
+              {s_attachments?.map((item: any) => (
+                <Col key={item.fileId} span={24}>
+                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
+                  <Typography.Link underline href={item.url} target="_blank">
+                    {item.name}
+                  </Typography.Link>
+                </Col>
+              ))}
+            </Row>
 
-        <Row gutter={[12, 8]}>
-          <Col span={24} className="flex gap-3">
-            <FieldLabel>Links</FieldLabel>
-            <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-              Add link
-            </Button>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 1
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 2
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 3
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 4
-            </Typography.Link>
-          </Col>
-        </Row>
+            <GroupTitle>
+              <MessageFilled className="mr-1" />
+              Comment
+            </GroupTitle>
 
-        <Row gutter={[12, 8]}>
-          <Col span={12} className="flex gap-3">
-            <FieldLabel>Files</FieldLabel>
-            <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-              Add file
-            </Button>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 1
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 2
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 3
-            </Typography.Link>
-          </Col>
-          <Col span={24}>
-            <Typography.Link underline href="https://google.com" target="_blank">
-              reference website 4
-            </Typography.Link>
-          </Col>
-        </Row>
+            <CommentList cardId={card._id} />
+          </section>
 
-        <GroupTitle>
-          <MessageFilled className="mr-1" />
-          Comment
-        </GroupTitle>
+          <Divider className="my-3" />
 
-        <CommentList />
-      </section>
+          <Row>
+            <Col span={24} className="flex justify-end gap-1">
+              <Button
+                type="primary"
+                htmlType="submit"
+                // onClick={() => set_s_showCard(false)}
+              >
+                Ok
+              </Button>
+            </Col>
+          </Row>
+        </div>
+      </Form>
 
-      <Divider className="my-3" />
-
-      <Row>
-        <Col span={24} className="flex justify-end gap-1">
-          <Button type="primary" onClick={() => set_s_showCard(false)}>
-            Ok
-          </Button>
-        </Col>
-      </Row>
-    </div>
+      {/* tags 的 Modal */}
+      <Modal
+        title="Tags setting"
+        width="472px"
+        open={s_showTagModal}
+        destroyOnClose
+        onCancel={() => set_s_showTagModal(false)}
+        maskClosable={false}
+        footer={null}
+      >
+        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={s_kanbanId} />}
+      </Modal>
+    </Spin>
   );
 };
 

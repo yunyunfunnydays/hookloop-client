@@ -20,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   // 所有 workspace
   const [c_workspaces, set_c_workspaces] = useState<Iworkspace[]>([]);
+
   const [s_isLoading, set_s_isLoading] = useState(false);
   // 存登入人員的資訊
   const [c_user, set_c_user] = useState<IUser>({
@@ -76,6 +77,10 @@ export default function App({ Component, pageProps }: AppProps) {
           ...data,
           userId: data._id,
         });
+        return;
+      }
+      if (currentPath.includes("/resetPassword")) {
+        Router.push(currentPath);
         return;
       }
       // 因為沒有驗證成功，所以要導轉到首頁

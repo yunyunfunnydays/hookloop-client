@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import { Button, Dropdown } from "antd";
+import { Button, Dropdown, Carousel } from "antd";
 // img
 import mission from "@/assets/mission.svg";
 import dashboard from "@/assets/dashboard.svg";
@@ -16,12 +16,14 @@ import user6 from "@/assets/user6.svg";
 import user7 from "@/assets/user7.svg";
 import user8 from "@/assets/user8.svg";
 import user9 from "@/assets/user9.svg";
+import carousel1 from "@/assets/carousel-1.png";
 
 import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
+  const carouselRef = useRef(null);
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     console.info("click", e);
@@ -228,6 +230,64 @@ const Home: React.FC = () => {
           <h1 className="font-black text-[24px] lg:text-[40px] font-['Montserrat']">
             KICKSTART YOUR PROJECT IN SECONDS
           </h1>
+          <div className="relative w-[80%] my-5 leading-6">
+            <div className="absolute carousel-arrow carousel-arrow-left"
+              onClick={() => (carouselRef.current as any).prev()}
+            ></div>
+            <Carousel ref={carouselRef} className="bg-white p-8" >
+              <div className="md:flex items-center" >
+                <Image src={carousel1} className="w-full md:h-full md:mr-4" alt="carousel1" />
+                <div className="w-full md:h-full flex flex-col justify-evenly">
+                  <h3 className="text-2xl font-bold mt-8 md:mt-0 text-center md:text-left">
+                    Dashboard
+                  </h3>
+                  <div>
+                    <p className="mt-3">
+                      Just click the plus button - discover simplicity and efficiency at your fingertips with our instant workspace creation!
+                    </p>
+                    <p className="mt-3">
+                      Take command of your team and kanbans, and search to find what you need within a seamless workspace. Immerse yourself in a clean, intuitive interface that keeps you on track and in control.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="md:flex items-center" >
+                <Image src={carousel1} className="w-full md:h-full md:mr-4" alt="carousel1" />
+                <div className="w-full md:h-full flex flex-col justify-evenly">
+                  <h3 className="text-2xl font-bold mt-8 md:mt-0 text-center md:text-left">
+                    Kanban
+                  </h3>
+                  <div>
+                    <p className="mt-3">
+                      Explore our organized kanban, where you can effortlessly add new cards by clicking 'add card' or manage card categories using 'settings.'
+                    </p>
+                    <p className="mt-3">
+                      Click to edit cards or drag and drop them to their perfect positions. Plus, with our multifunctional sidebar, rapidly switch between different kanban by simply clicking on them. Immerse yourself in seamless navigation with just a click and a drag!
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="md:flex items-center" >
+                <Image src={carousel1} className="w-full md:h-full md:mr-4" alt="carousel1" />
+                <div className="w-full md:h-full flex flex-col justify-evenly">
+                  <h3 className="text-2xl font-bold mt-8 md:mt-0 text-center md:text-left">
+                    Card
+                  </h3>
+                  <div>
+                    <p className="mt-3">
+                      Streamline your workflow with our feature-rich cards.
+                    </p>
+                    <p className="mt-3">
+                      Edit items with a simple click. Track start and end times, assign cards to team members, and add tags and priorities for optimized search and task organization. Boost collaboration by uploading links and attachments, while ensuring seamless communication with comments.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Carousel>
+            <div className="absolute carousel-arrow carousel-arrow-right"
+              onClick={() => (carouselRef.current as any).next()}
+            ></div>
+          </div>
         </section>
 
         {/* user testmony */}
@@ -319,7 +379,7 @@ const Home: React.FC = () => {
             Copyright &copy; 2023 HookLoop
           </div>
         </section>
-      </section>
+      </section >
     </>
   );
 };
