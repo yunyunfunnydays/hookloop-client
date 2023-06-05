@@ -60,3 +60,23 @@ export const updatePassword = (data: { oldPassword: string; newPassword: string 
 export const closeMe = () => {
   return instance.patch("/users/me/isActive");
 };
+
+// 忘記密碼
+export const forgetPassword = (data: { email: string }) => {
+  return instance.post(`/auth/forgetPassword`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "",
+    },
+  });
+};
+
+// 驗證新密碼
+export const verifyPassword = (data: { newPassword: string; resetPasswordToken: string }) => {
+  return instance.post(`/auth/verifyPassword`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "",
+    },
+  });
+};

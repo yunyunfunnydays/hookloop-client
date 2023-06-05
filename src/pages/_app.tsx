@@ -79,6 +79,10 @@ export default function App({ Component, pageProps }: AppProps) {
         });
         return;
       }
+      if (currentPath.includes("/resetPassword")) {
+        Router.push(currentPath);
+        return;
+      }
       // 因為沒有驗證成功，所以要導轉到首頁
       if (currentPath !== "/") {
         Router.push("/");

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import Router from "next/router";
 import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
@@ -12,7 +12,8 @@ import logo from "@/assets/logo_black.svg";
 import GlobalContext from "@/Context/GlobalContext";
 // api
 import { IApiResponse } from "@/service/instance";
-import { createUser, login } from "@/service/api";
+import { createUser, forgetPassword, login } from "@/service/api";
+import useTimer from "@/hooks/useTimer";
 
 interface ILogin {
   open: boolean;
@@ -21,7 +22,7 @@ interface ILogin {
 
 const { useBreakpoint } = Grid;
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const Login: React.FC<ILogin> = (props) => {
   /*
@@ -37,21 +38,22 @@ const Login: React.FC<ILogin> = (props) => {
   // antd 用來監聽畫面寬度變化
   const screens: Record<string, boolean> = useBreakpoint();
   // 判斷目前情境是[登入]還是[註冊]
-  const [s_editType, set_s_editType] = useState<"login" | "signUp">("login");
+  const [s_editType, set_s_editType] = useState<"login" | "signUp" | "forgetPassword">("login");
   // const [s_passwordVisible, set_s_passwordVisible] = useState(false);
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
+  const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
+  const [s_reset_password_timer, set_s_reset_password_timer] = useState<number>(0);
 
   // const ICON_STYLE = "cursor-pointer mb-2";
 
   // 按鈕基本樣式
   const SUBMIT_BTN = "w-[120px] h-[32px] py-[4px] px-[15px] font-semibold";
+  const RESET_PASSWORD_SUBMIT_BTN = `w-[250px] h-[32px] py-[4px] px-[15px] font-semibold`;
 
   // 用來切換[登入]、[註冊]
-  const toggleEditType = () => {
-    const _type = s_editType === "login" ? "signUp" : "login";
-
-    set_s_editType(_type);
+  const toggleEditType = (type?: "login" | "signUp" | "forgetPassword") => {
+    set_s_editType(type || "login");
     // 切換時重置 form value
     form.resetFields();
   };
@@ -103,7 +105,7 @@ const Login: React.FC<ILogin> = (props) => {
       Cookies.set("hookloop-token", data.token);
       set_c_user({
         ...data.user,
-        userId: data.user._id,
+        userId: data.user.id,
       });
       Router.push("/dashboard");
       close();
@@ -121,8 +123,8 @@ const Login: React.FC<ILogin> = (props) => {
       placement: "topLeft",
       description: (
         <div>
-          <Tag>{res.data.field}</Tag>
-          <span className="ml-2">{res.data.error}</span>
+          {res.data.field && <Tag>{res.data.field}</Tag>}
+          <span>{res.data.error}</span>
         </div>
       ),
     });
@@ -154,7 +156,23 @@ const Login: React.FC<ILogin> = (props) => {
       }
       set_s_loading(false);
     }
+
+    if (s_editType === "forgetPassword") {
+      set_s_loading(true);
+      const res: AxiosResponse = await forgetPassword({ email: values.email });
+      const { status, message } = res.data as IApiResponse;
+      if (status === "success") {
+        set_s_reset_password_email_status(true);
+        msg.success(message);
+      } else {
+        set_s_reset_password_email_status(false);
+        handleError(res.data);
+      }
+      set_s_loading(false);
+    }
   };
+
+  // useEffect(() => {}, [us]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
@@ -196,38 +214,40 @@ const Login: React.FC<ILogin> = (props) => {
               </Form.Item>
             )}
 
-            <Row className="w-full">
-              <Col span={24} className="flex items-end gap-1">
-                <Form.Item
-                  className="flex-1"
-                  label={<Title level={5}>Password</Title>}
-                  name="password"
-                  rules={[{ required: true }, { max: 20 }, { min: 8 }]}
-                >
-                  <Input.Password
-                    size="large"
-                    placeholder="enter 8 to 20 letters."
-                    // iconRender={(_) => <div />}
-                    // visibilityToggle={{
-                    //   visible: s_passwordVisible,
-                    // }}
-                  />
-                </Form.Item>
-                {/* {s_passwordVisible ? (
-                  <EyeOutlined
-                    className={ICON_STYLE}
-                    onClick={() => set_s_passwordVisible((prev) => !prev)}
-                    style={{ fontSize: "24px" }}
-                  />
-                ) : (
-                  <EyeInvisibleOutlined
-                    className={ICON_STYLE}
-                    onClick={() => set_s_passwordVisible((prev) => !prev)}
-                    style={{ fontSize: "24px" }}
-                  />
-                )} */}
-              </Col>
-            </Row>
+            {s_editType !== "forgetPassword" && (
+              <Row className="w-full">
+                <Col span={24} className="flex items-end gap-1">
+                  <Form.Item
+                    className="flex-1"
+                    label={<Title level={5}>Password</Title>}
+                    name="password"
+                    rules={[{ required: true }, { max: 20 }, { min: 8 }]}
+                  >
+                    <Input.Password
+                      size="large"
+                      placeholder="enter 8 to 20 letters."
+                      // iconRender={(_) => <div />}
+                      // visibilityToggle={{
+                      //   visible: s_passwordVisible,
+                      // }}
+                    />
+                  </Form.Item>
+                  {/* {s_passwordVisible ? (
+                    <EyeOutlined
+                      className={ICON_STYLE}
+                      onClick={() => set_s_passwordVisible((prev) => !prev)}
+                      style={{ fontSize: "24px" }}
+                    />
+                  ) : (
+                    <EyeInvisibleOutlined
+                      className={ICON_STYLE}
+                      onClick={() => set_s_passwordVisible((prev) => !prev)}
+                      style={{ fontSize: "24px" }}
+                    />
+                  )} */}
+                </Col>
+              </Row>
+            )}
 
             {s_editType === "signUp" && (
               <Row className="w-full">
@@ -261,15 +281,26 @@ const Login: React.FC<ILogin> = (props) => {
             <Row className="w-full">
               <Col span={24}>
                 <Form.Item className="flex-center mb-2">
-                  <Button type="primary" className={SUBMIT_BTN} htmlType="submit">
-                    {s_editType === "login" ? "Log in" : "Sign up"}
+                  <Button
+                    type="primary"
+                    className={s_editType === "forgetPassword" ? RESET_PASSWORD_SUBMIT_BTN : SUBMIT_BTN}
+                    htmlType="submit"
+                  >
+                    {s_editType === "login" && "Log in"}
+                    {s_editType === "signUp" && "Sign up"}
+                    {s_editType === "forgetPassword" && "Send Reset Password Email"}
                   </Button>
                 </Form.Item>
               </Col>
 
               {s_editType === "login" && (
                 <Col span={24}>
-                  <Text type="secondary" underline className="cursor-pointer flex-center">
+                  <Text
+                    type="secondary"
+                    underline
+                    className="cursor-pointer flex-center"
+                    onClick={() => toggleEditType("forgetPassword")}
+                  >
                     Forget your password?
                   </Text>
                 </Col>
@@ -279,11 +310,32 @@ const Login: React.FC<ILogin> = (props) => {
 
           <div className="w-full h-[105px] mt-[40px] bg-[#F5F5F5] flex-center flex-col gap-2">
             <Title level={5}>{s_editType === "login" ? "Not have account yet?" : "Already have an account?"}</Title>
-            <Button className={`text-black ${SUBMIT_BTN}`} onClick={toggleEditType}>
+            <Button
+              className={`text-black ${SUBMIT_BTN}`}
+              onClick={() => {
+                if (s_editType === "login") {
+                  toggleEditType("signUp");
+                } else {
+                  toggleEditType("login");
+                }
+              }}
+            >
               {s_editType === "login" ? "Sign up" : "Log in"}
             </Button>
           </div>
+          {s_reset_password_email_status && (
+            <div className="w-full mt-[20px] bg-[#ffe8eb] flex-center flex-col p-[20px]">
+              <Title level={5} type="danger">
+                An email has been sent to your email.
+              </Title>
+              <Paragraph type="danger">
+                Follow the directions in the email to reset your password. <br />
+                The email reset authorization is availablefor 10 minutes.
+              </Paragraph>
+            </div>
+          )}
         </div>
+        {useTimer(600000).minute}:{useTimer(600000).second}
       </Spin>
     </Modal>
   );
