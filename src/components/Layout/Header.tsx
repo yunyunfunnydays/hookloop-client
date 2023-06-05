@@ -96,7 +96,7 @@ const Header: React.FC = () => {
           >
             {c_user?.avatar.length === 0 ? c_user.username[0] : null}
           </Avatar> */}
-          <CustAvatar info={c_user} />
+          <CustAvatar info={c_user} onClick={() => Router.push("/profile")} />
         </div>
       ) : (
         <>
