@@ -12,11 +12,11 @@ const CustAvatar: React.FC<IProps> = ({ info, ...props }) => {
   return (
     <Avatar
       size={32}
-      src={info.avatar.length > 0 && `https://cdn.filestackcontent.com/${info.avatar}`}
+      src={info?.avatar?.length > 0 && `https://cdn.filestackcontent.com/${info?.avatar}`}
       className="cursor-pointer bg-gray-200"
       {...props}
     >
-      {info?.avatar.length === 0 ? info.username[0] : null}
+      {info?.avatar?.length === 0 ? info.username[0] : null}
     </Avatar>
   );
 };

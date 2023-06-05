@@ -55,17 +55,18 @@ const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_
           <Col span={24}>
             <Typography.Title level={5}>Members</Typography.Title>
           </Col>
-          {s_members?.map((user: Imember) => (
-            <Col span={24} key={user?.username}>
-              <Checkbox value={user.userId} className="member-chackbox flex items-end">
-                {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
+          {s_members &&
+            s_members.map((user: Imember) => (
+              <Col span={24} key={user?.username}>
+                <Checkbox value={user.userId} className="member-chackbox flex items-end">
+                  {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
                   {user?.avatar?.length === 0 ? user?.username[0] : null}
                 </Avatar> */}
-                <CustAvatar info={user} />
-                <span className="ml-2">{user.username}</span>
-              </Checkbox>
-            </Col>
-          ))}
+                  <CustAvatar info={user} />
+                  <span className="ml-2">{user.username}</span>
+                </Checkbox>
+              </Col>
+            ))}
           <Divider className="my-2" />
           <Col span={24}>
             <Typography.Title level={5}>Tags</Typography.Title>

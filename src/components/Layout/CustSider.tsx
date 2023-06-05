@@ -192,6 +192,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         open={s_isShowMember}
         onCancel={() => set_s_isShowMember(false)}
         footer={null}
+        destroyOnClose
       >
         {s_isShowMember && (
           <MemberModal

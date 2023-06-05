@@ -99,6 +99,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   // 第一次渲染及 c_user 改變時執行, 監聽 c_user 是因為登入後前端會重新 set 一次 c_user
   useEffect(() => {
+    console.log("c_user = ", c_user);
     // 沒有登入 or 驗證 token 的API還沒回來
     if (c_user?.email?.length === 0) return;
 

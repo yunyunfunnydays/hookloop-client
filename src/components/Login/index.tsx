@@ -59,7 +59,15 @@ const Login: React.FC<ILogin> = (props) => {
   // 關閉彈窗
   const handleCancel = (): void => {
     // ...
+
     close();
+
+    form.setFieldsValue({
+      email: "",
+      password: "",
+      confirm: "",
+    });
+    set_s_editType("login");
   };
 
   // 取得彈窗寬度，每一個size都寫是方便之後改寬度
@@ -100,16 +108,23 @@ const Login: React.FC<ILogin> = (props) => {
     const { data, message, status } = res;
     if (status === "success") {
       msg.success(message);
+      // console.log("login data = ", data);
       Cookies.set("hookloop-token", data.token);
       set_c_user({
-        ...data.user,
         userId: data.user.id,
+        ...data.user,
       });
       Router.push("/dashboard");
       close();
     } else {
       msg.error(message);
     }
+    form.setFieldsValue({
+      email: "",
+      password: "",
+      confirm: "",
+    });
+    set_s_editType("login");
     set_s_loading(false);
   };
 

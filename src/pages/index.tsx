@@ -260,8 +260,8 @@ const Home: React.FC = () => {
                   <h3 className="mt-8 text-center text-2xl font-bold md:mt-0 md:text-left">Kanban</h3>
                   <div>
                     <p className="mt-3">
-                      Explore our organized kanban, where you can effortlessly add new cards by clicking 'add card' or
-                      manage card categories using 'settings.'
+                      Explore our organized kanban, where you can effortlessly add new cards by clicking 『add card』 or
+                      manage card categories using 『settings.』
                     </p>
                     <p className="mt-3">
                       Click to edit cards or drag and drop them to their perfect positions. Plus, with our
