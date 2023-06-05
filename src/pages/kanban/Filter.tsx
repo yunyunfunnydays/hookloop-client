@@ -37,9 +37,6 @@ const Filter: React.FC<IProps> = ({ s_kanbanId, set_s_open }) => {
       <Avatar.Group maxCount={3} size={42} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
         {s_members?.map((user: Imember) => (
           <Tooltip key={user?.username} title={user?.username}>
-            {/* <Avatar size={42} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
-              {user?.avatar?.length === 0 ? user?.username[0] : null}
-            </Avatar> */}
             <CustAvatar info={user} />
           </Tooltip>
         ))}

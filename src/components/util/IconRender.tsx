@@ -13,7 +13,6 @@ const IconRenderer: FC<IconRendererProps> = ({ iconName }) => {
     const ValidAntdIcon = AntdIcon as React.ComponentType; // then cast it to React.ComponentType
     return <ValidAntdIcon />;
   }
-  // console.log("e04");
   // return null or a placeholder for invalid icons
   return null;
 };

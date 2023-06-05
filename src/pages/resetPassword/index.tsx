@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState, useContext, useEffect } from "react";
 import Router, { useRouter } from "next/router";
 import { Row, Col, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
@@ -84,13 +85,13 @@ const ResetPassword = () => {
   return (
     <Spin spinning={s_loading}>
       {contextHolder}
-      <div className="flex flex-col items-center p-[25px] m-auto max-w-[600px]">
+      <div className="m-auto flex max-w-[600px] flex-col items-center p-[25px]">
         <Form
           layout="vertical"
           name="basic"
           form={form}
           onFinish={onFinish}
-          className="w-full flex flex-col items-center gap-[40px]"
+          className="flex w-full flex-col items-center gap-[40px]"
         >
           <Title level={3}>Reset Your Password</Title>
 
@@ -144,7 +145,7 @@ const ResetPassword = () => {
             </Col>
           </Row>
         </Form>
-        <Image src={mission} className="w-[295px] md:w-[565px] h-[205px] md:h-[395px] mt-20" alt="mission" />
+        <Image src={mission} className="mt-20 h-[205px] w-[295px] md:h-[395px] md:w-[565px]" alt="mission" />
       </div>
     </Spin>
   );

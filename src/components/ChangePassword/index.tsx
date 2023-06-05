@@ -52,7 +52,7 @@ const ChangePassword: React.FC<IChangePassword> = (props) => {
           labelCol={{ span: 6 }}
           labelAlign="left"
           onFinish={onFinish}
-          className="w-full flex flex-col items-center gap-[20px]"
+          className="flex w-full flex-col items-center gap-[20px]"
         >
           <Form.Item
             name="oldPassword"
@@ -91,7 +91,7 @@ const ChangePassword: React.FC<IChangePassword> = (props) => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-[120px] h-[32px] py-[4px] px-[15px] font-semibold">
+            <Button type="primary" htmlType="submit" className="h-[32px] w-[120px] px-[15px] py-[4px] font-semibold">
               Submit
             </Button>
           </Form.Item>

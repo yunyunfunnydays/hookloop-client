@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from "react";
 import { Tag, Button, Modal, Input, Space, Select, Row, Col, Divider } from "antd";
 import * as icons from "@ant-design/icons";
@@ -85,6 +83,7 @@ const CreateModal: React.FC<ICreateProps> = ({ s_editTag, set_c_Tags, kanbanId, 
         {TagColors.map((color) => (
           <div
             key={color}
+            role="presentation"
             className={`${color} h-7 w-14 cursor-pointer rounded-sm transition-all hover:opacity-75`}
             onClick={() => set_s_TagColor(color)}
           />
