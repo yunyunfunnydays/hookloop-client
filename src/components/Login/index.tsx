@@ -43,7 +43,7 @@ const Login: React.FC<ILogin> = (props) => {
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
   const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
-  const [s_reset_password_timer, set_s_reset_password_timer] = useState<number>(0);
+  const [s_reset_password_timer, set_s_reset_password_timer] = useState(false);
 
   // const ICON_STYLE = "cursor-pointer mb-2";
 
@@ -335,7 +335,7 @@ const Login: React.FC<ILogin> = (props) => {
             </div>
           )}
         </div>
-        {useTimer(600000).minute}:{useTimer(600000).second}
+        {useTimer(600000, set_s_reset_password_timer).minute}:{useTimer(600000, set_s_reset_password_timer).second}
       </Spin>
     </Modal>
   );
