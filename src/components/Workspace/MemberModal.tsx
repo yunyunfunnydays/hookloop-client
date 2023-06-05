@@ -25,7 +25,7 @@ const MemberModal: React.FC<IProps> = ({ s_workspace, set_s_workspace, set_s_isS
     if (Object.keys(target).length > 0) {
       messageApi.warning(
         <span>
-          user <span className="text-red-500 font-bold">{data.username}</span> is existing
+          user <span className="font-bold text-red-500">{data.username}</span> is existing
         </span>,
       );
       return;

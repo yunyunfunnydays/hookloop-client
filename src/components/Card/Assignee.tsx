@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import Image from "next/image";
 import { Avatar, Button, Modal, Tooltip, message as msg, Divider } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import CustAvatar from "@/components/util/CustAvatar";
