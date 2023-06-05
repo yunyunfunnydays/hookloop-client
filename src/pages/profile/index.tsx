@@ -3,15 +3,17 @@ import { UploadFile, UploadChangeParam } from "antd/lib/upload";
 import ChangePassword from "@/components/ChangePassword";
 import { getMe, updateMe, closeMe, updateAvatar } from "@/service/api";
 import { IApiResponse } from "@/service/instance";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Form, Row, Col, Typography, Input, Divider, Avatar, Spin, message as msg, Upload } from "antd";
+import GlobalContext from "@/Context/GlobalContext";
 import Router from "next/router";
 import Cookies from "js-cookie";
 
 const { Title } = Typography;
 
 const Profile = () => {
+  const { set_c_user } = useContext(GlobalContext);
   const [s_showChangePassword, set_s_showChangePassword] = useState<boolean>(false);
   const [s_spinning, set_s_spinning] = useState(false);
   const [s_avatarUrl, set_s_avatarUrl] = useState<string>("");
@@ -80,6 +82,8 @@ const Profile = () => {
 
       if (status === "success") {
         msg.success(message);
+
+        set_c_user(data.userData);
         set_s_avatarUrl(data.userData.avatar);
       } else {
         msg.error(message);
