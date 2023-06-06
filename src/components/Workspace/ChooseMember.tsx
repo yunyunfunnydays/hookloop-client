@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React, { useContext } from "react";
 import { Select } from "antd";
 import { UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import MemberSelect from "@/components/Member/MemberSelect";
+import GlobalContext from "@/Context/GlobalContext";
 
 interface IProps {
   members: Imember[];
@@ -11,13 +12,18 @@ interface IProps {
   changeRole: (_: any, newRole: Imember["role"]) => void;
 }
 
-const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeRole, deleteMember }) => {
+const ChooseMember: React.FC<IProps> = ({ members, addMember, changeRole, deleteMember }) => {
+  const { c_user } = useContext(GlobalContext);
+  const auth = members.find((item) => item.userId === c_user.userId)?.role;
+  // console.log("c_user = ", c_user);
   // console.log("members = ", members);
+  // console.log("auth = ", auth);
+  // console.log();
   return (
     <section>
       <div className="mt-4 flex flex-col">
         <p className="mb-1 text-base font-medium">Invite members</p>
-        <MemberSelect value={null} placeholder="input email text" onChange={addMember} />
+        <MemberSelect disabled={auth === "Member"} value={null} placeholder="input email text" onChange={addMember} />
       </div>
 
       <section className="mt-4 flex flex-col gap-5">
@@ -35,6 +41,7 @@ const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeR
                 <div className="flex-center gap-2">
                   <Select
                     className="w-24"
+                    disabled={auth === "Member"}
                     onChange={(value) => changeRole(member.username, value)}
                     value={member.role}
                     options={[
@@ -42,7 +49,12 @@ const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeR
                       { value: "Member", label: "Member" },
                     ]}
                   />
-                  <DeleteOutlined className="cursor-pointer text-base" onClick={() => deleteMember(member.username)} />
+                  {auth !== "Member" && (
+                    <DeleteOutlined
+                      className="cursor-pointer text-base"
+                      onClick={() => deleteMember(member.username)}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -50,6 +62,6 @@ const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeR
       </section>
     </section>
   );
-});
+};
 
 export default ChooseMember;

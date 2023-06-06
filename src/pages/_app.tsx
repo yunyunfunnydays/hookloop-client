@@ -13,6 +13,7 @@ import Header from "@/components/Layout/Header";
 import { verifyUserToken } from "@/service/api";
 import { getWorkspacesByUserId } from "@/service/apis/workspace";
 import withTheme from "../../theme/index";
+import { userInitValue } from "../components/util/initValue";
 // context
 import GlobalContext from "../Context/GlobalContext";
 
@@ -20,16 +21,10 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   // 所有 workspace
   const [c_workspaces, set_c_workspaces] = useState<Iworkspace[]>([]);
-
+  const [c_memberMap, set_c_memberMap] = useState<ImemberRecord>({});
   const [s_isLoading, set_s_isLoading] = useState(false);
   // 存登入人員的資訊
-  const [c_user, set_c_user] = useState<IUser>({
-    username: "",
-    email: "",
-    password: "",
-    avatar: "",
-    userId: "",
-  });
+  const [c_user, set_c_user] = useState<IUser>(userInitValue);
 
   // 取得所有 workspace
   const c_getAllWorkspace = async () => {
@@ -87,13 +82,7 @@ export default function App({ Component, pageProps }: AppProps) {
       if (currentPath !== "/") {
         Router.push("/");
       }
-      set_c_user({
-        username: "",
-        email: "",
-        password: "",
-        avatar: "",
-        userId: "",
-      });
+      set_c_user(userInitValue);
     })();
   }, []);
 
@@ -105,8 +94,43 @@ export default function App({ Component, pageProps }: AppProps) {
     c_getAllWorkspace();
   }, [c_user]);
 
+  useEffect(() => {
+    const {
+      pathname,
+      query: { id },
+    } = router;
+
+    // 如果沒有進入 kanban 就不執行
+    if (!pathname.includes("kanban")) return;
+    if (!c_workspaces || !id) return;
+
+    // 用 c_workspaceId 找出目前 workspace 上所有成員的資料
+    const nowWorkspace = c_workspaces.find(({ kanbans, members }: Iworkspace) => {
+      if (kanbans.length === 0 || members.length === 0) return false;
+      return kanbans.some(({ key }: Ikanban) => key === id);
+    });
+
+    if (!nowWorkspace) return;
+
+    const memberMap = nowWorkspace.members.reduce((prev: ImemberRecord, curr) => {
+      prev[curr.userId] = curr;
+      return prev;
+    }, {});
+
+    set_c_memberMap(memberMap);
+  }, [router, c_workspaces]);
+
   return withTheme(
-    <GlobalContext.Provider value={{ c_workspaces, set_c_workspaces, c_user, set_c_user, c_getAllWorkspace }}>
+    <GlobalContext.Provider
+      value={{
+        c_memberMap,
+        c_workspaces,
+        set_c_workspaces,
+        c_user,
+        set_c_user,
+        c_getAllWorkspace,
+      }}
+    >
       <Spin spinning={s_isLoading}>
         <Header />
         <Component {...pageProps} />

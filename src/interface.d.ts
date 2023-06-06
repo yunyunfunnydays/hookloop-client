@@ -42,6 +42,8 @@ declare global {
     state: "create" | "delete";
   }
 
+  type ImemberRecord = Record<string, Imember>;
+
   interface Iworkspace {
     workspaceId: string;
     workspaceName: string;

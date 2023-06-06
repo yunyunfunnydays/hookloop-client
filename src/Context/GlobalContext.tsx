@@ -1,6 +1,7 @@
 import React from "react";
 
 interface IProps {
+  c_memberMap: ImemberRecord;
   c_workspaces: Iworkspace[];
   set_c_workspaces: ISetStateFunction<Iworkspace[]>;
   c_user: IUser;
@@ -9,6 +10,7 @@ interface IProps {
 }
 
 const GlobalContext = React.createContext<IProps>({
+  c_memberMap: {},
   c_workspaces: [],
   set_c_workspaces: () => {},
   c_user: {} as IUser,
