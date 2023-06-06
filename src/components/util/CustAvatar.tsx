@@ -9,6 +9,7 @@ interface IProps extends AvatarProps {
 }
 
 const CustAvatar: React.FC<IProps> = ({ info, ...props }) => {
+  // console.log("info = ", info);
   return (
     <Avatar
       size={32}

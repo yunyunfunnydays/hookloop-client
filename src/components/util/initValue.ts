@@ -1,3 +1,11 @@
+export const userInitValue: IUser = {
+  username: "",
+  email: "",
+  password: "",
+  avatar: "",
+  userId: "",
+};
+
 export const workspaceInitValue: Iworkspace = {
   workspaceId: "",
   workspaceName: "",

@@ -15,6 +15,7 @@ import {
   LogoutOutlined,
   ExclamationCircleFilled,
 } from "@ant-design/icons";
+import { userInitValue } from "@/components/util/initValue";
 // API
 import { archivedWorkspace } from "@/service/apis/workspace";
 // context
@@ -58,13 +59,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   const handleLogout = async () => {
     msg.success("Log out success");
     Cookies.set("hookloop-token", "");
-    set_c_user({
-      username: "",
-      email: "",
-      password: "",
-      avatar: "",
-      userId: "",
-    });
+    set_c_user(userInitValue);
     Router.push("/");
   };
 
