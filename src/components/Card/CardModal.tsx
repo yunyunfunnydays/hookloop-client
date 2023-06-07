@@ -64,7 +64,6 @@ const FieldLabel: React.FC<IFieldProps> = ({ children }) => (
 );
 
 const tagRender = (props: CustomTagProps) => {
-  // console.log("props = ", props);
   const { label, value, closable, onClose } = props;
   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
@@ -97,17 +96,10 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const [s_Links, set_s_Links] = useState<ILink[]>([]);
   // 卡片上傳的檔案
   const [s_attachments, set_s_attachments] = useState<any>([]);
-  // 卡片的 reporter
-  const [s_reporter, set_s_reporter] = useState<IOwner>({
-    _id: "",
-    username: "",
-    avatar: "",
-  });
-
-  // 卡片的 assignee
-  const [s_assignee, set_s_assignee] = useState<IOwner[]>([]);
 
   const [form] = Form.useForm();
+  const f_reporter = Form.useWatch("reporter", form);
+  const f_assignee = Form.useWatch("assignee", form);
   const [messageApi, contextHolder] = msg.useMessage();
 
   const onSubmit = async (values: ICard) => {
@@ -139,30 +131,19 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
 
   // 選擇owner
   const chooseOwner = (_: any, data: IOwner) => {
-    // console.log(data);
-    set_s_reporter({
-      _id: data._id,
-      username: data.username,
-      avatar: data.avatar,
-    });
-
     form.setFieldsValue({
       reporter: data._id,
     });
   };
 
-  const chooseAssignee = (data: IOwner[]) => {
-    const assignee_Ids = data?.map((item) => item._id) || [];
+  const chooseAssignee = (data: string[]) => {
     form.setFieldsValue({
-      assignee: assignee_Ids,
+      assignee: data,
     });
-    set_s_assignee(data);
   };
 
   const createLink = (data: { name: string; url: string }) => {
-    // console.log("link = ", data);
     const _links = [...s_Links].concat({ name: data.name, url: data.url });
-    // const _linkIds = [...form.getFieldValue('webLink')].concat();
     set_s_Links(_links);
     set_s_showLink(false);
   };
@@ -186,25 +167,19 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   useEffect(() => {
     form.setFieldsValue({
       ...card,
-      // kanbanId: "646cf5e65916bb0a3de48875",
-      // kanbanId: s_kanbanId,
-      tag: card.tag?.map((item: ITag) => item?._id) || [],
       // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
-      reporter: card.reporter?._id || "",
-      assignee: card.assignee?.map((item: IOwner) => item._id),
       actualDate: [dayjs(card.actualStartDate), dayjs(card.actualEndDate)],
       targetDate: [dayjs(card.targetStartDate), dayjs(card.targetEndDate)],
     });
 
     // 如果有reporter就獨立開一個state儲存
-    if ((card.reporter?._id || "").length > 0) {
-      set_s_reporter(card.reporter);
-    }
+    // if ((card.reporter?._id || "").length > 0) {
+    //   set_s_reporter(card.reporter);
+    // }
     // 如果有assignee就獨立開一個state儲存
-    if (card.assignee?.length > 0) {
-      // console.log("data.assignee = ", data.assignee);
-      set_s_assignee(card.assignee);
-    }
+    // if (card.assignee?.length > 0) {
+    //   set_s_assignee(card.assignee);
+    // }
 
     if ((card?.attachment || "")?.length > 0) {
       set_s_attachments(card.attachment);
@@ -273,13 +248,12 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
             <Row gutter={[12, 0]} align="bottom">
               <Col span={3} className="flex flex-col">
                 <FieldLabel>Owner</FieldLabel>
-                {/* reporter */}
-                <Reporter reporter={s_reporter} afterChoose={chooseOwner} />
+                <Reporter reporter={f_reporter} afterChoose={chooseOwner} />
               </Col>
 
               <Col span={9} className="flex flex-col">
                 <FieldLabel>Member</FieldLabel>
-                <Assignee assignee={s_assignee} afterChoose={chooseAssignee} />
+                <Assignee assignee={f_assignee} afterChoose={chooseAssignee} />
               </Col>
             </Row>
 
@@ -319,7 +293,6 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
                 <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
                   <Select
                     placeholder="please select status"
-                    // value={s_cardData.status}
                     options={[
                       { label: "Pending", value: "Pending" },
                       { label: "In Progress", value: "In Progress" },
@@ -337,13 +310,13 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
                     tagRender={tagRender}
                     options={c_Tags?.map((item) => ({
                       label: (
-                        <span className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
+                        <span key={item.color} className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
                           <IconRenderer iconName={item.icon as keyof typeof icons} />
                           <span className="ml-2">{item.name}</span>
                         </span>
                       ),
                       value: item._id,
-                      data: "123",
+                      key: item._id,
                     }))}
                     dropdownRender={dropdownRender}
                   />
@@ -433,11 +406,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
 
           <Row>
             <Col span={24} className="flex justify-end gap-1">
-              <Button
-                type="primary"
-                htmlType="submit"
-                // onClick={() => set_s_showCard(false)}
-              >
+              <Button type="primary" htmlType="submit">
                 Ok
               </Button>
             </Col>

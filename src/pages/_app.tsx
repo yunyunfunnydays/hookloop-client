@@ -35,20 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
       // msg.success(message);
 
       const _data = data.filter((workspace: Iworkspace) => workspace.isArchived !== true);
-      // // 根据 isPinned 属性对项目数组进行排序
-      // _data.sort((a, b) => {
-      //   // 如果 a 的 isPinned 为 true，而 b 的 isPinned 为 false，则 a 排在 b 前面
-      //   if (a.isPinned && !b.isPinned) {
-      //     return -1;
-      //   }
-      //   // 如果 a 的 isPinned 为 false，而 b 的 isPinned 为 true，则 b 排在 a 前面
-      //   if (!a.isPinned && b.isPinned) {
-      //     return 1;
-      //   }
-      //   // 其他情况下，保持原有顺序
-      //   return 0;
-      // });
-      // console.log("c_workspaces = ", _data);
+
       set_c_workspaces(_data);
     }
     set_s_isLoading(false);

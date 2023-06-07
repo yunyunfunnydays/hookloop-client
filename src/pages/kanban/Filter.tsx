@@ -1,32 +1,29 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import GlobalContext from "@/Context/GlobalContext";
 import { Tooltip, Avatar, Button } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
-// init value
-import { workspaceInitValue, kanbanInitValue } from "@/components/util/initValue";
 import CustAvatar from "@/components/util/CustAvatar";
 
 interface IProps {
-  s_kanbanId: string;
   set_s_open: ISetStateFunction<boolean>;
 }
 
-const Filter: React.FC<IProps> = ({ s_kanbanId, set_s_open }) => {
-  const { c_workspaces } = useContext(GlobalContext);
+const Filter: React.FC<IProps> = ({ set_s_open }) => {
+  const { c_memberMap } = useContext(GlobalContext);
 
-  const [s_members, set_s_members] = useState<Imember[]>([]);
-  useEffect(() => {
-    if (!s_kanbanId) return;
-    // 目標看板
-    const kanbanData: Ikanban =
-      c_workspaces?.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === s_kanbanId) ||
-      kanbanInitValue;
-    const members: Imember[] =
-      c_workspaces.find((workspace) => workspace.workspaceId === kanbanData?.workspaceId)?.members ||
-      workspaceInitValue.members;
+  // const [s_members, set_s_members] = useState<Imember[]>([]);
+  // useEffect(() => {
+  //   if (!s_kanbanId) return;
+  //   // 目標看板
+  //   const kanbanData: Ikanban =
+  //     c_workspaces?.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === s_kanbanId) ||
+  //     kanbanInitValue;
+  //   const members: Imember[] =
+  //     c_workspaces.find((workspace) => workspace.workspaceId === kanbanData?.workspaceId)?.members ||
+  //     workspaceInitValue.members;
 
-    set_s_members(members);
-  }, [c_workspaces, s_kanbanId]);
+  //   set_s_members(members);
+  // }, [c_workspaces, s_kanbanId]);
 
   return (
     <div className="flex h-[90px] w-full items-center justify-end">
@@ -35,9 +32,9 @@ const Filter: React.FC<IProps> = ({ s_kanbanId, set_s_open }) => {
         Filter
       </Button>
       <Avatar.Group maxCount={3} size={42} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
-        {s_members?.map((user: Imember) => (
+        {Object.values(c_memberMap)?.map((user: Imember) => (
           <Tooltip key={user?.username} title={user?.username}>
-            <CustAvatar info={user} />
+            <CustAvatar size={42} info={user} />
           </Tooltip>
         ))}
       </Avatar.Group>

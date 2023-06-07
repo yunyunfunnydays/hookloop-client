@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect, useContext } from "react";
 import type { InputRef } from "antd";
 import { Modal, Input, Avatar, Tooltip } from "antd";
 import { addCard } from "@/service/apis/card";
+import GlobalContext from "@/Context/GlobalContext";
 import { BellFilled, MessageOutlined, PlusOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
 import CardModal from "@/components/Card/CardModal";
@@ -35,7 +36,8 @@ const CardPriority: React.FC<CardPriorityProps> = ({ priority }) => {
 
 const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
-
+  const { c_memberMap } = useContext(GlobalContext);
+  // console.log("card = ", card);
   return (
     <>
       <Draggable draggableId={card._id} index={index} key={card._id}>
@@ -83,25 +85,14 @@ const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
               {/* 成員 */}
               <Avatar.Group maxCount={5} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
                 {card.reporter && (
-                  <Tooltip key={card.reporter?.username} title={card.reporter?.username}>
-                    {/* <Avatar
-                      size={32}
-                      src={card.reporter?.avatar?.length > 0 && card.reporter?.avatar}
-                      className="border-2 border-orange-400 bg-gray-200"
-                    >
-                      {card.reporter?.avatar?.length === 0 ? card.reporter?.username[0] : null}
-                    </Avatar> */}
-                    <CustAvatar info={card.reporter} className="border-2 border-orange-400 bg-gray-200" />
+                  <Tooltip key={card.reporter} title={c_memberMap[card.reporter]?.username}>
+                    <CustAvatar info={c_memberMap[card.reporter]} className="border-2 border-orange-400 bg-gray-200" />
                   </Tooltip>
                 )}
 
-                {card.assignee?.map((user: IUser) => (
-                  <Tooltip key={user?.username} title={user?.username}>
-                    {/* <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
-                    {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
-                      {user?.avatar?.length === 0 ? user?.username[0] : null}
-                    </Avatar> */}
-                    <CustAvatar info={user} />
+                {card.assignee?.map((userId) => (
+                  <Tooltip key={userId} title={c_memberMap[userId]?.username}>
+                    <CustAvatar info={c_memberMap[userId]} />
                   </Tooltip>
                 ))}
               </Avatar.Group>

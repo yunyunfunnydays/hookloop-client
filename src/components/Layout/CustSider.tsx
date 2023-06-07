@@ -77,11 +77,13 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           key: `${workspace.workspaceId}Kanbans`,
           icon: <AppstoreOutlined />,
           // 這個 children 用來渲染 kanban
-          children: workspace.kanbans.map((kanban) => ({
-            key: workspace.workspaceName + kanban._id,
-            onClick: () => Router.push(`/kanban/${kanban.key}`),
-            label: kanban.name,
-          })),
+          children: workspace.kanbans
+            ?.filter((kanban) => !kanban.isArchived)
+            ?.map((kanban) => ({
+              key: workspace.workspaceName + kanban._id,
+              onClick: () => Router.push(`/kanban/${kanban.key}`),
+              label: kanban.name,
+            })),
         },
         {
           label: <span className="members">Members</span>,
@@ -197,6 +199,9 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           />
         )}
       </Modal>
+
+      {/* workspace 設定的 Modal */}
+      {/* <Modal title="Workspace setting"></Modal> */}
     </Layout.Sider>
   );
 };

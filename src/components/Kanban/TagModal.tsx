@@ -115,7 +115,7 @@ const TagModal: React.FC<IProps> = ({ c_Tags, set_c_Tags, kanbanId }) => {
     <section className="flex flex-col">
       <div className="flex flex-col gap-3">
         {c_Tags?.map((tag: ITag) => (
-          <div className="flex gap-2">
+          <div key={tag._id} className="flex gap-2">
             <Tag
               key={tag._id}
               color="#edebeb"
