@@ -1,6 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext, ReactNode } from "react";
 import * as icons from "@ant-design/icons";
+import dynamic from "next/dynamic";
 import {
   Row,
   Col,
@@ -28,6 +30,8 @@ import {
   MessageFilled,
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
+// import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 // import { getTags } from "@/service/apis/kanban";
 import { getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
@@ -86,6 +90,7 @@ const tagRender = (props: CustomTagProps) => {
 
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
 const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
+  const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
   // const router = useRouter();
   const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
   const [s_isLoaging, set_s_isLoaging] = useState(false);
@@ -100,6 +105,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const [form] = Form.useForm();
   const f_reporter = Form.useWatch("reporter", form);
   const f_assignee = Form.useWatch("assignee", form);
+  const f_description = Form.useWatch("description", form);
   const [messageApi, contextHolder] = msg.useMessage();
 
   const onSubmit = async (values: ICard) => {
@@ -164,6 +170,20 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
     }
   };
 
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
+      // [{ size: [] }],
+      // [{ font: [] }],
+      // [{ align: ["right", "center", "justify"] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      // ["link", "image"],
+      [{ color: [] }], // [{ color: ["red", "#785412"] }],
+      [{ background: [] }], // [{ background: ["red", "#785412"] }],
+    ],
+  };
+
   useEffect(() => {
     const call_getCardById = async () => {
       const res: AxiosResponse = await getCardById(card._id);
@@ -208,215 +228,234 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   return (
     <Spin spinning={s_isLoaging}>
       <Form form={form} onFinish={onSubmit} layout="vertical">
-        <div className="flex flex-col">
-          {contextHolder}
-          {/* 隱藏欄位 */}
-          <div>
-            {/* <Form.Item name="kanbanId" hidden>
+        {/* <div className="flex flex-col"> */}
+        {contextHolder}
+        {/* 隱藏欄位 */}
+        <div>
+          {/* <Form.Item name="kanbanId" hidden>
               <Input />
             </Form.Item> */}
-            {/* <Form.Item name="_id" hidden>
+          {/* <Form.Item name="_id" hidden>
               <Input />
             </Form.Item> */}
-            <Form.Item name="reporter" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="assignee" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="webLink" hidden>
-              <Input />
-            </Form.Item>
-          </div>
-          <section className="no-scrollbar flex h-[70vh] flex-col gap-4 overflow-auto">
-            <GroupTitle>
-              <EditFilled className="mr-1" />
-              Content
-            </GroupTitle>
+          <Form.Item name="reporter" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="assignee" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="webLink" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" hidden>
+            <Input />
+          </Form.Item>
+        </div>
+        <section className="no-scrollbar flex h-[70vh] flex-col gap-4 overflow-auto">
+          <GroupTitle>
+            <EditFilled className="mr-1" />
+            Content
+          </GroupTitle>
 
-            <Row gutter={[12, 0]}>
-              <Col span={24}>
-                <Form.Item label={<FieldLabel>Title</FieldLabel>} name="name">
-                  <Input placeholder="Write card name" />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={[12, 0]}>
-              <Col span={24}>
-                <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
-                  <Input.TextArea placeholder="Write Description" />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={[12, 0]} align="bottom">
-              <Col span={3} className="flex flex-col">
-                <FieldLabel>Owner</FieldLabel>
-                <Reporter reporter={f_reporter} afterChoose={chooseOwner} />
-              </Col>
-
-              <Col span={9} className="flex flex-col">
-                <FieldLabel>Member</FieldLabel>
-                <Assignee assignee={f_assignee} afterChoose={chooseAssignee} />
-              </Col>
-            </Row>
-
-            <GroupTitle>
-              <SettingFilled className="mr-1" />
-              Setting
-            </GroupTitle>
-
-            <Row gutter={[12, 12]}>
-              <Col span={24} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
-                  <DatePicker.RangePicker className="h-[30px] w-full" />
-                </Form.Item>
-              </Col>
-
-              <Col span={24} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Actual period</FieldLabel>} name="actualDate">
-                  <DatePicker.RangePicker className="h-[30px] w-full" />
-                </Form.Item>
-              </Col>
-
-              <Col span={12} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Priority</FieldLabel>} name="priority">
-                  <Select
-                    placeholder="please select priority"
-                    // value={s_cardData.priority}
-                    options={[
-                      { label: "Low", value: "Low" },
-                      { label: "Medium", value: "Medium" },
-                      { label: "High", value: "High" },
-                    ]}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={12} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
-                  <Select
-                    placeholder="please select status"
-                    options={[
-                      { label: "Pending", value: "Pending" },
-                      { label: "In Progress", value: "In Progress" },
-                      { label: "Done", value: "Done" },
-                    ]}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={24} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Tags</FieldLabel>} name="tag">
-                  <Select
-                    mode="multiple"
-                    showArrow
-                    tagRender={tagRender}
-                    options={c_Tags?.map((item) => ({
-                      label: (
-                        <span key={item.color} className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
-                          <IconRenderer iconName={item.icon as keyof typeof icons} />
-                          <span className="ml-2">{item.name}</span>
-                        </span>
-                      ),
-                      value: item._id,
-                      key: item._id,
-                    }))}
-                    dropdownRender={dropdownRender}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <GroupTitle>
-              <BookFilled className="mr-1" />
-              Reference
-            </GroupTitle>
-
-            <Row gutter={[12, 8]}>
-              <Col span={24} className="flex gap-3">
-                <FieldLabel>Links</FieldLabel>
-                <Button
-                  size="small"
-                  className="flex items-center text-black"
-                  onClick={() => set_s_showLink(true)}
-                  icon={<LinkOutlined />}
-                >
-                  Add link
-                </Button>
-              </Col>
-              <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
-              {s_Links?.map((item) => (
-                <Col key={item.url + item.name} span={24}>
-                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeLink(item.name + item.url)} />
-                  <Typography.Link underline href={item.url} target="_blank">
-                    {item.name}
-                  </Typography.Link>
-                </Col>
-              ))}
-            </Row>
-
-            <Row gutter={[12, 8]}>
-              <Col span={12} className="flex gap-3">
-                <FieldLabel>Files</FieldLabel>
-                {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-                  Add file
-                </Button> */}
-                <Upload
-                  itemRender={() => null}
-                  listType="picture"
-                  beforeUpload={() => false}
-                  onChange={async ({ file }) => {
-                    set_s_isLoaging(true);
-                    const formData = new FormData();
-                    formData.append("file", file as any);
-                    const res: AxiosResponse = await addAttachment(form.getFieldValue("_id"), formData);
-                    const { status, message, data } = res.data as IApiResponse;
-                    if (status === "success") {
-                      // console.log("data = ", data);
-                      set_s_attachments(data.target.attachment);
-                      messageApi.success(message);
-                    } else {
-                      messageApi.error(message);
-                    }
-                    set_s_isLoaging(false);
-                  }}
-                >
-                  <Button size="small" className="flex items-center text-black" icon={<LinkOutlined />}>
-                    Add file
-                  </Button>
-                </Upload>
-              </Col>
-
-              {s_attachments?.map((item: any) => (
-                <Col key={item.fileId} span={24}>
-                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
-                  <Typography.Link underline href={item.url} target="_blank">
-                    {item.name}
-                  </Typography.Link>
-                </Col>
-              ))}
-            </Row>
-
-            <GroupTitle>
-              <MessageFilled className="mr-1" />
-              Comment
-            </GroupTitle>
-
-            <CommentList cardId={card._id} />
-          </section>
-
-          <Divider className="my-3" />
-
-          <Row>
-            <Col span={24} className="flex justify-end gap-1">
-              <Button type="primary" htmlType="submit">
-                Ok
-              </Button>
+          <Row gutter={[12, 0]}>
+            <Col span={24}>
+              <Form.Item label={<FieldLabel>Title</FieldLabel>} name="name">
+                <Input placeholder="Write card name" />
+              </Form.Item>
             </Col>
           </Row>
-        </div>
+
+          <Row gutter={[12, 0]}>
+            <Col span={24}>
+              {/* <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
+                  <Input.TextArea placeholder="Write Description" />
+                </Form.Item> */}
+              <FieldLabel>Description</FieldLabel>
+              <ReactQuill
+                theme="snow"
+                value={f_description}
+                modules={modules}
+                // formats={formats}
+                onBlur={(_, __, editor) => {
+                  // console.log("previousRange = ", previousRange);
+                  // console.log("source = ", source);
+                  // console.log("getSelection = ", editor.getSelection());
+                  form.setFieldsValue({
+                    description: editor.getHTML(),
+                  });
+                }}
+              />
+            </Col>
+            <Col span={24}>
+              <Row gutter={[12, 0]} align="bottom">
+                <Col span={3} className="flex flex-col">
+                  <FieldLabel>Owner</FieldLabel>
+                  <Reporter reporter={f_reporter} afterChoose={chooseOwner} />
+                </Col>
+
+                <Col span={9} className="flex flex-col">
+                  <FieldLabel>Member</FieldLabel>
+                  <Assignee assignee={f_assignee} afterChoose={chooseAssignee} />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+          <GroupTitle>
+            <SettingFilled className="mr-1" />
+            Setting
+          </GroupTitle>
+
+          <Row gutter={[12, 12]}>
+            <Col span={24} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
+                <DatePicker.RangePicker className="h-[30px] w-full" />
+              </Form.Item>
+            </Col>
+
+            <Col span={24} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Actual period</FieldLabel>} name="actualDate">
+                <DatePicker.RangePicker className="h-[30px] w-full" />
+              </Form.Item>
+            </Col>
+
+            <Col span={12} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Priority</FieldLabel>} name="priority">
+                <Select
+                  placeholder="please select priority"
+                  // value={s_cardData.priority}
+                  options={[
+                    { label: "Low", value: "Low" },
+                    { label: "Medium", value: "Medium" },
+                    { label: "High", value: "High" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={12} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
+                <Select
+                  placeholder="please select status"
+                  options={[
+                    { label: "Pending", value: "Pending" },
+                    { label: "In Progress", value: "In Progress" },
+                    { label: "Done", value: "Done" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={24} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Tags</FieldLabel>} name="tag">
+                <Select
+                  mode="multiple"
+                  showArrow
+                  tagRender={tagRender}
+                  options={c_Tags?.map((item) => ({
+                    label: (
+                      <span key={item.color} className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
+                        <IconRenderer iconName={item.icon as keyof typeof icons} />
+                        <span className="ml-2">{item.name}</span>
+                      </span>
+                    ),
+                    value: item._id,
+                    key: item._id,
+                  }))}
+                  dropdownRender={dropdownRender}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <GroupTitle>
+            <BookFilled className="mr-1" />
+            Reference
+          </GroupTitle>
+
+          <Row gutter={[12, 8]}>
+            <Col span={24} className="flex gap-3">
+              <FieldLabel>Links</FieldLabel>
+              <Button
+                size="small"
+                className="flex items-center text-black"
+                onClick={() => set_s_showLink(true)}
+                icon={<LinkOutlined />}
+              >
+                Add link
+              </Button>
+            </Col>
+            <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
+            {s_Links?.map((item) => (
+              <Col key={item.url + item.name} span={24}>
+                <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeLink(item.name + item.url)} />
+                <Typography.Link underline href={item.url} target="_blank">
+                  {item.name}
+                </Typography.Link>
+              </Col>
+            ))}
+          </Row>
+
+          <Row gutter={[12, 8]}>
+            <Col span={12} className="flex gap-3">
+              <FieldLabel>Files</FieldLabel>
+              {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                  Add file
+                </Button> */}
+              <Upload
+                itemRender={() => null}
+                listType="picture"
+                beforeUpload={() => false}
+                onChange={async ({ file }) => {
+                  set_s_isLoaging(true);
+                  const formData = new FormData();
+                  formData.append("file", file as any);
+                  const res: AxiosResponse = await addAttachment(form.getFieldValue("_id"), formData);
+                  const { status, message, data } = res.data as IApiResponse;
+                  if (status === "success") {
+                    // console.log("data = ", data);
+                    set_s_attachments(data.target.attachment);
+                    messageApi.success(message);
+                  } else {
+                    messageApi.error(message);
+                  }
+                  set_s_isLoaging(false);
+                }}
+              >
+                <Button size="small" className="flex items-center text-black" icon={<LinkOutlined />}>
+                  Add file
+                </Button>
+              </Upload>
+            </Col>
+
+            {s_attachments?.map((item: any) => (
+              <Col key={item.fileId} span={24}>
+                <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
+                <Typography.Link underline href={item.url} target="_blank">
+                  {item.name}
+                </Typography.Link>
+              </Col>
+            ))}
+          </Row>
+
+          <GroupTitle>
+            <MessageFilled className="mr-1" />
+            Comment
+          </GroupTitle>
+
+          <CommentList cardId={card._id} />
+        </section>
+
+        <Divider className="my-3" />
+
+        <Row>
+          <Col span={24} className="flex justify-end gap-1">
+            <Button type="primary" htmlType="submit">
+              Ok
+            </Button>
+          </Col>
+        </Row>
+        {/* </div> */}
       </Form>
 
       {/* tags 的 Modal */}
