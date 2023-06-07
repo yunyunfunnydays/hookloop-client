@@ -39,29 +39,26 @@ const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_
     if (!s_kanbanId) return;
     // 目標看板
     const kanbanData: Ikanban =
-      c_workspaces?.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === s_kanbanId) ||
+      c_workspaces.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === s_kanbanId) ||
       kanbanInitValue;
     const members: Imember[] =
       c_workspaces.find((workspace) => workspace.workspaceId === kanbanData?.workspaceId)?.members ||
       workspaceInitValue.members;
-    // console.log("members = ", members);
+    if (!members) return;
     set_s_members(members);
   }, [c_workspaces, s_kanbanId]);
-  // console.log("s_members = ", s_members);
+
   return (
     <div className="flex flex-col">
-      <Checkbox.Group style={{ width: "100%" }} value={c_query.member} onChange={onChange}>
+      <Checkbox.Group style={{ width: "100%" }} value={c_query?.member || ""} onChange={onChange}>
         <Row gutter={[12, 12]}>
           <Col span={24}>
             <Typography.Title level={5}>Members</Typography.Title>
           </Col>
           {s_members &&
             s_members.map((user: Imember) => (
-              <Col span={24} key={user?.username}>
+              <Col span={24} key={user.username}>
                 <Checkbox value={user.userId} className="member-chackbox flex items-end">
-                  {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
-                  {user?.avatar?.length === 0 ? user?.username[0] : null}
-                </Avatar> */}
                   <CustAvatar info={user} />
                   <span className="ml-2">{user.username}</span>
                 </Checkbox>

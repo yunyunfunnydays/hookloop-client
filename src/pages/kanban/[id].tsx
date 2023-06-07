@@ -4,10 +4,12 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
-import { Drawer, Spin } from "antd";
+import { Drawer, Spin, Button } from "antd";
 import { moveCard, addCard } from "@/service/apis/card";
 import { getKanbanByKey, getTags } from "@/service/apis/kanban";
 import { addList, moveList, renameList } from "@/service/apis/list";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import useWebSocket from "react-use-websocket";
 import CustLayout from "@/components/Layout";
 import List, { AddList } from "./List";
 import Filter from "./Filter";
@@ -17,6 +19,8 @@ import KanbanContext from "../../Context/KanbanContext";
 
 const Kanban: React.FC = () => {
   const router = useRouter();
+  const wsUrl = process.env.wsUrl!;
+  const { sendMessage, lastMessage, readyState } = useWebSocket(wsUrl);
   // const [s_ListsData, set_s_ListsData] = useState<IListsCards>(initialListsCards);
   const [s_ListsData, set_s_ListsData] = useState<IList[]>([]);
   const [s_kanbanId, set_s_kanbanId] = useState("");
@@ -32,8 +36,6 @@ const Kanban: React.FC = () => {
   };
 
   const c_getAllTags = async (kanbanId = "") => {
-    console.log("kanbanId = ", kanbanId);
-
     if (!kanbanId) return;
     const res: AxiosResponse = await getTags(kanbanId);
     const { status, data } = res.data as IApiResponse;
@@ -49,7 +51,7 @@ const Kanban: React.FC = () => {
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
       // set_s_allComments(data);
-      console.log("kanbanData = ", data);
+
       set_s_ListsData(data.listOrder);
       set_s_kanbanId(data._id);
 
@@ -57,7 +59,7 @@ const Kanban: React.FC = () => {
       set_s_spinning(false);
     }
   };
-  console.log("c_Tags = ", c_Tags);
+
   const handleDragEnd = async (result: DropResult) => {
     try {
       const { destination, source, draggableId, type } = result;
@@ -172,6 +174,15 @@ const Kanban: React.FC = () => {
     }
   };
 
+  // websocket 收到訊息時重新取得 kanban
+  useEffect(() => {
+    // 檢視 WebSocket 訊息
+    // console.log("lastMessage: ", lastMessage?.data);
+    if (!lastMessage || !lastMessage.data) return;
+    const data = JSON.parse(lastMessage.data);
+    console.log("data = ", data);
+  }, [lastMessage]);
+
   useEffect(() => {
     set_s_kanbanKey(router.query.id as string);
   }, [router.query.id]);
@@ -191,6 +202,7 @@ const Kanban: React.FC = () => {
     <CustLayout>
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
+          <Button onClick={() => sendMessage(JSON.stringify({ type: "enterKanban", id: s_kanbanId }))}>connect</Button>
           <section className="h-full">
             <Filter set_s_open={set_s_open} />
             <section className="">
