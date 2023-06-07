@@ -1,7 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 // import { Avatar } from "antd";
 import dayjs from "dayjs";
+import GlobalContext from "@/Context/GlobalContext";
 import CustAvatar from "@/components/util/CustAvatar";
 
 interface IProps {
@@ -10,6 +11,7 @@ interface IProps {
 
 const Comment: React.FC<IProps> = ({ comments }) => {
   const divRef = useRef<HTMLDivElement | null>(null);
+  const { c_memberMap } = useContext(GlobalContext);
   useEffect(() => {
     if (divRef.current !== null) {
       divRef.current.scrollTop = divRef.current.scrollHeight;
@@ -21,15 +23,12 @@ const Comment: React.FC<IProps> = ({ comments }) => {
         <div key={item._id} className="flex flex-col gap-1">
           <section className="flex items-center justify-between">
             <h5 className="flex items-center gap-1 text-base font-bold">
-              {/* <Avatar size={36} className="bg-gray-200" src={item.userId?.avatar.length > 0 && item.userId?.avatar}>
-                {item.userId?.avatar.length === 0 ? item.userId?.username[0] : null}
-              </Avatar> */}
-              <CustAvatar info={item.userId} />
-              <span>{item.userId?.username || ""}</span>
+              <CustAvatar info={c_memberMap[item.userId]} />
+              <span>{c_memberMap[item.userId].username || ""}</span>
             </h5>
-            <text className="text-sm font-normal text-[#8C8C8C]">
+            <span className="text-sm font-normal text-[#8C8C8C]">
               {dayjs(item.createdAt).format("YYYY-MM-DD HH:mm")}
-            </text>
+            </span>
           </section>
 
           <section className="border border-[#D9D9D9] p-2">{item.currentComment}</section>

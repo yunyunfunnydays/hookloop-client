@@ -192,7 +192,7 @@ const Kanban: React.FC = () => {
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
           <section className="h-full">
-            <Filter s_kanbanId={s_kanbanId} set_s_open={set_s_open} />
+            <Filter set_s_open={set_s_open} />
             <section className="">
               <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
