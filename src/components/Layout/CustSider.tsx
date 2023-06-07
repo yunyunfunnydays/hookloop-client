@@ -15,7 +15,7 @@ import {
   LogoutOutlined,
   ExclamationCircleFilled,
 } from "@ant-design/icons";
-import { userInitValue } from "@/components/util/initValue";
+import { userInitValue, workspaceInitValue } from "@/components/util/initValue";
 // API
 import { archivedWorkspace } from "@/service/apis/workspace";
 // context
@@ -23,6 +23,7 @@ import GlobalContext from "@/Context/GlobalContext";
 // component
 import CreateWorkSpaceModal from "@/components/Workspace/CreateWorkSpaceModal";
 import MemberModal from "../Workspace/MemberModal";
+import SettingModal from "../Workspace/SettingModal";
 
 interface IProps {
   s_collapsed: boolean;
@@ -33,16 +34,13 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   const { c_workspaces, c_getAllWorkspace, set_c_user } = useContext(GlobalContext);
 
   // 目前點選的 workspace
-  const [s_workspace, set_s_workspace] = useState<Iworkspace>({
-    workspaceId: "",
-    workspaceName: "",
-    kanbans: [],
-    members: [],
-    isArchived: false,
-  });
+  const [s_workspace, set_s_workspace] = useState<Iworkspace>(workspaceInitValue);
 
   // 顯示新增 workspace 的開關
   const [s_isShowModal, set_s_isShowModal] = useState(false);
+
+  // 顯示 workspace setting 的開關
+  const [s_showWorkspaceSetting, set_s_showWorkspaceSetting] = useState(false);
 
   // 顯示選擇 Member 的開關
   const [s_isShowMember, set_s_isShowMember] = useState(false);
@@ -78,7 +76,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           icon: <AppstoreOutlined />,
           // 這個 children 用來渲染 kanban
           children: workspace.kanbans
-            ?.filter((kanban) => !kanban.isArchived)
+            ?.filter((kanban) => !kanban.isArchived) // 篩掉被封存的 kanban
             ?.map((kanban) => ({
               key: workspace.workspaceName + kanban._id,
               onClick: () => Router.push(`/kanban/${kanban.key}`),
@@ -102,6 +100,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
             {
               key: `${workspace.workspaceId}Archive`,
               label: "Archive workspace",
+              // 封存 workspace
               onClick: () => {
                 Modal.confirm({
                   title: "Do you Want to Archive workspace?",
@@ -121,6 +120,10 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
             {
               key: `${workspace.workspaceId}Kanban_setting`,
               label: "Workspace setting",
+              onClick: () => {
+                set_s_workspace(workspace);
+                set_s_showWorkspaceSetting(true);
+              },
             },
           ],
         },
@@ -201,7 +204,24 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       </Modal>
 
       {/* workspace 設定的 Modal */}
-      {/* <Modal title="Workspace setting"></Modal> */}
+      <Modal
+        title="Workspace setting"
+        width="672px"
+        open={s_showWorkspaceSetting}
+        style={{
+          top: 20,
+        }}
+        destroyOnClose
+        onCancel={() => {
+          set_s_showWorkspaceSetting(false);
+          set_s_workspace(workspaceInitValue);
+        }}
+        footer={null}
+      >
+        {s_showWorkspaceSetting && (
+          <SettingModal s_workspace={s_workspace} set_s_showWorkspaceSetting={set_s_showWorkspaceSetting} />
+        )}
+      </Modal>
     </Layout.Sider>
   );
 };

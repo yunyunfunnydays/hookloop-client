@@ -29,7 +29,7 @@ import {
 } from "@ant-design/icons";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 // import { getTags } from "@/service/apis/kanban";
-import { updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
+import { getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from "dayjs";
@@ -130,9 +130,9 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   };
 
   // 選擇owner
-  const chooseOwner = (_: any, data: IOwner) => {
+  const chooseOwner = (userId: string) => {
     form.setFieldsValue({
-      reporter: data._id,
+      reporter: userId,
     });
   };
 
@@ -165,29 +165,34 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   };
 
   useEffect(() => {
-    form.setFieldsValue({
-      ...card,
-      // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
-      actualDate: [dayjs(card.actualStartDate), dayjs(card.actualEndDate)],
-      targetDate: [dayjs(card.targetStartDate), dayjs(card.targetEndDate)],
-    });
+    const call_getCardById = async () => {
+      const res: AxiosResponse = await getCardById(card._id);
+      const { status, data } = res.data as IApiResponse;
+      if (status === "success") {
+        // console.log("data = ", data);
+        form.setFieldsValue({
+          ...data,
+          // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+          actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
+          targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
+        });
 
-    // 如果有reporter就獨立開一個state儲存
-    // if ((card.reporter?._id || "").length > 0) {
-    //   set_s_reporter(card.reporter);
-    // }
-    // 如果有assignee就獨立開一個state儲存
-    // if (card.assignee?.length > 0) {
-    //   set_s_assignee(card.assignee);
-    // }
+        if ((data?.attachment || "")?.length > 0) {
+          set_s_attachments(card.attachment);
+        }
 
-    if ((card?.attachment || "")?.length > 0) {
-      set_s_attachments(card.attachment);
-    }
-
-    if ((card?.webLink || "")?.length > 0) {
-      set_s_Links(card.webLink);
-    }
+        if ((data?.webLink || "")?.length > 0) {
+          set_s_Links(card.webLink);
+        }
+      }
+    };
+    call_getCardById();
+    // form.setFieldsValue({
+    //   ...card,
+    //   // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+    //   actualDate: [dayjs(card.actualStartDate), dayjs(card.actualEndDate)],
+    //   targetDate: [dayjs(card.targetStartDate), dayjs(card.targetEndDate)],
+    // });
   }, []);
 
   const dropdownRender = (menu: ReactNode) => (

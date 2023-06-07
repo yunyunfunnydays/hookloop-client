@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Modal, Tooltip } from "antd";
-import MemberSelect from "@/components/Member/MemberSelect";
+import { Button, Modal, Tooltip, Select } from "antd";
+// import MemberSelect from "@/components/Member/MemberSelect";
 import GlobalContext from "@/Context/GlobalContext";
 import CustAvatar from "../util/CustAvatar";
 
 interface IProps {
   // reporter: IOwner;
   reporter: string;
-  afterChoose: (_: any, data: IOwner) => void;
+  afterChoose: (userId: string) => void;
 }
 
 const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
@@ -48,7 +48,7 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
         maskClosable={false}
         footer={null}
       >
-        <MemberSelect
+        {/* <MemberSelect
           className="w-full"
           value={null}
           placeholder="input email text"
@@ -56,6 +56,25 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
             afterChoose(_, data);
             set_s_showModal(false);
           }}
+        /> */}
+        <Select
+          className="w-full"
+          value={null}
+          onChange={(userId: string) => {
+            // 判斷要新增的人員是否已存在
+            if (!userId) return;
+            afterChoose(userId);
+            set_s_showModal(false);
+          }}
+          options={Object.values(c_memberMap).map((user: Imember) => ({
+            value: user.userId,
+            label: (
+              <span className="flex items-center gap-2">
+                <CustAvatar info={user} />
+                {user.username}
+              </span>
+            ),
+          }))}
         />
       </Modal>
     </>
