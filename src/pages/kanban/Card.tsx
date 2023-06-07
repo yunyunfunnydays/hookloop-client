@@ -38,6 +38,7 @@ const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
   const { c_memberMap } = useContext(GlobalContext);
   // console.log("card = ", card);
+  if (!card) return null;
   return (
     <>
       <Draggable draggableId={card._id} index={index} key={card._id}>

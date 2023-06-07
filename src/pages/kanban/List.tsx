@@ -23,7 +23,7 @@ const List: React.FC<IListProps> = ({ list, s_ListsData, set_s_ListsData, cards,
   const [s_isEditingList, set_s_isEditingList] = useState(false);
   const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
     name: "",
-    _id: list._id,
+    _id: list?._id,
   });
   const inputRef = useRef<InputRef>(null);
 
@@ -34,7 +34,7 @@ const List: React.FC<IListProps> = ({ list, s_ListsData, set_s_ListsData, cards,
   }, [s_isEditingList]);
 
   const handleEditList = () => {
-    set_s_newData({ name: list.name, _id: list._id });
+    set_s_newData({ name: list.name, _id: list?._id });
     set_s_isEditingList(true);
   };
 
@@ -47,7 +47,7 @@ const List: React.FC<IListProps> = ({ list, s_ListsData, set_s_ListsData, cards,
 
   const handleInputEnd = async () => {
     try {
-      if (s_newData.name === "" || s_newData._id === "") return;
+      if (!s_newData) return;
 
       const res: AxiosResponse = await renameList(s_newData);
       const { status, message, data } = res.data as IApiResponse;
@@ -59,6 +59,8 @@ const List: React.FC<IListProps> = ({ list, s_ListsData, set_s_ListsData, cards,
       set_s_isEditingList(false);
     }
   };
+
+  if (!list) return null;
 
   return (
     <Draggable draggableId={list._id} index={index2}>
