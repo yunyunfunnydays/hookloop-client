@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import Router from "next/router";
-
 import {
   Grid,
   Row,
@@ -17,7 +16,6 @@ import {
   Spin,
   Space,
 } from "antd";
-// import { EyeOutlined, EyeInvisibleOutlined, CloseOutlined } from "@ant-design/icons";
 // eslint-disable-next-line import/no-extraneous-dependencies
 
 import Cookies from "js-cookie";
@@ -46,8 +44,9 @@ const Login: React.FC<ILogin> = (props) => {
    * close 關閉彈窗時執行
    */
   const { open, close } = props;
-  const { set_c_user } = useContext(GlobalContext);
+  const { set_c_user, c_showPortal } = useContext(GlobalContext);
   const [form] = Form.useForm();
+
   // API 錯誤時用來讓使用者明確知道錯在哪裡
   const [api, contextHolder] = notification.useNotification();
   // antd 用來監聽畫面寬度變化
@@ -124,13 +123,14 @@ const Login: React.FC<ILogin> = (props) => {
   const handleResponse = (res: IApiResponse) => {
     const { data, message, status } = res;
     if (status === "success") {
-      msg.success(message);
+      // msg.success(message);
       // console.log("login data = ", data);
       Cookies.set("hookloop-token", data.token);
       set_c_user({
         userId: data.user.id,
         ...data.user,
       });
+      c_showPortal();
       Router.push("/dashboard");
       close();
     } else {

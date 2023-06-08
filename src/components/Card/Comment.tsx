@@ -17,6 +17,7 @@ const Comment: React.FC<IProps> = ({ comments }) => {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [comments]);
+  // console.log("comments = ", comments);
   return (
     <div ref={divRef} className="flex h-[200px] flex-col gap-3 overflow-auto">
       {comments?.map((item) => (
@@ -24,7 +25,7 @@ const Comment: React.FC<IProps> = ({ comments }) => {
           <section className="flex items-center justify-between">
             <h5 className="flex items-center gap-1 text-base font-bold">
               <CustAvatar info={c_memberMap[item.userId]} />
-              <span>{c_memberMap[item.userId].username || ""}</span>
+              <span>{c_memberMap[item.userId]?.username || ""}</span>
             </h5>
             <span className="text-sm font-normal text-[#8C8C8C]">
               {dayjs(item.createdAt).format("YYYY-MM-DD HH:mm")}

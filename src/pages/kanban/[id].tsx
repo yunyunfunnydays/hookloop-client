@@ -180,7 +180,7 @@ const Kanban: React.FC = () => {
     // console.log("lastMessage: ", lastMessage?.data);
     if (!lastMessage || !lastMessage.data) return;
     const data = JSON.parse(lastMessage.data);
-    console.log("data = ", data);
+    console.log("lastMessage.data = ", data);
   }, [lastMessage]);
 
   useEffect(() => {
@@ -195,7 +195,7 @@ const Kanban: React.FC = () => {
 
   // console.log("c_Tags = ", c_Tags);
   const contextValue = useMemo(
-    () => ({ c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey }),
+    () => ({ c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, sendMessage, lastMessage }),
     [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey],
   );
   return (
