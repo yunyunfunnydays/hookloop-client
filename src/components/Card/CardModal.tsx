@@ -88,9 +88,20 @@ const tagRender = (props: CustomTagProps) => {
   );
 };
 
+// const QuillNoSSRWrapper = dynamic(
+//   async () => {
+//     const { default: RQ } = await import("react-quill");
+
+//     const QuillJS = ({ forwardedRef, ...props }: IWrappedComponent) => <RQ ref={forwardedRef} {...props} />;
+//     return QuillJS;
+//   },
+//   { ssr: false },
+// );
+
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
 const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+  // const quillRef = useRef<typeof ReactQuill>(null); // Create a Ref
   // const router = useRouter();
   const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
   const [s_isLoaging, set_s_isLoaging] = useState(false);
@@ -101,6 +112,8 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const [s_Links, set_s_Links] = useState<ILink[]>([]);
   // 卡片上傳的檔案
   const [s_attachments, set_s_attachments] = useState<any>([]);
+
+  const [s_allComments, set_s_allComments] = useState<Icomment[]>([]);
 
   const [form] = Form.useForm();
   const f_reporter = Form.useWatch("reporter", form);
@@ -197,12 +210,14 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
           targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
         });
 
+        set_s_allComments(data.cardComment);
+
         if ((data?.attachment || "")?.length > 0) {
-          set_s_attachments(card.attachment);
+          set_s_attachments(data.attachment);
         }
 
         if ((data?.webLink || "")?.length > 0) {
-          set_s_Links(card.webLink);
+          set_s_Links(data.webLink);
         }
       }
     };
@@ -272,6 +287,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
                 </Form.Item> */}
               <FieldLabel>Description</FieldLabel>
               <ReactQuill
+                // forwardedRef={quillRef}
                 theme="snow"
                 value={f_description}
                 modules={modules}
@@ -286,6 +302,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
                 }}
               />
             </Col>
+
             <Col span={24}>
               <Row gutter={[12, 0]} align="bottom">
                 <Col span={3} className="flex flex-col">
@@ -443,7 +460,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
             Comment
           </GroupTitle>
 
-          <CommentList cardId={card._id} />
+          <CommentList cardId={card._id} s_allComments={s_allComments} />
         </section>
 
         <Divider className="my-3" />

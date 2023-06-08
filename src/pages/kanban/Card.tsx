@@ -37,6 +37,7 @@ const CardPriority: React.FC<CardPriorityProps> = ({ priority }) => {
 const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
   const { c_memberMap } = useContext(GlobalContext);
+  const { lastMessage } = useContext(KanbanContext);
   // console.log("card = ", card);
   if (!card) return null;
   return (

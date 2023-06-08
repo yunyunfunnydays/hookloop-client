@@ -10,8 +10,6 @@ interface IProps {}
 const Dashboard: React.FC<IProps> = () => {
   // workspace 資料
   const { c_workspaces } = useContext(GlobalContext);
-  // 是否開啟卡片(測試用)
-  // const [s_showCard, set_s_showCard] = useState(false);
 
   return (
     <CustLayout>
