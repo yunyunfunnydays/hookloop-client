@@ -1,10 +1,10 @@
 import React from "react";
 
-interface IProps {
-  priority: string;
-}
+type PriorityProps = {
+  priority: "Low" | "Medium" | "High";
+};
 
-const PriorityBadge: React.FC<IProps> = ({ priority }) => {
+const PriorityBadge: React.FC<PriorityProps> = ({ priority }) => {
   if (priority === "High") {
     return (
       <div className="rounded border border-[#CF1322] bg-[#FFF1F0] px-2 py-0.5">

@@ -4,11 +4,11 @@ import { Tooltip, Avatar, Button } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import CustAvatar from "@/components/util/CustAvatar";
 
-interface IProps {
+type FilterProps = {
   set_s_open: ISetStateFunction<boolean>;
-}
+};
 
-const Filter: React.FC<IProps> = ({ set_s_open }) => {
+const Filter: React.FC<FilterProps> = ({ set_s_open }) => {
   const { c_memberMap } = useContext(GlobalContext);
 
   // const [s_members, set_s_members] = useState<Imember[]>([]);

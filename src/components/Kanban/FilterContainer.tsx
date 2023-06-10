@@ -9,14 +9,14 @@ import * as icons from "@ant-design/icons";
 import { workspaceInitValue, kanbanInitValue } from "@/components/util/initValue";
 import CustAvatar from "@/components/util/CustAvatar";
 
-interface IProps {
+type FilterContainerProps = {
   s_kanbanId: string;
   c_query: any;
   set_c_query: ISetStateFunction<any>;
   c_Tags: ITag[];
-}
+};
 
-const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_query }) => {
+const FilterContainer: React.FC<FilterContainerProps> = ({ s_kanbanId, c_Tags, c_query, set_c_query }) => {
   const { c_workspaces } = useContext(GlobalContext);
 
   const [s_members, set_s_members] = useState<Imember[]>([]);

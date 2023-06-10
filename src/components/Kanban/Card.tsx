@@ -1,12 +1,11 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useContext } from "react";
 import { Modal, Avatar, Tooltip } from "antd";
 import GlobalContext from "@/Context/GlobalContext";
 import { BellFilled, MessageOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
+import CardPriority from "@/components/Kanban/CardPriority";
 import CardModal from "@/components/Card/CardModal";
 import IconRenderer from "@/components/util/IconRender";
-import KanbanContext from "@/Context/KanbanContext";
 import CustAvatar from "@/components/util/CustAvatar";
 
 type CardProps = {
@@ -15,28 +14,9 @@ type CardProps = {
   index: number;
 };
 
-interface CardPriorityProps {
-  priority: "Medium" | "Low" | "High";
-}
-
-const CardPriority: React.FC<CardPriorityProps> = ({ priority }) => {
-  const style = {
-    Low: "text-[#389E0D] bg-[#F6FFED] border-[#389E0D]",
-    Medium: "text-[#D46B08] bg-[#FFF7E6] border-[#D46B08]",
-    High: "text-[#CF1322] bg-[#FFF1F0] border-[#CF1322]",
-  };
-  return (
-    <span className={`rounded-md border-2 p-1 font-['Roboto'] font-medium ${style[priority]}`}>
-      Priority: {priority}
-    </span>
-  );
-};
-
 const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
   const { c_memberMap } = useContext(GlobalContext);
-  const { lastMessage } = useContext(KanbanContext);
-  // console.log("card = ", card);
   if (!card) return null;
   return (
     <>

@@ -10,10 +10,10 @@ import { getKanbanByKey, getTags } from "@/service/apis/kanban";
 import { addList, moveList, renameList } from "@/service/apis/list";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import useWebSocket from "react-use-websocket";
+import { AddList, List } from "@/components/Kanban";
 import CustLayout from "@/components/Layout";
-import List, { AddList } from "./List";
-import Filter from "./Filter";
-import FilterContainer from "./FilterContainer";
+import Filter from "../../components/Kanban/Filter";
+import FilterContainer from "../../components/Kanban/FilterContainer";
 // context
 import KanbanContext from "../../Context/KanbanContext";
 
