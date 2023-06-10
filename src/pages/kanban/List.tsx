@@ -8,7 +8,8 @@ import { renameList, addList } from "@/service/apis/list";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import type { InputRef } from "antd";
 
-import Card, { AddCard } from "./Card";
+import { AddCard } from "@/components/Kanban";
+import Card from "./Card";
 
 type IListProps = {
   list: IList;

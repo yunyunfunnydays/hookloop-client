@@ -1,10 +1,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useRef, useState, useEffect, useContext } from "react";
-import type { InputRef } from "antd";
-import { Modal, Input, Avatar, Tooltip } from "antd";
-import { addCard } from "@/service/apis/card";
+import React, { useState, useContext } from "react";
+import { Modal, Avatar, Tooltip } from "antd";
 import GlobalContext from "@/Context/GlobalContext";
-import { BellFilled, MessageOutlined, PlusOutlined } from "@ant-design/icons";
+import { BellFilled, MessageOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
 import CardModal from "@/components/Card/CardModal";
 import IconRenderer from "@/components/util/IconRender";
@@ -193,83 +191,6 @@ const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
         {s_showCard === true ? <CardModal s_kanbanId={s_kanbanId} card={card} set_s_showCard={set_s_showCard} /> : null}
       </Modal>
     </>
-  );
-};
-
-type AddCardProps = {
-  s_kanbanId: string;
-  listData: IList;
-  // set_s_ListsData: ISetStateFunction<IList[]>;
-};
-
-export const AddCard: React.FC<AddCardProps> = ({ s_kanbanId, listData }) => {
-  const inputRef = useRef<InputRef>(null);
-  const { c_getKanbanByKey } = useContext(KanbanContext);
-  const [s_isAddingCard, set_s_isAddingCard] = useState(false);
-  const [s_cardName, set_s_cardName] = useState<string>("");
-
-  useEffect(() => {
-    if (s_isAddingCard && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [s_isAddingCard]);
-
-  const handleAddCard = () => {
-    set_s_isAddingCard(true);
-  };
-
-  const handleInputEnd = async () => {
-    try {
-      if (s_cardName === "" || s_cardName === null) return;
-      if (s_kanbanId === "" || s_kanbanId === null) return;
-
-      const res: AxiosResponse = await addCard({
-        name: s_cardName,
-        kanbanId: s_kanbanId,
-        listId: listData._id,
-      });
-      const { status, message } = res.data as IApiResponse;
-      // console.log("data = ", data);
-      if (status === "success") {
-        // set_s_ListsData(data.listOrder);
-        c_getKanbanByKey();
-      } else {
-        console.error(message);
-      }
-      set_s_cardName("");
-    } catch (errorInfo) {
-      console.error(errorInfo);
-    } finally {
-      set_s_isAddingCard(false);
-    }
-  };
-
-  return s_isAddingCard ? (
-    <Input
-      ref={inputRef}
-      value={s_cardName}
-      name="listName"
-      // bordered={false}
-      onChange={(e) => set_s_cardName(e.target.value)}
-      onBlur={handleInputEnd}
-      onPressEnter={handleInputEnd}
-      // className="h-[56px] min-w-[330px] bg-red-400 px-5 py-4 text-xl font-medium text-[#262626] text-['Roboto']"
-    />
-  ) : (
-    <div
-      role="presentation"
-      className="rounded-md p-2 text-base font-medium text-[#595959] hover:bg-[#d2d0d0]"
-      onClick={handleAddCard}
-    >
-      <PlusOutlined />
-      <span> Add a card</span>
-    </div>
-    // <div role="presentation" className="min-w-[330px] bg-[#F5F5F5] px-5 py-4" onClick={handleAddCard}>
-    //   <div className="cursor-pointer text-base font-medium text-[#595959] text-['Roboto']">
-    //     <PlusOutlined />
-    //     <span> Add a card</span>
-    //   </div>
-    // </div>
   );
 };
 

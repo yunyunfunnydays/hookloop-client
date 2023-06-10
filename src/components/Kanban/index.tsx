@@ -1,7 +1,3 @@
-import React from "react";
+import AddCard from "./AddCard";
 
-const Kanban: React.FC = () => {
-  return <div>Kanban111</div>;
-};
-
-export default Kanban;
+export { AddCard };
