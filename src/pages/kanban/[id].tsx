@@ -2,18 +2,16 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useMemo } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
 import { Drawer, Spin, Button } from "antd";
-import { moveCard, addCard } from "@/service/apis/card";
-import { getKanbanByKey, getTags } from "@/service/apis/kanban";
-import { addList, moveList, renameList } from "@/service/apis/list";
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import useWebSocket from "react-use-websocket";
-import { AddList, List } from "@/components/Kanban";
+
+import { moveCard } from "@/service/apis/card";
+import { getKanbanByKey, getTags } from "@/service/apis/kanban";
+import { moveList } from "@/service/apis/list";
+import { AddList, List, Filter, FilterContainer } from "@/components/Kanban";
 import CustLayout from "@/components/Layout";
-import Filter from "../../components/Kanban/Filter";
-import FilterContainer from "../../components/Kanban/FilterContainer";
 // context
 import KanbanContext from "../../Context/KanbanContext";
 
