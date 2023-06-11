@@ -186,9 +186,11 @@ const Kanban: React.FC = () => {
 
   // 連接 websocket
   useEffect(() => {
+    console.log(`enterKanban: ${s_kanbanId}`);
     sendMessage(JSON.stringify({ type: "enterKanban", id: s_kanbanId }));
 
     return () => {
+      console.log(`leaveKanban: ${s_kanbanId}`);
       sendMessage(JSON.stringify({ type: "leaveKanban", id: s_kanbanId }));
     };
   }, [s_kanbanId]);
