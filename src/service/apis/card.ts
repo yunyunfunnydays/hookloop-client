@@ -37,7 +37,7 @@ export const moveCard = (data: {
   newCardOrder: string[];
   oldCardOrder: string[];
 }) => {
-  return instance.patch("cards/qwererqrw/move", data);
+  return instance.patch("cards/move", data);
 };
 
 // 取得 card 上所有 commits

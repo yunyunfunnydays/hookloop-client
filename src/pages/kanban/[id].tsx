@@ -191,6 +191,10 @@ const Kanban: React.FC = () => {
     if (!lastMessage || !lastMessage.data) return;
     const data = JSON.parse(lastMessage.data);
     console.log("lastMessage.data = ", data);
+
+    // data.type === "moveList"
+    // data.type === "createCard"
+    // data.type ===
   }, [lastMessage]);
 
   useEffect(() => {
@@ -219,11 +223,7 @@ const Kanban: React.FC = () => {
               <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
                   {(provided) => (
-                    <div
-                      className="flex items-start space-x-6 overflow-auto"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
+                    <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
                       {s_listData?.map((listData: IList, index: number) => {
                         return (
                           <List

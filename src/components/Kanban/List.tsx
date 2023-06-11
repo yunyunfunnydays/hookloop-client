@@ -75,7 +75,7 @@ const List: React.FC<ListProps> = ({ list, s_listData, set_s_listData, cards, in
           <Droppable droppableId={list._id} type="card">
             {(provided) => (
               <div
-                className=" min-w-[330px] overflow-auto bg-[#F5F5F5] px-5 py-4"
+                className=" min-w-[330px] bg-[#F5F5F5] px-5 py-4"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
@@ -90,7 +90,7 @@ const List: React.FC<ListProps> = ({ list, s_listData, set_s_listData, cards, in
                     className="h-[28px] min-w-[290px] bg-[#F5F5F5] p-0 text-xl font-medium text-[#262626] text-['Roboto']"
                   />
                 ) : (
-                  <div className="flex items-center justify-between overflow-auto">
+                  <div className="flex items-center justify-between">
                     <span
                       role="presentation"
                       className="grow text-xl font-medium text-[#262626] text-['Roboto']"
@@ -105,7 +105,7 @@ const List: React.FC<ListProps> = ({ list, s_listData, set_s_listData, cards, in
                   {cards.length} {cards.length === 1 ? "card" : "cards"}
                 </div>
                 {cards.length > 0 && (
-                  <div className="mb-4 flex h-[calc(100vh_-_230px_-_90px)] flex-col space-y-6 overflow-auto">
+                  <div className="mb-4 flex h-[calc(100vh_-_230px_-_90px)] flex-col space-y-6">
                     {cards.map((card: ICard, index: number) => (
                       <Card key={card._id} s_kanbanId={s_kanbanId} card={card} index={index} />
                     ))}
