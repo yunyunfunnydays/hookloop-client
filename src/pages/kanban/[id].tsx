@@ -204,6 +204,12 @@ const Kanban: React.FC = () => {
     const data = JSON.parse(lastMessage.data);
     console.log("lastMessage.data = ", data);
 
+    if (data.type === "moveList") {
+      c_getKanbanByKey();
+    } else if (data.type === "createCard") {
+      c_getKanbanByKey();
+    }
+
     // data.type === "moveList"
     // data.type === "createCard"
     // data.type ===
