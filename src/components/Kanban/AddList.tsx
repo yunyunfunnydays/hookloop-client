@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Input, message as msg } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { addList } from "@/service/apis/list";
 import type { InputRef } from "antd";
+import KanbanContext from "@/Context/KanbanContext";
 
-type AddListProps = {
-  s_kanbanId: string;
-};
+type AddListProps = {};
 
-const AddList: React.FC<AddListProps> = ({ s_kanbanId }) => {
+const AddList: React.FC<AddListProps> = () => {
+  const { c_kanbanId } = useContext(KanbanContext);
   const inputRef = useRef<InputRef>(null);
   const [s_isAddingList, set_s_isAddingList] = useState(false);
   const [s_listName, set_s_listName] = useState<string | null>(null);
@@ -30,11 +30,11 @@ const AddList: React.FC<AddListProps> = ({ s_kanbanId }) => {
   const handleInputEnd = async () => {
     try {
       if (s_listName === "" || s_listName === null) return;
-      if (s_kanbanId === "" || s_kanbanId === null) return;
+      if (c_kanbanId === "" || c_kanbanId === null) return;
 
       const res: AxiosResponse = await addList({
         name: s_listName,
-        kanbanId: s_kanbanId,
+        kanbanId: c_kanbanId,
       });
       const { status, message } = res.data as IApiResponse;
 

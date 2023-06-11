@@ -21,7 +21,7 @@ const Kanban: React.FC = () => {
   const { sendMessage, lastMessage, readyState } = useWebSocket(wsUrl);
   // const [s_listData, set_s_listData] = useState<IListsCards>(initialListsCards);
   const [s_listData, set_s_listData] = useState<IList[]>([]);
-  const [s_kanbanId, set_s_kanbanId] = useState("");
+  const [c_kanbanId, set_c_kanbanId] = useState("");
   const [s_spinning, set_s_spinning] = useState(false);
   const [s_kanbanKey, set_s_kanbanKey] = useState("");
   const [c_Tags, set_c_Tags] = useState<ITag[]>([]);
@@ -51,7 +51,7 @@ const Kanban: React.FC = () => {
       // set_s_allComments(data);
 
       set_s_listData(data.listOrder);
-      set_s_kanbanId(data._id);
+      set_c_kanbanId(data._id);
 
       c_getAllTags(data._id);
       set_s_spinning(false);
@@ -78,8 +78,8 @@ const Kanban: React.FC = () => {
       //   "combine": null
       // }
 
-      // 沒有取得到 s_kanbanId
-      if (!s_kanbanId) return;
+      // 沒有取得到 c_kanbanId
+      if (!c_kanbanId) return;
 
       // 沒有移動後的位置，即放的地方不是有效區域
       if (!destination) return;
@@ -167,7 +167,7 @@ const Kanban: React.FC = () => {
         // return;
         set_s_spinning(true);
         const res: AxiosResponse = await moveList({
-          kanbanId: s_kanbanId,
+          kanbanId: c_kanbanId,
           listOrder: new_s_ListsData.map((listData: IList) => listData._id),
         });
         const { status, data } = res.data as IApiResponse;
@@ -186,14 +186,14 @@ const Kanban: React.FC = () => {
 
   // 連接 websocket
   useEffect(() => {
-    console.log(`enterKanban: ${s_kanbanId}`);
-    sendMessage(JSON.stringify({ type: "enterKanban", id: s_kanbanId }));
+    console.log(`enterKanban: ${c_kanbanId}`);
+    sendMessage(JSON.stringify({ type: "enterKanban", id: c_kanbanId }));
 
     return () => {
-      console.log(`leaveKanban: ${s_kanbanId}`);
-      sendMessage(JSON.stringify({ type: "leaveKanban", id: s_kanbanId }));
+      console.log(`leaveKanban: ${c_kanbanId}`);
+      sendMessage(JSON.stringify({ type: "leaveKanban", id: c_kanbanId }));
     };
-  }, [s_kanbanId]);
+  }, [c_kanbanId]);
 
   // websocket 收到訊息時重新取得 kanban
   useEffect(() => {
@@ -235,8 +235,8 @@ const Kanban: React.FC = () => {
   }, [s_kanbanKey]);
 
   const contextValue = useMemo(
-    () => ({ c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, sendMessage, lastMessage }),
-    [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey],
+    () => ({ c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId, sendMessage, lastMessage }),
+    [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId],
   );
   return (
     <CustLayout>
@@ -249,19 +249,11 @@ const Kanban: React.FC = () => {
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
                   {(provided) => (
                     <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
-                      {s_listData?.map((listData: IList, index: number) => {
-                        return (
-                          <List
-                            key={listData._id}
-                            list={listData}
-                            cards={listData.cardOrder}
-                            index2={index}
-                            s_kanbanId={s_kanbanId}
-                          />
-                        );
-                      })}
+                      {s_listData.map((list: IList, index: number) => (
+                        <List key={list._id} list={list} cards={list.cardOrder} index={index} />
+                      ))}
                       {provided.placeholder}
-                      <AddList s_kanbanId={s_kanbanId} />
+                      <AddList />
                     </div>
                   )}
                 </Droppable>
@@ -269,14 +261,12 @@ const Kanban: React.FC = () => {
               <Drawer
                 title="Filter"
                 placement="right"
-                // className="mt-[50px]"
                 closable
                 onClose={() => set_s_open(false)}
                 open={s_open}
                 getContainer={false}
-                // maskStyle={{ backgroundColor: "transparent" }}
               >
-                <FilterContainer s_kanbanId={s_kanbanId} c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} />
+                <FilterContainer c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} />
               </Drawer>
             </section>
           </section>

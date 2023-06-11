@@ -13,17 +13,17 @@ const Filter: React.FC<FilterProps> = ({ set_s_open }) => {
 
   // const [s_members, set_s_members] = useState<Imember[]>([]);
   // useEffect(() => {
-  //   if (!s_kanbanId) return;
+  //   if (!c_kanbanId) return;
   //   // 目標看板
   //   const kanbanData: Ikanban =
-  //     c_workspaces?.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === s_kanbanId) ||
+  //     c_workspaces?.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === c_kanbanId) ||
   //     kanbanInitValue;
   //   const members: Imember[] =
   //     c_workspaces.find((workspace) => workspace.workspaceId === kanbanData?.workspaceId)?.members ||
   //     workspaceInitValue.members;
 
   //   set_s_members(members);
-  // }, [c_workspaces, s_kanbanId]);
+  // }, [c_workspaces, c_kanbanId]);
 
   return (
     <div className="flex h-[90px] w-full items-center justify-end">

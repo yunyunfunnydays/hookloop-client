@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useRef, useState, useEffect, useContext } from "react";
-import type { InputRef } from "antd";
-import { Modal, Input, Avatar, Tooltip } from "antd";
-import { addCard } from "@/service/apis/card";
+import React, { useState, useContext } from "react";
+import { Modal, Avatar, Tooltip } from "antd";
 import GlobalContext from "@/Context/GlobalContext";
 import { BellFilled, MessageOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
@@ -13,12 +11,11 @@ import IconRenderer from "@/components/util/IconRender";
 import CustAvatar from "@/components/util/CustAvatar";
 
 type CardProps = {
-  s_kanbanId: string;
   card: ICard;
   index: number;
 };
 
-const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
+const Card: React.FC<CardProps> = ({ card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
   const { c_memberMap } = useContext(GlobalContext);
 
@@ -174,7 +171,7 @@ const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
         footer={null}
       >
         {/* {s_showCard && <CardModal set_s_showCard={set_s_showCard} />} */}
-        {s_showCard === true ? <CardModal s_kanbanId={s_kanbanId} card={card} set_s_showCard={set_s_showCard} /> : null}
+        {s_showCard === true ? <CardModal card={card} set_s_showCard={set_s_showCard} /> : null}
       </Modal>
     </>
   );

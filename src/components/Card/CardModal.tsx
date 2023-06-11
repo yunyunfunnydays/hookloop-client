@@ -52,7 +52,6 @@ import CustAvatar from "../util/CustAvatar";
 // Ariean and you are both working on the same document. Do you want to overwrite the current file?
 
 interface IProps {
-  s_kanbanId: string;
   card: ICard;
   set_s_showCard: ISetStateFunction<boolean>;
 }
@@ -105,7 +104,8 @@ const tagRender = (props: CustomTagProps) => {
 // );
 
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
-const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
+const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
+  const { c_kanbanId } = useContext(KanbanContext);
   const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
   const [modal, modalContextHolder] = Modal.useModal();
   // const quillRef = useRef<typeof ReactQuill>(null); // Create a Ref
@@ -148,7 +148,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
     // return;
     delete newValues.targetDate;
     delete newValues.actualDate;
-    const res: AxiosResponse = await updateCard(s_kanbanId, card._id, newValues);
+    const res: AxiosResponse = await updateCard(c_kanbanId, card._id, newValues);
     const { status, message } = res.data as IApiResponse;
     if (status === "success") {
       messageApi.success(message);
@@ -577,7 +577,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
         maskClosable={false}
         footer={null}
       >
-        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={s_kanbanId} />}
+        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={c_kanbanId} />}
       </Modal>
     </Spin>
   );

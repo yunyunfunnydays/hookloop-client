@@ -8,15 +8,16 @@ import * as icons from "@ant-design/icons";
 // init value
 import { workspaceInitValue, kanbanInitValue } from "@/components/util/initValue";
 import CustAvatar from "@/components/util/CustAvatar";
+import KanbanContext from "@/Context/KanbanContext";
 
 type FilterContainerProps = {
-  s_kanbanId: string;
   c_query: any;
   set_c_query: ISetStateFunction<any>;
   c_Tags: ITag[];
 };
 
-const FilterContainer: React.FC<FilterContainerProps> = ({ s_kanbanId, c_Tags, c_query, set_c_query }) => {
+const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_c_query }) => {
+  const { c_kanbanId } = useContext(KanbanContext);
   const { c_workspaces } = useContext(GlobalContext);
 
   const [s_members, set_s_members] = useState<Imember[]>([]);
@@ -36,17 +37,17 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ s_kanbanId, c_Tags, c
   };
 
   useEffect(() => {
-    if (!s_kanbanId) return;
+    if (!c_kanbanId) return;
     // 目標看板
     const kanbanData: Ikanban =
-      c_workspaces.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === s_kanbanId) ||
+      c_workspaces.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === c_kanbanId) ||
       kanbanInitValue;
     const members: Imember[] =
       c_workspaces.find((workspace) => workspace.workspaceId === kanbanData?.workspaceId)?.members ||
       workspaceInitValue.members;
     if (!members) return;
     set_s_members(members);
-  }, [c_workspaces, s_kanbanId]);
+  }, [c_workspaces, c_kanbanId]);
 
   return (
     <div className="flex flex-col">

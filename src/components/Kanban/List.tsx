@@ -6,16 +6,16 @@ import { renameList } from "@/service/apis/list";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 
 import AddCard from "./AddCard";
-import Card from "./Card";
+import Cards from "./Cards";
 
 type ListProps = {
   list: IList;
-  s_kanbanId: string;
+
   cards: ICard[];
-  index2: number;
+  index: number;
 };
 
-const List: React.FC<ListProps> = ({ list, cards, index2, s_kanbanId }) => {
+const List: React.FC<ListProps> = ({ list, cards, index }) => {
   const [s_isEditingList, set_s_isEditingList] = useState(false);
   const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
     name: "",
@@ -57,7 +57,7 @@ const List: React.FC<ListProps> = ({ list, cards, index2, s_kanbanId }) => {
   };
 
   return (
-    <Draggable draggableId={list._id} index={index2} key={list._id}>
+    <Draggable draggableId={list._id} index={index} key={list._id}>
       {(provided2) => (
         <div
           ref={provided2.innerRef}
@@ -97,15 +97,9 @@ const List: React.FC<ListProps> = ({ list, cards, index2, s_kanbanId }) => {
                 <div className="mb-2 text-sm font-medium text-[#8C8C8C] text-['Roboto']">
                   {cards.length} {cards.length === 1 ? "card" : "cards"}
                 </div>
-                {cards.length > 0 && (
-                  <div className="mb-4 flex h-[calc(100vh_-_230px_-_90px)] flex-col space-y-6">
-                    {cards.map((card: ICard, index: number) => (
-                      <Card key={card._id} s_kanbanId={s_kanbanId} card={card} index={index} />
-                    ))}
-                  </div>
-                )}
+                {cards.length > 0 && <Cards cards={cards} />}
                 {provided.placeholder}
-                <AddCard s_kanbanId={s_kanbanId} listData={list} />
+                <AddCard listData={list} />
               </div>
             )}
           </Droppable>
