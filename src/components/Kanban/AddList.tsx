@@ -40,6 +40,7 @@ const AddList: React.FC<AddListProps> = ({ s_kanbanId, set_s_listData }) => {
       const { status, message, data } = res.data as IApiResponse;
 
       if (status === "success") {
+        console.log("data.listOrder", data.listOrder);
         set_s_listData(data.listOrder);
       } else {
         console.error(message);

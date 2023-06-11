@@ -175,7 +175,7 @@ const Kanban: React.FC = () => {
         if (status !== "success") return;
         console.log("data.listOrder = ", data.listOrder);
         // set_s_listData(data.listOrder);
-        c_getKanbanByKey();
+        // c_getKanbanByKey();
       }
     } catch (errorInfo) {
       console.error(errorInfo);
@@ -202,17 +202,28 @@ const Kanban: React.FC = () => {
 
     if (!lastMessage || !lastMessage.data) return;
     const data = JSON.parse(lastMessage.data);
+    console.log("=".repeat(64));
     console.log("lastMessage.data = ", data);
 
     if (data.type === "moveList") {
-      c_getKanbanByKey();
+      set_s_listData(data.result.listOrder);
+    } else if (data.type === "createList") {
+      console.log("socket: createList");
+      // 更新 list
+      // set_s_listData((prev) => [...prev, data.result]);
+      // 上面會少了 key
+    } else if (data.type === "renameList") {
+      console.log("socket: renameList");
     } else if (data.type === "createCard") {
       c_getKanbanByKey();
+    } else if (data.type === "moveCard") {
+      console.log("socket: moveCard");
+    } else if (data.type === "renameCard") {
+      console.log("socket: renameCard");
+    } else {
+      console.log("socket: 不明 socket 事件");
     }
-
-    // data.type === "moveList"
-    // data.type === "createCard"
-    // data.type ===
+    set_s_spinning(false);
   }, [lastMessage]);
 
   useEffect(() => {
