@@ -184,10 +184,20 @@ const Kanban: React.FC = () => {
     }
   };
 
+  // 連接 websocket
+  useEffect(() => {
+    sendMessage(JSON.stringify({ type: "enterKanban", id: s_kanbanId }));
+
+    return () => {
+      sendMessage(JSON.stringify({ type: "leaveKanban", id: s_kanbanId }));
+    };
+  }, [s_kanbanId]);
+
   // websocket 收到訊息時重新取得 kanban
   useEffect(() => {
     // 檢視 WebSocket 訊息
     // console.log("lastMessage: ", lastMessage?.data);
+
     if (!lastMessage || !lastMessage.data) return;
     const data = JSON.parse(lastMessage.data);
     console.log("lastMessage.data = ", data);
@@ -216,7 +226,7 @@ const Kanban: React.FC = () => {
     <CustLayout>
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
-          <Button onClick={() => sendMessage(JSON.stringify({ type: "enterKanban", id: s_kanbanId }))}>connect</Button>
+          {/* <Button onClick={() => sendMessage(JSON.stringify({ type: "enterKanban", id: s_kanbanId }))}>connect</Button> */}
           <section className="h-full">
             <Filter set_s_open={set_s_open} />
             <section className="">
