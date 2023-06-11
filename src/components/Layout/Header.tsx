@@ -14,6 +14,7 @@ import { kanbanInitValue, workspaceInitValue } from "@/components/util/initValue
 // component
 import Login from "../Login";
 import CustAvatar from "../util/CustAvatar";
+import Notification from "@/components/Notification";
 
 const Header: React.FC = () => {
   const { c_user, c_workspaces } = useContext(GlobalContext);
@@ -86,7 +87,7 @@ const Header: React.FC = () => {
       {hasAuth ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="h-[22px] w-[42px] bg-[#434343]" />
-          <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
+          <Notification/>
 
           {/* <Avatar
             size={28}
