@@ -12,8 +12,8 @@ export const getCardById = (cardId: string) => {
 };
 
 // 使用 cardId 更新卡片
-export const updateCard = (cardId: string, data: ICard) => {
-  return instance.patch(`cards/${cardId}/update`, data);
+export const updateCard = (kanbanId: string, cardId: string, data: ICard) => {
+  return instance.patch(`cards/${kanbanId}/${cardId}/update`, data);
 };
 
 // 上傳檔案

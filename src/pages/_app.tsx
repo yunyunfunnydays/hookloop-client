@@ -7,7 +7,7 @@ import "../../public/antd.min.css";
 import "../../public/custom.css";
 import type { AppProps } from "next/app";
 import Router, { useRouter } from "next/router";
-import { Spin, notification, Button } from "antd";
+import { Spin, notification } from "antd";
 // component
 import Header from "@/components/Layout/Header";
 // API
@@ -119,6 +119,7 @@ export default function App({ Component, pageProps }: AppProps) {
     });
 
     if (!nowWorkspace) return;
+    if (!c_user) return;
 
     const memberMap = nowWorkspace.members.reduce((prev: ImemberRecord, curr) => {
       prev[curr.userId] = curr;
@@ -126,7 +127,7 @@ export default function App({ Component, pageProps }: AppProps) {
     }, {});
 
     set_c_memberMap(memberMap);
-  }, [router, c_workspaces]);
+  }, [router, c_workspaces, c_user]);
 
   return withTheme(
     <GlobalContext.Provider
@@ -144,7 +145,7 @@ export default function App({ Component, pageProps }: AppProps) {
       {portal}
       {contextHolder}
       <Spin spinning={s_isLoading}>
-        <Button onClick={() => c_socketNotification("645db55959ac4f3c4fec1c1a", "move list")}>open notification</Button>
+        {/* <Button onClick={() => c_socketNotification("645db55959ac4f3c4fec1c1a", "move list")}>open notification</Button> */}
         <Header />
         <Component {...pageProps} />
       </Spin>

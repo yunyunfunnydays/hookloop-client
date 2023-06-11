@@ -13,6 +13,7 @@ import {
   Select,
   DatePicker,
   Tag,
+  Result,
   Divider,
   Form,
   Spin,
@@ -29,6 +30,7 @@ import {
   LinkOutlined,
   MessageFilled,
 } from "@ant-design/icons";
+import useWebSocket from "react-use-websocket";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 // import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -39,11 +41,15 @@ import IconRenderer from "@/components/util/IconRender";
 import dayjs from "dayjs";
 import KanbanContext from "@/Context/KanbanContext";
 // component
+import GlobalContext from "@/Context/GlobalContext";
 import CommentList from "./CommentList";
 import TagModal from "../Kanban/TagModal";
 import Reporter from "./Reporter";
 import Assignee from "./Assignee";
 import Link from "./Link";
+import CustAvatar from "../util/CustAvatar";
+
+// Ariean and you are both working on the same document. Do you want to overwrite the current file?
 
 interface IProps {
   s_kanbanId: string;
@@ -101,9 +107,14 @@ const tagRender = (props: CustomTagProps) => {
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
 const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+  const [modal, modalContextHolder] = Modal.useModal();
   // const quillRef = useRef<typeof ReactQuill>(null); // Create a Ref
   // const router = useRouter();
+  const wsUrl = process.env.wsUrl!;
+  const { sendMessage, lastMessage } = useWebSocket(wsUrl);
+  const { c_user, c_socketNotification, c_memberMap } = useContext(GlobalContext);
   const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
+
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
   // 是否顯示建立 Link 的地方
@@ -126,6 +137,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
 
     const newValues: ICard = {
       ...values,
+      // kanbanId: s_kanbanId,
       webLink: s_Links,
       actualStartDate: values.actualDate?.[0] || null,
       actualEndDate: values.actualDate?.[1] || null,
@@ -136,7 +148,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
     // return;
     delete newValues.targetDate;
     delete newValues.actualDate;
-    const res: AxiosResponse = await updateCard(card._id, newValues);
+    const res: AxiosResponse = await updateCard(s_kanbanId, card._id, newValues);
     const { status, message } = res.data as IApiResponse;
     if (status === "success") {
       messageApi.success(message);
@@ -197,37 +209,116 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
     ],
   };
 
+  const writeData = (data: ICard) => {
+    form.setFieldsValue({
+      ...data,
+      // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+      actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
+      targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
+    });
+    if (data.cardComment) {
+      set_s_allComments(data.cardComment);
+    }
+
+    if ((data?.attachment || "")?.length > 0) {
+      set_s_attachments(data.attachment);
+    }
+
+    if ((data?.webLink || "")?.length > 0) {
+      set_s_Links(data.webLink);
+    }
+  };
+
+  const overWrite = (modifyUserId: string, data: ICard) => {
+    const confirmModal = modal.confirm({
+      icon: <div />,
+      // className: "p-0",
+      // width: 550,
+      content: (
+        <Result
+          // status="success"
+          className="p-0"
+          icon={<CustAvatar size={100} info={c_memberMap[modifyUserId]} />}
+          title={<span className="text-lg font-bold">Ariean made changed to this document.</span>}
+          subTitle="Do you want to overwrite the current file?"
+          extra={[
+            <Button
+              type="primary"
+              key="console"
+              onClick={() => {
+                writeData(data);
+                confirmModal.destroy();
+              }}
+            >
+              Over Write
+            </Button>,
+            <Button key="buy" className="ml-2" onClick={() => confirmModal.destroy()}>
+              Cancel
+            </Button>,
+          ]}
+        />
+      ),
+      footer: [],
+    });
+  };
+
+  useEffect(() => {
+    // console.log("card._id=  ", card._id);
+    sendMessage(JSON.stringify({ type: "enterCard", id: card._id }));
+
+    return () => {
+      sendMessage(JSON.stringify({ type: "leaveCard", id: card._id }));
+    };
+  }, []);
+
+  useEffect(() => {
+    // 檢視 WebSocket 訊息
+    // console.log("lastMessage: ", lastMessage?.data);
+    if (!lastMessage || !lastMessage.data) return;
+    const data = JSON.parse(lastMessage.data);
+
+    if (data.type === "comments") {
+      if (data.updateUserId !== c_user.userId) {
+        c_socketNotification(data.updateUserId, <span>add a comment in this card</span>);
+      }
+      set_s_allComments(data.result);
+    }
+
+    if (data.type === "updateCard") {
+      if (data.updateUserId !== c_user.userId) {
+        c_socketNotification(data.updateUserId, <span>update in this card</span>);
+        overWrite(data.updateUserId, data.result);
+      }
+    }
+    // console.log("lastMessage.data = ", data);updateUserId
+  }, [lastMessage]);
+
   useEffect(() => {
     const call_getCardById = async () => {
       const res: AxiosResponse = await getCardById(card._id);
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
         // console.log("data = ", data);
-        form.setFieldsValue({
-          ...data,
-          // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
-          actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
-          targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
-        });
+        writeData(data);
+        // form.setFieldsValue({
+        //   ...data,
+        //   // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+        //   actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
+        //   targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
+        // });
 
-        set_s_allComments(data.cardComment);
+        // set_s_allComments(data.cardComment);
 
-        if ((data?.attachment || "")?.length > 0) {
-          set_s_attachments(data.attachment);
-        }
+        // if ((data?.attachment || "")?.length > 0) {
+        //   set_s_attachments(data.attachment);
+        // }
 
-        if ((data?.webLink || "")?.length > 0) {
-          set_s_Links(data.webLink);
-        }
+        // if ((data?.webLink || "")?.length > 0) {
+        //   set_s_Links(data.webLink);
+        // }
       }
     };
     call_getCardById();
-    // form.setFieldsValue({
-    //   ...card,
-    //   // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
-    //   actualDate: [dayjs(card.actualStartDate), dayjs(card.actualEndDate)],
-    //   targetDate: [dayjs(card.targetStartDate), dayjs(card.targetEndDate)],
-    // });
   }, []);
 
   const dropdownRender = (menu: ReactNode) => (
@@ -242,6 +333,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
 
   return (
     <Spin spinning={s_isLoaging}>
+      {modalContextHolder}
       <Form form={form} onFinish={onSubmit} layout="vertical">
         {/* <div className="flex flex-col"> */}
         {contextHolder}
