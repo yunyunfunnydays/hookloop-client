@@ -6,10 +6,10 @@ import type { InputRef } from "antd";
 
 type AddListProps = {
   s_kanbanId: string;
-  set_s_ListsData: ISetStateFunction<IList[]>;
+  set_s_listData: ISetStateFunction<IList[]>;
 };
 
-const AddList: React.FC<AddListProps> = ({ s_kanbanId, set_s_ListsData }) => {
+const AddList: React.FC<AddListProps> = ({ s_kanbanId, set_s_listData }) => {
   const inputRef = useRef<InputRef>(null);
   const [s_isAddingList, set_s_isAddingList] = useState(false);
   const [s_listName, set_s_listName] = useState<string | null>(null);
@@ -40,7 +40,7 @@ const AddList: React.FC<AddListProps> = ({ s_kanbanId, set_s_ListsData }) => {
       const { status, message, data } = res.data as IApiResponse;
 
       if (status === "success") {
-        set_s_ListsData(data.listOrder);
+        set_s_listData(data.listOrder);
       } else {
         console.error(message);
       }

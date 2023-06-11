@@ -19,8 +19,8 @@ const Kanban: React.FC = () => {
   const router = useRouter();
   const wsUrl = process.env.wsUrl!;
   const { sendMessage, lastMessage, readyState } = useWebSocket(wsUrl);
-  // const [s_ListsData, set_s_ListsData] = useState<IListsCards>(initialListsCards);
-  const [s_ListsData, set_s_ListsData] = useState<IList[]>([]);
+  // const [s_listData, set_s_listData] = useState<IListsCards>(initialListsCards);
+  const [s_listData, set_s_listData] = useState<IList[]>([]);
   const [s_kanbanId, set_s_kanbanId] = useState("");
   const [s_spinning, set_s_spinning] = useState(false);
   const [s_kanbanKey, set_s_kanbanKey] = useState("");
@@ -50,7 +50,7 @@ const Kanban: React.FC = () => {
     if (status === "success") {
       // set_s_allComments(data);
 
-      set_s_ListsData(data.listOrder);
+      set_s_listData(data.listOrder);
       set_s_kanbanId(data._id);
 
       c_getAllTags(data._id);
@@ -61,18 +61,30 @@ const Kanban: React.FC = () => {
   const handleDragEnd = async (result: DropResult) => {
     try {
       const { destination, source, draggableId, type } = result;
-      // designation：移動到的位置，沒有則為null：{droppableId: "6461fc9dd15e2103a1ae1f60", index: 1}
-      // source：移動前的位置，沒有則為null：{droppableId: "6461fc9dd15e2103a1ae1f60", index: 0}
-      // draggableId：移動的元素
-      // type：移動的類型
+      // console.log("result", result);
+      // {
+      //   "draggableId": "64848edccfcdf01ded2935de", 移動的元素
+      //   "type": "card", 移動的類型 'card' | 'list'
+      //   "source": { 移動前的位置
+      //       "index": 0,
+      //       "droppableId": "64844a6087532678e71e20e2"
+      //   },
+      //   "reason": "DROP",
+      //   "mode": "FLUID",
+      //   "destination": { 移動後的位置，如果沒有則為 null
+      //       "droppableId": "64844a6387532678e71e20e7",
+      //       "index": 0
+      //   },
+      //   "combine": null
+      // }
 
       // 沒有取得到 s_kanbanId
       if (!s_kanbanId) return;
 
-      // 沒有任何移動
+      // 沒有移動後的位置，即放的地方不是有效區域
       if (!destination) return;
 
-      // 移動到原本的位置
+      // 移動前和移動後的位置相等，不進行任何邏輯計算
       if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
       if (type === "card") {
@@ -87,14 +99,14 @@ const Kanban: React.FC = () => {
         //         "646219c0fc88d32944beb8f1"
         //     ]
         // }
-        // console.log("s_ListsData = ", s_ListsData);
+        // console.log("s_listData = ", s_listData);
         // console.log("source = ", source);
         // console.log("destination = ", destination);
         // console.log("result = ", result);
 
         // 在同一個list移動
         if (source.droppableId === destination.droppableId) {
-          const new_source = s_ListsData.find((listData) => listData._id === source.droppableId)?.cardOrder;
+          const new_source = s_listData.find((listData) => listData._id === source.droppableId)?.cardOrder;
           if (new_source) {
             [new_source[source.index], new_source[destination.index]] = [
               new_source[destination.index],
@@ -111,9 +123,9 @@ const Kanban: React.FC = () => {
           c_getKanbanByKey();
           return;
         }
-        const new_source = s_ListsData.find((listData) => listData._id === source.droppableId)?.cardOrder;
+        const new_source = s_listData.find((listData) => listData._id === source.droppableId)?.cardOrder;
         // const target = new_source?.splice(source.index, 1)[0]; // 這裡應該使用 source.index，而不是 droppableId
-        const new_destination = s_ListsData.find((listData) => listData._id === destination.droppableId)?.cardOrder;
+        const new_destination = s_listData.find((listData) => listData._id === destination.droppableId)?.cardOrder;
         if (new_source && new_destination) {
           const target = new_source.splice(source.index, 1)[0];
           new_destination.splice(destination.index, 0, target);
@@ -146,7 +158,7 @@ const Kanban: React.FC = () => {
         //         "64621508d474bd1535ae76d7"
         //     ]
         // }
-        const new_s_ListsData = JSON.parse(JSON.stringify(s_ListsData));
+        const new_s_ListsData = JSON.parse(JSON.stringify(s_listData));
 
         [new_s_ListsData[source.index], new_s_ListsData[destination.index]] = [
           new_s_ListsData[destination.index],
@@ -162,7 +174,7 @@ const Kanban: React.FC = () => {
 
         if (status !== "success") return;
         console.log("data.listOrder = ", data.listOrder);
-        // set_s_ListsData(data.listOrder);
+        // set_s_listData(data.listOrder);
         c_getKanbanByKey();
       }
     } catch (errorInfo) {
@@ -212,7 +224,7 @@ const Kanban: React.FC = () => {
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                     >
-                      {s_ListsData?.map((listData: IList, index: number) => {
+                      {s_listData?.map((listData: IList, index: number) => {
                         return (
                           <List
                             key={listData._id}
@@ -220,13 +232,13 @@ const Kanban: React.FC = () => {
                             cards={listData.cardOrder}
                             index2={index}
                             s_kanbanId={s_kanbanId}
-                            s_ListsData={s_ListsData}
-                            set_s_ListsData={set_s_ListsData}
+                            s_listData={s_listData}
+                            set_s_listData={set_s_listData}
                           />
                         );
                       })}
                       {provided.placeholder}
-                      <AddList s_kanbanId={s_kanbanId} set_s_ListsData={set_s_ListsData} />
+                      <AddList s_kanbanId={s_kanbanId} set_s_listData={set_s_listData} />
                     </div>
                   )}
                 </Droppable>

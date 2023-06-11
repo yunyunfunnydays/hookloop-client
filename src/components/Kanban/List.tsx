@@ -16,11 +16,11 @@ type ListProps = {
   s_kanbanId: string;
   cards: ICard[];
   index2: number;
-  s_ListsData: IList[];
-  set_s_ListsData: ISetStateFunction<IList[]>;
+  s_listData: IList[];
+  set_s_listData: ISetStateFunction<IList[]>;
 };
 
-const List: React.FC<ListProps> = ({ list, s_ListsData, set_s_ListsData, cards, index2, s_kanbanId }) => {
+const List: React.FC<ListProps> = ({ list, s_listData, set_s_listData, cards, index2, s_kanbanId }) => {
   const [s_isEditingList, set_s_isEditingList] = useState(false);
   const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
     name: "",
