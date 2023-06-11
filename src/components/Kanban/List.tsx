@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable no-console */
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "antd";
 import type { InputRef } from "antd";
@@ -60,8 +57,6 @@ const List: React.FC<ListProps> = ({ list, s_listData, set_s_listData, cards, in
       set_s_isEditingList(false);
     }
   };
-
-  if (!list) return null;
 
   return (
     <Draggable draggableId={list._id} index={index2}>

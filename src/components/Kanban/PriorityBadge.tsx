@@ -1,38 +1,44 @@
 import React from "react";
 
-type PriorityProps = {
+type PriorityBadgeProps = {
   priority: "Low" | "Medium" | "High";
 };
 
-const PriorityBadge: React.FC<PriorityProps> = ({ priority }) => {
-  if (priority === "High") {
-    return (
-      <div className="rounded border border-[#CF1322] bg-[#FFF1F0] px-2 py-0.5">
-        <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#CF1322] text-['Roboto']">
-          Priority:&nbsp;High
-        </div>
+type PriorityStyleType = {
+  [K in PriorityBadgeProps["priority"]]: React.CSSProperties;
+};
+
+const priorityStyle: PriorityStyleType = {
+  Low: {
+    color: "#389E0D",
+    backgroundColor: "#F6FFED",
+    borderColor: "#389E0D",
+  },
+  Medium: {
+    color: "#D46B08",
+    backgroundColor: "#FFF7E6",
+    borderColor: "#D46B08",
+  },
+  High: {
+    color: "#CF1322",
+    backgroundColor: "#FFF1F0",
+    borderColor: "#CF1322",
+  },
+};
+
+const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority }) => {
+  const style = priorityStyle[priority];
+
+  return (
+    <div className="rounded px-2 py-0.5" style={{ backgroundColor: style.backgroundColor, borderColor: style.color }}>
+      <div
+        className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-['Roboto']"
+        style={{ color: style.color }}
+      >
+        Priority:&nbsp;{priority}
       </div>
-    );
-  }
-  if (priority === "Medium") {
-    return (
-      <div className="rounded border border-[#D46B08] bg-[#FFF7E6] px-2 py-0.5">
-        <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#D46B08] text-['Roboto']">
-          Priority:&nbsp;Medium
-        </div>
-      </div>
-    );
-  }
-  if (priority === "Low") {
-    return (
-      <div className="rounded border border-[#389E0D] bg-[#F6FFED] px-2 py-0.5">
-        <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#389E0D] text-['Roboto']">
-          Priority:&nbsp;Low
-        </div>
-      </div>
-    );
-  }
-  return null;
+    </div>
+  );
 };
 
 export default PriorityBadge;
