@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
-import { Drawer, Spin, Button } from "antd";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { Drawer, Spin } from "antd";
+import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import useWebSocket from "react-use-websocket";
 
 import { moveCard } from "@/service/apis/card";
@@ -12,14 +12,13 @@ import { getKanbanByKey, getTags } from "@/service/apis/kanban";
 import { moveList } from "@/service/apis/list";
 import { AddList, List, Filter, FilterContainer } from "@/components/Kanban";
 import CustLayout from "@/components/Layout";
-// context
-import KanbanContext from "../../Context/KanbanContext";
+
+import KanbanContext from "@/Context/KanbanContext";
 
 const Kanban: React.FC = () => {
   const router = useRouter();
   const wsUrl = process.env.wsUrl!;
-  const { sendMessage, lastMessage, readyState } = useWebSocket(wsUrl);
-  // const [s_listData, set_s_listData] = useState<IListsCards>(initialListsCards);
+  const { sendMessage, lastMessage } = useWebSocket(wsUrl);
   const [s_listData, set_s_listData] = useState<IList[]>([]);
   const [c_kanbanId, set_c_kanbanId] = useState("");
   const [s_spinning, set_s_spinning] = useState(false);
