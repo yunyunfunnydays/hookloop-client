@@ -70,6 +70,7 @@ const CommentList: React.FC<IProps> = ({ cardId, s_allComments }) => {
           <Input
             className="flex-1"
             placeholder="Write a comment..."
+            value={s_newComment}
             onChange={(e) => set_s_newComment(e.target.value)}
           />
           <Button size="large" className="font-medium text-black" onClick={sentData}>

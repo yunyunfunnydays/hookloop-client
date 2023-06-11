@@ -1,5 +1,9 @@
-import React, { useState, useContext } from "react";
-import { Modal, Avatar, Tooltip } from "antd";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import React, { useRef, useState, useEffect, useContext } from "react";
+import type { InputRef } from "antd";
+import { Modal, Input, Avatar, Tooltip } from "antd";
+import { addCard } from "@/service/apis/card";
 import GlobalContext from "@/Context/GlobalContext";
 import { BellFilled, MessageOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
@@ -17,6 +21,8 @@ type CardProps = {
 const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
   const { c_memberMap } = useContext(GlobalContext);
+
+  // console.log("card = ", card);
   if (!card) return null;
   return (
     <>

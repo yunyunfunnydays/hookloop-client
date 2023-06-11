@@ -5,6 +5,8 @@ interface IProps {
   set_c_Tags: ISetStateFunction<ITag[]>;
   c_getAllTags: (kanbanId: string) => void;
   c_getKanbanByKey: () => void;
+  sendMessage: any;
+  lastMessage: any;
 }
 
 const KanbanContext = React.createContext<IProps>({
@@ -12,5 +14,7 @@ const KanbanContext = React.createContext<IProps>({
   set_c_Tags: () => {},
   c_getAllTags: () => {},
   c_getKanbanByKey: () => {},
+  sendMessage: () => {},
+  lastMessage: () => {},
 });
 export default KanbanContext;

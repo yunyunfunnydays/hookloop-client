@@ -17,7 +17,7 @@ const Comment: React.FC<IProps> = ({ comments }) => {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [comments]);
-  // console.log("comments = ", comments);
+
   return (
     <div ref={divRef} className="flex h-[200px] flex-col gap-3 overflow-auto">
       {comments?.map((item) => (

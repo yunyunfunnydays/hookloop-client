@@ -73,6 +73,7 @@ declare global {
     actualEndDate: Dayjs | null;
     status: string | null;
     tag: ITag[];
+    cardComment?: Icomment[];
   }
 
   interface ITag {
