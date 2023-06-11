@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Input } from "antd";
+import { Input, message as msg } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { addList } from "@/service/apis/list";
 import type { InputRef } from "antd";
 
 type AddListProps = {
   s_kanbanId: string;
-  set_s_listData: ISetStateFunction<IList[]>;
 };
 
-const AddList: React.FC<AddListProps> = ({ s_kanbanId, set_s_listData }) => {
+const AddList: React.FC<AddListProps> = ({ s_kanbanId }) => {
   const inputRef = useRef<InputRef>(null);
   const [s_isAddingList, set_s_isAddingList] = useState(false);
   const [s_listName, set_s_listName] = useState<string | null>(null);
@@ -37,18 +36,13 @@ const AddList: React.FC<AddListProps> = ({ s_kanbanId, set_s_listData }) => {
         name: s_listName,
         kanbanId: s_kanbanId,
       });
-      const { status, message, data } = res.data as IApiResponse;
+      const { status, message } = res.data as IApiResponse;
 
-      if (status === "success") {
-        console.log("data.listOrder", data.listOrder);
-        set_s_listData(data.listOrder);
-      } else {
-        console.error(message);
-      }
-      set_s_listName(null);
+      if (status !== "success") msg.error(message);
     } catch (errorInfo) {
       console.error(errorInfo);
     } finally {
+      set_s_listName(null);
       set_s_isAddingList(false);
     }
   };

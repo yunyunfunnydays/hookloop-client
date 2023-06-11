@@ -231,12 +231,9 @@ const Kanban: React.FC = () => {
   }, [router.query.id]);
 
   useEffect(() => {
-    // console.log("s_kanbanKey = ", s_kanbanKey);
-
     c_getKanbanByKey();
   }, [s_kanbanKey]);
 
-  // console.log("c_Tags = ", c_Tags);
   const contextValue = useMemo(
     () => ({ c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, sendMessage, lastMessage }),
     [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey],
@@ -245,7 +242,6 @@ const Kanban: React.FC = () => {
     <CustLayout>
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
-          {/* <Button onClick={() => sendMessage(JSON.stringify({ type: "enterKanban", id: s_kanbanId }))}>connect</Button> */}
           <section className="h-full">
             <Filter set_s_open={set_s_open} />
             <section className="">
@@ -261,13 +257,11 @@ const Kanban: React.FC = () => {
                             cards={listData.cardOrder}
                             index2={index}
                             s_kanbanId={s_kanbanId}
-                            s_listData={s_listData}
-                            set_s_listData={set_s_listData}
                           />
                         );
                       })}
                       {provided.placeholder}
-                      <AddList s_kanbanId={s_kanbanId} set_s_listData={set_s_listData} />
+                      <AddList s_kanbanId={s_kanbanId} />
                     </div>
                   )}
                 </Droppable>
