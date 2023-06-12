@@ -29,6 +29,11 @@ const Home: React.FC = () => {
     console.info("click", e);
   };
 
+  const handleSlectedPlan = (selectedPlan: string) => {
+    // eslint-disable-next-line no-console
+    console.log(selectedPlan);
+  };
+
   const items: MenuProps["items"] = [
     {
       label: "English",
@@ -182,7 +187,11 @@ const Home: React.FC = () => {
                     <strong>Unlimited</strong> Workspace
                   </li>
                 </ul>
-                <Button type="primary" className="mt-[25px] h-[40px] w-[115px] font-bold">
+                <Button
+                  type="primary"
+                  className="mt-[25px] h-[40px] w-[115px] font-bold"
+                  onClick={() => handleSlectedPlan("")}
+                >
                   Best choice!
                 </Button>
               </div>
@@ -202,7 +211,12 @@ const Home: React.FC = () => {
                 <ul className="mt-[20px] list-disc text-[20px]">
                   <li>10 workspace</li>
                 </ul>
-                <Button className="mt-[25px] h-[40px] w-[115px] font-bold text-black">Select it</Button>
+                <Button
+                  className="mt-[25px] h-[40px] w-[115px] font-bold text-black"
+                  onClick={() => handleSlectedPlan("")}
+                >
+                  Select it
+                </Button>
               </div>
             </section>
 
@@ -219,7 +233,12 @@ const Home: React.FC = () => {
                 <ul className="mt-[20px] list-disc text-[20px]">
                   <li>1 Workspace</li>
                 </ul>
-                <Button className="mt-[25px] h-[40px] w-[115px] font-bold text-black">Select it</Button>
+                <Button
+                  className="mt-[25px] h-[40px] w-[115px] font-bold text-black"
+                  onClick={() => handleSlectedPlan("")}
+                >
+                  Select it
+                </Button>
               </div>
             </section>
           </div>
