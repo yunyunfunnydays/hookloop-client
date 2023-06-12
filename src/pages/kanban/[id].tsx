@@ -19,7 +19,7 @@ const Kanban: React.FC = () => {
   const router = useRouter();
   const wsUrl = process.env.wsUrl!;
   const { sendMessage, lastMessage } = useWebSocket(wsUrl);
-  const [s_listData, set_s_listData] = useState<IList[]>([]);
+  const [c_listData, set_c_listData] = useState<IList[]>([]);
   const [c_kanbanId, set_c_kanbanId] = useState("");
   const [s_spinning, set_s_spinning] = useState(false);
   const [s_kanbanKey, set_s_kanbanKey] = useState("");
@@ -49,7 +49,7 @@ const Kanban: React.FC = () => {
     if (status === "success") {
       // set_s_allComments(data);
 
-      set_s_listData(data.listOrder);
+      set_c_listData(data.listOrder);
 
       // console.log("data.listOrder", data.listOrder);
       // [
@@ -136,93 +136,37 @@ const Kanban: React.FC = () => {
       // 移動前和移動後的位置相等，不進行任何邏輯計算
       if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
-      if (type === "card") {
-        // TODO: ENDPOINT cards/move，傳到後端的資料格式如下
-        //   {
-        //     "newListId": "64621508d474bd1535ae76d7",
-        //     "oldListId": "646201bf97acc5268322d8f5",
-        //     "newCardOrder":[
-        //         "6462191cfc88d32944beb8e6"
-        //     ],
-        //     "oldCardOrder":[
-        //         "646219c0fc88d32944beb8f1"
-        //     ]
-        // }
-        // console.log("s_listData = ", s_listData);
-        // console.log("source = ", source);
-        // console.log("destination = ", destination);
-        // console.log("result = ", result);
+      const newListData = Array.from(c_listData);
 
-        // 在同一個list移動
-        if (source.droppableId === destination.droppableId) {
-          const new_source = s_listData.find((listData) => listData._id === source.droppableId)?.cardOrder;
-          if (new_source) {
-            [new_source[source.index], new_source[destination.index]] = [
-              new_source[destination.index],
-              new_source[source.index],
-            ];
-          }
+      if (type === "card") {
+        const sourceList = newListData.find((list) => list._id === source.droppableId);
+        const destinationList = newListData.find((list) => list._id === destination.droppableId);
+
+        if (sourceList && destinationList) {
+          const card = sourceList.cardOrder.splice(source.index, 1)[0];
+          destinationList.cardOrder.splice(destination.index, 0, card);
+
+          set_c_listData(newListData);
+
           moveCard({
             kanbanId: c_kanbanId,
-            newListId: source.droppableId,
+            newListId: destination.droppableId,
             oldListId: source.droppableId,
-            newCardOrder: new_source?.map((item) => item._id) || [],
-            oldCardOrder: new_source?.map((item) => item._id) || [],
+            newCardOrder: destinationList.cardOrder.map((item) => item._id),
+            oldCardOrder: sourceList.cardOrder.map((item) => item._id),
+            socketData: newListData,
           });
-          return;
         }
-        const new_source = s_listData.find((listData) => listData._id === source.droppableId)?.cardOrder;
-        // const target = new_source?.splice(source.index, 1)[0]; // 這裡應該使用 source.index，而不是 droppableId
-        const new_destination = s_listData.find((listData) => listData._id === destination.droppableId)?.cardOrder;
-        if (new_source && new_destination) {
-          const target = new_source.splice(source.index, 1)[0];
-          new_destination.splice(destination.index, 0, target);
-        }
-
-        // new_destination?.splice(destination.index, 0, target); // 這裡應該使用 destination.index，而不是 droppableId
-        // console.log({
-        //   newListId: destination.droppableId,
-        //   oldListId: source.droppableId,
-        //   newCardOrder: new_destination?.map((item) => item.name) || [],
-        //   oldCardOrder: new_source?.map((item) => item.name) || [],
-        // });
-        // return;
-        set_s_spinning(true);
-        moveCard({
-          kanbanId: c_kanbanId,
-          newListId: destination.droppableId,
-          oldListId: source.droppableId,
-          newCardOrder: new_destination?.map((item) => item._id) || [],
-          oldCardOrder: new_source?.map((item) => item._id) || [],
-        });
       } else if (type === "list") {
-        // TODO: ENDPOINT lists/move，傳到後端的資料格式如下
-        //   {
-        //     "kanbanId": "6461fc9dd15e2103a1ae1f60",
-        //     "listOrder":[
-        //         "646241e1d28f1972ffc34c5a",
-        //         "646201bf97acc5268322d8f5",
-        //         "64621508d474bd1535ae76d7"
-        //     ]
-        // }
-        const new_s_ListsData = JSON.parse(JSON.stringify(s_listData));
+        const [removed] = newListData.splice(source.index, 1);
+        newListData.splice(destination.index, 0, removed);
 
-        [new_s_ListsData[source.index], new_s_ListsData[destination.index]] = [
-          new_s_ListsData[destination.index],
-          new_s_ListsData[source.index],
-        ];
-        // return;
-        set_s_spinning(true);
-        const res: AxiosResponse = await moveList({
+        set_c_listData(newListData);
+
+        moveList({
           kanbanId: c_kanbanId,
-          listOrder: new_s_ListsData.map((listData: IList) => listData._id),
+          listOrder: newListData.map((listData: IList) => listData._id),
         });
-        const { status, data } = res.data as IApiResponse;
-
-        if (status !== "success") return;
-        console.log("data.listOrder = ", data.listOrder);
-        // set_s_listData(data.listOrder);
-        // c_getKanbanByKey();
       }
     } catch (errorInfo) {
       console.error(errorInfo);
@@ -253,11 +197,11 @@ const Kanban: React.FC = () => {
     console.log("lastMessage.data = ", data);
 
     if (data.type === "moveList") {
-      set_s_listData(data.result.listOrder);
+      set_c_listData(data.result.listOrder);
     } else if (data.type === "createList") {
       console.log("socket: createList");
       // 更新 list
-      // set_s_listData((prev) => [...prev, data.result]);
+      // set_c_listData((prev) => [...prev, data.result]);
       // 上面會少了 key
       c_getKanbanByKey();
     } else if (data.type === "renameList") {
@@ -266,15 +210,15 @@ const Kanban: React.FC = () => {
     } else if (data.type === "createCard") {
       c_getKanbanByKey();
     } else if (data.type === "moveCard") {
-      console.log("socket: moveCard");
-      c_getKanbanByKey();
+      console.log("data.result.socketData", data.result.socketData);
+      // set_c_listData(data.result.socketData);
+      set_c_listData(data.result);
     } else if (data.type === "renameCard") {
       console.log("socket: renameCard");
       c_getKanbanByKey();
     } else {
       console.log("socket: 不明 socket 事件");
     }
-    set_s_spinning(false);
   }, [lastMessage]);
 
   useEffect(() => {
@@ -286,8 +230,18 @@ const Kanban: React.FC = () => {
   }, [s_kanbanKey]);
 
   const contextValue = useMemo(
-    () => ({ c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId, sendMessage, lastMessage }),
-    [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId],
+    () => ({
+      c_Tags,
+      set_c_Tags,
+      c_getAllTags,
+      c_getKanbanByKey,
+      c_kanbanId,
+      c_listData,
+      set_c_listData,
+      sendMessage,
+      lastMessage,
+    }),
+    [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId, c_listData, set_c_listData],
   );
   return (
     <CustLayout>
@@ -300,7 +254,7 @@ const Kanban: React.FC = () => {
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
                   {(provided) => (
                     <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
-                      {s_listData.map((list: IList, index: number) => (
+                      {c_listData.map((list: IList, index: number) => (
                         <List key={list._id} list={list} cards={list.cardOrder} index={index} />
                       ))}
                       {provided.placeholder}

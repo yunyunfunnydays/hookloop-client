@@ -37,6 +37,7 @@ export const moveCard = (data: {
   oldListId: string;
   newCardOrder: string[];
   oldCardOrder: string[];
+  socketData: any;
 }) => {
   return instance.patch("cards/move", data);
 };
