@@ -163,6 +163,7 @@ const Kanban: React.FC = () => {
             ];
           }
           moveCard({
+            kanbanId: c_kanbanId,
             newListId: source.droppableId,
             oldListId: source.droppableId,
             newCardOrder: new_source?.map((item) => item._id) || [],
@@ -188,6 +189,7 @@ const Kanban: React.FC = () => {
         // return;
         set_s_spinning(true);
         moveCard({
+          kanbanId: c_kanbanId,
           newListId: destination.droppableId,
           oldListId: source.droppableId,
           newCardOrder: new_destination?.map((item) => item._id) || [],

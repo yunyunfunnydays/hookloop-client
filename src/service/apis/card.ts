@@ -32,6 +32,7 @@ export const deleteAttachment = (cardId: string, attachmentId: string) => {
 
 // 移動卡片
 export const moveCard = (data: {
+  kanbanId: string;
   newListId: string;
   oldListId: string;
   newCardOrder: string[];
