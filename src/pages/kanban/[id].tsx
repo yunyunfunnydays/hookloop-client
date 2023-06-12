@@ -50,6 +50,55 @@ const Kanban: React.FC = () => {
       // set_s_allComments(data);
 
       set_s_listData(data.listOrder);
+
+      // console.log("data.listOrder", data.listOrder);
+      // [
+      //   {
+      //     _id: "6485d557f60e78828e78074d",
+      //     name: "list2",
+      //     kanbanId: "6485d539f60e78828e78071c",
+      //     cardOrder: [
+      //       {
+      //         _id: "6485d563f60e78828e780769",
+      //         name: "Card 2",
+      //         assignee: [],
+      //         priority: "Medium",
+      //         status: "Pending",
+      //         tag: [],
+      //         isArchived: false,
+      //         cardCommentCount: 0,
+      //       },
+      //     ],
+      //     isArchived: false,
+      //     createdAt: "2023-06-11T14:08:23.765Z",
+      //     updatedAt: "2023-06-11T15:02:59.446Z",
+      //   },
+      //   {
+      //     _id: "6485d606f60e78828e7807ef",
+      //     name: "list 4",
+      //     kanbanId: "6485d539f60e78828e78071c",
+      //     cardOrder: [
+      //       {
+      //         _id: "6485f6d111af2dbdfd661ea4",
+      //         name: "Card 8",
+      //         assignee: [],
+      //         priority: "Medium",
+      //         status: "Pending",
+      //         tag: [],
+      //         isArchived: false,
+      //         actualEndDate: "2023-06-11T16:31:19.159Z",
+      //         actualStartDate: "2023-06-11T16:31:19.159Z",
+      //         targetEndDate: "2023-06-11T16:31:19.159Z",
+      //         targetStartDate: "2023-06-11T16:31:19.159Z",
+      //         cardCommentCount: 0,
+      //       },
+      //     ],
+      //     isArchived: false,
+      //     createdAt: "2023-06-11T14:11:18.142Z",
+      //     updatedAt: "2023-06-11T16:31:13.267Z",
+      //   },
+      // ];
+
       set_c_kanbanId(data._id);
 
       c_getAllTags(data._id);
@@ -58,6 +107,7 @@ const Kanban: React.FC = () => {
   };
 
   const handleDragEnd = async (result: DropResult) => {
+    console.log("result", result);
     try {
       const { destination, source, draggableId, type } = result;
       // console.log("result", result);
@@ -112,14 +162,12 @@ const Kanban: React.FC = () => {
               new_source[source.index],
             ];
           }
-          const res: AxiosResponse = await moveCard({
+          moveCard({
             newListId: source.droppableId,
             oldListId: source.droppableId,
             newCardOrder: new_source?.map((item) => item._id) || [],
             oldCardOrder: new_source?.map((item) => item._id) || [],
           });
-          const { status } = res.data as IApiResponse;
-          c_getKanbanByKey();
           return;
         }
         const new_source = s_listData.find((listData) => listData._id === source.droppableId)?.cardOrder;
@@ -139,14 +187,12 @@ const Kanban: React.FC = () => {
         // });
         // return;
         set_s_spinning(true);
-        const res: AxiosResponse = await moveCard({
+        moveCard({
           newListId: destination.droppableId,
           oldListId: source.droppableId,
           newCardOrder: new_destination?.map((item) => item._id) || [],
           oldCardOrder: new_source?.map((item) => item._id) || [],
         });
-        const { status } = res.data as IApiResponse;
-        c_getKanbanByKey();
       } else if (type === "list") {
         // TODO: ENDPOINT lists/move，傳到後端的資料格式如下
         //   {
@@ -211,14 +257,18 @@ const Kanban: React.FC = () => {
       // 更新 list
       // set_s_listData((prev) => [...prev, data.result]);
       // 上面會少了 key
+      c_getKanbanByKey();
     } else if (data.type === "renameList") {
       console.log("socket: renameList");
+      c_getKanbanByKey();
     } else if (data.type === "createCard") {
       c_getKanbanByKey();
     } else if (data.type === "moveCard") {
       console.log("socket: moveCard");
+      c_getKanbanByKey();
     } else if (data.type === "renameCard") {
       console.log("socket: renameCard");
+      c_getKanbanByKey();
     } else {
       console.log("socket: 不明 socket 事件");
     }
