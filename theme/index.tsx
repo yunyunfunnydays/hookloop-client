@@ -68,6 +68,9 @@ const withTheme = (node: JSX.Element) => (
           marginXS: 0,
           marginXXS: 0,
         },
+        Checkbox: {
+          marginXS: 0,
+        },
       },
     }}
   >

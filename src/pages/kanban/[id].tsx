@@ -23,7 +23,7 @@ const Kanban: React.FC = () => {
   const [c_kanbanId, set_c_kanbanId] = useState("");
   const [s_spinning, set_s_spinning] = useState(false);
   const [s_kanbanKey, set_s_kanbanKey] = useState("");
-  const [c_Tags, set_c_Tags] = useState<ITag[]>([]);
+  const [c_Tags, set_c_Tags] = useState<ITagRecord>({});
   const [s_open, set_s_open] = useState(false);
   const [s_isDragging, set_s_isDragging] = useState<boolean>(false);
   const [c_query, set_c_query] = useState({});
@@ -37,7 +37,15 @@ const Kanban: React.FC = () => {
     const res: AxiosResponse = await getTags(kanbanId);
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
-      set_c_Tags(data);
+      console.log("data = ", data);
+      if (data.length === 0) return;
+      const tmp_tags = (data as ITag[]).reduce((prev: ITagRecord, curr) => {
+        if (!curr._id) return prev;
+        prev[curr._id] = curr;
+        return prev;
+      }, {});
+      console.log("tmp_tags = ", tmp_tags);
+      set_c_Tags(tmp_tags);
     }
   };
 
@@ -285,6 +293,7 @@ const Kanban: React.FC = () => {
     c_getKanbanByKey();
   }, [s_kanbanKey]);
 
+  console.log("c_Tags = ", c_Tags);
   const contextValue = useMemo(
     () => ({ c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId, sendMessage, lastMessage }),
     [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId],
@@ -317,6 +326,7 @@ const Kanban: React.FC = () => {
                 open={s_open}
                 getContainer={false}
               >
+                {/* <FilterContainer s_kanbanId={s_kanbanId} c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} /> */}
                 <FilterContainer c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} />
               </Drawer>
             </section>

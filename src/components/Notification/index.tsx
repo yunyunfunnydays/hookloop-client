@@ -64,6 +64,7 @@ const Notification: React.FC = () => {
   return (
     <Popover
       arrow={false}
+      className="custPopover"
       title={
         <div className="flex border-b pb-2">
           <h3 className="mr-auto text-[24px] font-medium">Notification</h3>
@@ -116,7 +117,7 @@ const Notification: React.FC = () => {
       }
       trigger="click"
     >
-      <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
+      <NotificationOutlined className="custPopover text-white" style={{ fontSize: 28 }} />
     </Popover>
   );
 };

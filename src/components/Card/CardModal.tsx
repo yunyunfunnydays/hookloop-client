@@ -461,16 +461,20 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
                   mode="multiple"
                   showArrow
                   tagRender={tagRender}
-                  options={c_Tags?.map((item) => ({
-                    label: (
-                      <span key={item.color} className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
-                        <IconRenderer iconName={item.icon as keyof typeof icons} />
-                        <span className="ml-2">{item.name}</span>
-                      </span>
-                    ),
-                    value: item._id,
-                    key: item._id,
-                  }))}
+                  options={
+                    Object.keys(c_Tags).length > 0
+                      ? Object.values(c_Tags)?.map((item) => ({
+                          label: (
+                            <span key={item.color} className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
+                              <IconRenderer iconName={item.icon as keyof typeof icons} />
+                              <span className="ml-2">{item.name}</span>
+                            </span>
+                          ),
+                          value: item._id,
+                          key: item._id,
+                        }))
+                      : []
+                  }
                   dropdownRender={dropdownRender}
                 />
               </Form.Item>
