@@ -27,6 +27,7 @@ import GlobalContext from "@/Context/GlobalContext";
 import { IApiResponse } from "@/service/instance";
 import { createUser, forgetPassword, login } from "@/service/api";
 import Timer from "@/components/Timer";
+import { trimValues } from "@/utils";
 
 interface ILogin {
   open: boolean;
@@ -164,7 +165,7 @@ const Login: React.FC<ILogin> = (props) => {
   const onFinish = async (values: IUser) => {
     if (s_editType === "login") {
       set_s_loading(true);
-      const res: AxiosResponse = await login(values);
+      const res: AxiosResponse = await login(trimValues(values));
 
       const { status } = res.data as IApiResponse;
       if (status === "success") {
@@ -177,7 +178,7 @@ const Login: React.FC<ILogin> = (props) => {
 
     if (s_editType === "signUp") {
       set_s_loading(true);
-      const res: AxiosResponse = await createUser(values);
+      const res: AxiosResponse = await createUser(trimValues(values));
       const { status } = res.data as IApiResponse;
       if (status === "success") {
         handleResponse(res.data);
@@ -189,7 +190,7 @@ const Login: React.FC<ILogin> = (props) => {
 
     if (s_editType === "forgetPassword") {
       set_s_loading(true);
-      const res: AxiosResponse = await forgetPassword({ email: values.email });
+      const res: AxiosResponse = await forgetPassword({ email: values.email.trim() });
       const { status, message } = res.data as IApiResponse;
       if (status === "success") {
         set_s_reset_password_email_status(true);
