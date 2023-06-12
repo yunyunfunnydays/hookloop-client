@@ -1,6 +1,6 @@
-import Link from 'next/link'
+import Link from "next/link";
 import React, { useEffect, useState, useContext } from "react";
-import {Avatar, Popover, Switch } from 'antd';
+import { Avatar, Popover, Switch } from "antd";
 import { NotificationOutlined } from "@ant-design/icons";
 // context
 import GlobalContext from "@/Context/GlobalContext";
@@ -11,19 +11,19 @@ const Notification: React.FC = () => {
   const [s_showUnreadOnly, set_s_showUnreadOnly] = useState(true);
   const [s_notifications, set_s_notifications] = useState([
     {
-      _id: '',
-      createdAt: '',
-      content: '',
-      subject: '',
+      _id: "",
+      createdAt: "",
+      content: "",
+      subject: "",
       fromUserId: {
-        _id: '',
-        username: '',
-        avatar: '',
+        _id: "",
+        username: "",
+        avatar: "",
       },
       kanbanId: {
-        _id: '',
-        name: '',
-        key: '',
+        _id: "",
+        name: "",
+        key: "",
       },
       isRead: false,
     },
@@ -67,38 +67,55 @@ const Notification: React.FC = () => {
       title={
         <div className="flex border-b pb-2">
           <h3 className="mr-auto text-[24px] font-medium">Notification</h3>
-          <div className="flex items-center mt-1">
-            <Switch size="small" defaultChecked onClick={() => set_s_showUnreadOnly(state => !state)} />
-            <p className='ml-1'>unread only</p>
+          <div className="mt-1 flex items-center">
+            <Switch size="small" defaultChecked onClick={() => set_s_showUnreadOnly((state) => !state)} />
+            <p className="ml-1">unread only</p>
           </div>
         </div>
       }
       content={
         <div>
-          <a className='block text-right' onClick={() => markAllIsRead()}>mark all as read</a>
-          {s_notifications.map((msg, i) =>
-            <div key={i} className={`p-3 my-3 border rounded shadow-md shadow-slate-100 ${s_showUnreadOnly && msg.isRead ? "hidden" : ""} `}>
+          <a className="block text-right" onClick={() => markAllIsRead()}>
+            mark all as read
+          </a>
+          {s_notifications.map((msg, i) => (
+            <div
+              key={i}
+              className={`my-3 rounded border p-3 shadow-md shadow-slate-100 ${
+                s_showUnreadOnly && msg.isRead ? "hidden" : ""
+              } `}
+            >
               <div className="flex items-center">
                 <h3 className="text-[20px] font-medium">{msg.subject}</h3>
-                <div className="mt-1 ml-auto">
-                  <Switch size="small" className='block mx-auto' disabled={msg.isRead} defaultChecked={!msg.isRead} onClick={() => markIsRead(msg._id)} />
-                  <small className='block ml-auto'>mark as read</small>
+                <div className="ml-auto mt-1">
+                  <Switch
+                    size="small"
+                    className="mx-auto block"
+                    disabled={msg.isRead}
+                    defaultChecked={!msg.isRead}
+                    onClick={() => markIsRead(msg._id)}
+                  />
+                  <small className="ml-auto block">mark as read</small>
                 </div>
               </div>
               <p className="msg-content">{msg.content}</p>
-              <small className='font-medium'>
+              <small className="font-medium">
                 in <Link href={`/kanban/${msg.kanbanId.key}`}>{msg.kanbanId.name}</Link>
               </small>
               <div className="flex flex-wrap items-end">
-                <Avatar size={20} src={msg.fromUserId.avatar.length > 0 && `https://cdn.filestackcontent.com/${msg.fromUserId.avatar}`} />
-                <p className='ml-1 font-medium'>{msg.fromUserId.username}</p>
-                <small className='ml-1'>{msg.createdAt}</small>
+                <Avatar
+                  size={20}
+                  src={msg.fromUserId.avatar.length > 0 && `https://cdn.filestackcontent.com/${msg.fromUserId.avatar}`}
+                />
+                <p className="ml-1 font-medium">{msg.fromUserId.username}</p>
+                <small className="ml-1">{msg.createdAt}</small>
               </div>
             </div>
-          )}
+          ))}
         </div>
       }
-      trigger="click">
+      trigger="click"
+    >
       <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
     </Popover>
   );

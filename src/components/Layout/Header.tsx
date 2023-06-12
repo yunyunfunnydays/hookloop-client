@@ -87,7 +87,7 @@ const Header: React.FC = () => {
       {hasAuth ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="h-[22px] w-[42px] bg-[#434343]" />
-          <Notification/>
+          <Notification />
 
           {/* <Avatar
             size={28}

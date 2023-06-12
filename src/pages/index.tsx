@@ -20,6 +20,7 @@ import carousel1 from "@/assets/carousel-1.png";
 
 import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
+import PlanComponent from "@/components/Plan";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
@@ -29,10 +30,10 @@ const Home: React.FC = () => {
     console.info("click", e);
   };
 
-  const handleSlectedPlan = (selectedPlan: string) => {
-    // eslint-disable-next-line no-console
-    console.log(selectedPlan);
-  };
+  // const handleSlectedPlan = (selectedPlan: string) => {
+  //   // eslint-disable-next-line no-console
+  //   console.log(selectedPlan);
+  // };
 
   const items: MenuProps["items"] = [
     {
@@ -165,12 +166,20 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* plan */}
-        <section id="Plan" className="flex flex-col items-center gap-[40px] px-[12px] py-[40px]">
+        {/* plan Emi version */}
+        <section
+          id="Plan"
+          className="mx-auto flex w-[90%] flex-col items-center gap-[40px] px-[12px] py-[40px] md:w-[960px]"
+        >
+          <h1 className="font-['Montserrat'] text-[24px] font-black md:text-[40px]">PLAN & PRICING</h1>
+          <PlanComponent type="index" />
+        </section>
+
+        {/* plan original */}
+        {/* <section id="Plan" className="flex flex-col items-center gap-[40px] px-[12px] py-[40px]">
           <h1 className="font-['Montserrat'] text-[24px] font-black lg:text-[40px]">PLAN & PRICING</h1>
 
           <div className="flex flex-col flex-wrap justify-center gap-[20px] md:flex-row">
-            {/* box */}
             <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
               <div className="flex-center h-[80px] w-full bg-[#FFA940] text-white">
                 <h5 className="text-[30px] font-bold">Premium</h5>
@@ -197,7 +206,6 @@ const Home: React.FC = () => {
               </div>
             </section>
 
-            {/* box */}
             <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
               <div className="flex-center h-[80px] w-full border-0 border-b bg-[#FFF7E6] text-black">
                 <h5 className="text-[30px] font-bold text-[#D46B08]">Standard</h5>
@@ -220,7 +228,6 @@ const Home: React.FC = () => {
               </div>
             </section>
 
-            {/* box */}
             <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
               <div className="flex-center h-[80px] w-full bg-[#D9D9D9] text-black">
                 <h5 className="text-[30px] font-bold">Free</h5>
@@ -242,7 +249,7 @@ const Home: React.FC = () => {
               </div>
             </section>
           </div>
-        </section>
+        </section> */}
 
         {/* slider */}
         <section className="flex flex-col items-center bg-[#434343] py-[80px]">
