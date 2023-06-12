@@ -8,15 +8,16 @@ import * as icons from "@ant-design/icons";
 // init value
 import { workspaceInitValue, kanbanInitValue } from "@/components/util/initValue";
 import CustAvatar from "@/components/util/CustAvatar";
+import KanbanContext from "@/Context/KanbanContext";
 
-interface IProps {
-  s_kanbanId: string;
+type FilterContainerProps = {
   c_query: any;
   set_c_query: ISetStateFunction<any>;
   c_Tags: ITag[];
-}
+};
 
-const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_query }) => {
+const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_c_query }) => {
+  const { c_kanbanId } = useContext(KanbanContext);
   const { c_workspaces } = useContext(GlobalContext);
 
   const [s_members, set_s_members] = useState<Imember[]>([]);
@@ -36,36 +37,34 @@ const FilterContainer: React.FC<IProps> = ({ s_kanbanId, c_Tags, c_query, set_c_
   };
 
   useEffect(() => {
-    if (!s_kanbanId) return;
+    if (!c_kanbanId) return;
     // 目標看板
     const kanbanData: Ikanban =
-      c_workspaces?.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === s_kanbanId) ||
+      c_workspaces.flatMap((workspace) => workspace.kanbans)?.find((kanban) => kanban._id === c_kanbanId) ||
       kanbanInitValue;
     const members: Imember[] =
       c_workspaces.find((workspace) => workspace.workspaceId === kanbanData?.workspaceId)?.members ||
       workspaceInitValue.members;
-    // console.log("members = ", members);
+    if (!members) return;
     set_s_members(members);
-  }, [c_workspaces, s_kanbanId]);
-  // console.log("s_members = ", s_members);
+  }, [c_workspaces, c_kanbanId]);
+
   return (
     <div className="flex flex-col">
-      <Checkbox.Group style={{ width: "100%" }} value={c_query.member} onChange={onChange}>
+      <Checkbox.Group style={{ width: "100%" }} value={c_query?.member || ""} onChange={onChange}>
         <Row gutter={[12, 12]}>
           <Col span={24}>
             <Typography.Title level={5}>Members</Typography.Title>
           </Col>
-          {s_members?.map((user: Imember) => (
-            <Col span={24} key={user?.username}>
-              <Checkbox value={user.userId} className="member-chackbox flex items-end">
-                {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
-                  {user?.avatar?.length === 0 ? user?.username[0] : null}
-                </Avatar> */}
-                <CustAvatar info={user} />
-                <span className="ml-2">{user.username}</span>
-              </Checkbox>
-            </Col>
-          ))}
+          {s_members &&
+            s_members.map((user: Imember) => (
+              <Col span={24} key={user.username}>
+                <Checkbox value={user.userId} className="member-chackbox flex items-end">
+                  <CustAvatar info={user} />
+                  <span className="ml-2">{user.username}</span>
+                </Checkbox>
+              </Col>
+            ))}
           <Divider className="my-2" />
           <Col span={24}>
             <Typography.Title level={5}>Tags</Typography.Title>

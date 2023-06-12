@@ -98,3 +98,22 @@
 .ant-carousel .slick-dots li.slick-active button {
   background-color: #FFA940;
 }
+
+.ant-popover{
+  width: 300px;
+}
+.ant-popover .ant-popover-content{
+  top:30px;
+  right: 1.2rem;
+}
+.ant-popover .ant-popover-inner{
+  border-radius:6px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.ant-popover .ant-popover-inner .ant-popover-inner-content .msg-content{
+  white-space:pre
+}
+.ant-popover .ant-popover-title{
+  font-weight: normal;
+}

@@ -6,6 +6,7 @@
   "rules": {
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
+    "no-param-reassign": "off",
     "import/newline-after-import": ["error", { "count": 1 }], // import 完成後要換幾行
     "react/function-component-definition": [
       2,
@@ -18,6 +19,8 @@
     "@typescript-eslint/naming-convention": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "import/prefer-default-export": "off",
-    "no-console": ["error", { "allow": ["info", "error"] }]
+    "no-console": ["error", { "allow": ["info", "error"] }],
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off"
   }
 }

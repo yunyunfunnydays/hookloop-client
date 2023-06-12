@@ -17,7 +17,7 @@ import {
 import GlobalContext from "@/Context/GlobalContext";
 // api
 import { pinKanban, archiveKanban } from "@/service/apis/kanban";
-import ReNameKanbanModal from "@/components/Kanban/ReNameKanbanModal";
+import ReNameKanbanModal from "@/components/Kanban/RenameKanbanModal";
 import TagWrapper from "./TagWrapper";
 
 type ClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;

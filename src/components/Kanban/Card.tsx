@@ -1,41 +1,26 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useRef, useState, useEffect, useContext } from "react";
-import type { InputRef } from "antd";
-import { Modal, Input, Avatar, Tooltip } from "antd";
-import { addCard } from "@/service/apis/card";
-import { BellFilled, MessageOutlined, PlusOutlined } from "@ant-design/icons";
+import React, { useState, useContext } from "react";
+import { Modal, Avatar, Tooltip } from "antd";
+import GlobalContext from "@/Context/GlobalContext";
+import { BellFilled, MessageOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
+import CardPriority from "@/components/Kanban/CardPriority";
 import CardModal from "@/components/Card/CardModal";
 import IconRenderer from "@/components/util/IconRender";
-import KanbanContext from "@/Context/KanbanContext";
 import CustAvatar from "@/components/util/CustAvatar";
 
 type CardProps = {
-  s_kanbanId: string;
   card: ICard;
   index: number;
 };
 
-interface CardPriorityProps {
-  priority: "Medium" | "Low" | "High";
-}
-
-const CardPriority: React.FC<CardPriorityProps> = ({ priority }) => {
-  const style = {
-    Low: "text-[#389E0D] bg-[#F6FFED] border-[#389E0D]",
-    Medium: "text-[#D46B08] bg-[#FFF7E6] border-[#D46B08]",
-    High: "text-[#CF1322] bg-[#FFF1F0] border-[#CF1322]",
-  };
-  return (
-    <span className={`rounded-md border-2 p-1 font-['Roboto'] font-medium ${style[priority]}`}>
-      Priority: {priority}
-    </span>
-  );
-};
-
-const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
+const Card: React.FC<CardProps> = ({ card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
+  const { c_memberMap } = useContext(GlobalContext);
 
+  // console.log("card = ", card);
+  if (!card) return null;
   return (
     <>
       <Draggable draggableId={card._id} index={index} key={card._id}>
@@ -83,25 +68,14 @@ const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
               {/* 成員 */}
               <Avatar.Group maxCount={5} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
                 {card.reporter && (
-                  <Tooltip key={card.reporter?.username} title={card.reporter?.username}>
-                    {/* <Avatar
-                      size={32}
-                      src={card.reporter?.avatar?.length > 0 && card.reporter?.avatar}
-                      className="border-2 border-orange-400 bg-gray-200"
-                    >
-                      {card.reporter?.avatar?.length === 0 ? card.reporter?.username[0] : null}
-                    </Avatar> */}
-                    <CustAvatar info={card.reporter} className="border-2 border-orange-400 bg-gray-200" />
+                  <Tooltip key={card.reporter} title={c_memberMap[card.reporter]?.username}>
+                    <CustAvatar info={c_memberMap[card.reporter]} className="border-2 border-orange-400 bg-gray-200" />
                   </Tooltip>
                 )}
 
-                {card.assignee?.map((user: IUser) => (
-                  <Tooltip key={user?.username} title={user?.username}>
-                    {/* <Avatar size={32} src={item.avatar.length > 0 && <Image src={item.avatar} alt="user1" />}> */}
-                    {/* <Avatar size={32} src={user?.avatar?.length > 0 && user?.avatar} className="bg-gray-200">
-                      {user?.avatar?.length === 0 ? user?.username[0] : null}
-                    </Avatar> */}
-                    <CustAvatar info={user} />
+                {card.assignee?.map((userId) => (
+                  <Tooltip key={userId} title={c_memberMap[userId]?.username}>
+                    <CustAvatar info={c_memberMap[userId]} />
                   </Tooltip>
                 ))}
               </Avatar.Group>
@@ -197,86 +171,9 @@ const Card: React.FC<CardProps> = ({ s_kanbanId, card, index }) => {
         footer={null}
       >
         {/* {s_showCard && <CardModal set_s_showCard={set_s_showCard} />} */}
-        {s_showCard === true ? <CardModal s_kanbanId={s_kanbanId} card={card} set_s_showCard={set_s_showCard} /> : null}
+        {s_showCard === true ? <CardModal card={card} set_s_showCard={set_s_showCard} /> : null}
       </Modal>
     </>
-  );
-};
-
-type AddCardProps = {
-  s_kanbanId: string;
-  listData: IList;
-  // set_s_ListsData: ISetStateFunction<IList[]>;
-};
-
-export const AddCard: React.FC<AddCardProps> = ({ s_kanbanId, listData }) => {
-  const inputRef = useRef<InputRef>(null);
-  const { c_getKanbanByKey } = useContext(KanbanContext);
-  const [s_isAddingCard, set_s_isAddingCard] = useState(false);
-  const [s_cardName, set_s_cardName] = useState<string>("");
-
-  useEffect(() => {
-    if (s_isAddingCard && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [s_isAddingCard]);
-
-  const handleAddCard = () => {
-    set_s_isAddingCard(true);
-  };
-
-  const handleInputEnd = async () => {
-    try {
-      if (s_cardName === "" || s_cardName === null) return;
-      if (s_kanbanId === "" || s_kanbanId === null) return;
-
-      const res: AxiosResponse = await addCard({
-        name: s_cardName,
-        kanbanId: s_kanbanId,
-        listId: listData._id,
-      });
-      const { status, message } = res.data as IApiResponse;
-      // console.log("data = ", data);
-      if (status === "success") {
-        // set_s_ListsData(data.listOrder);
-        c_getKanbanByKey();
-      } else {
-        console.error(message);
-      }
-      set_s_cardName("");
-    } catch (errorInfo) {
-      console.error(errorInfo);
-    } finally {
-      set_s_isAddingCard(false);
-    }
-  };
-
-  return s_isAddingCard ? (
-    <Input
-      ref={inputRef}
-      value={s_cardName}
-      name="listName"
-      // bordered={false}
-      onChange={(e) => set_s_cardName(e.target.value)}
-      onBlur={handleInputEnd}
-      onPressEnter={handleInputEnd}
-      // className="h-[56px] min-w-[330px] bg-red-400 px-5 py-4 text-xl font-medium text-[#262626] text-['Roboto']"
-    />
-  ) : (
-    <div
-      role="presentation"
-      className="rounded-md p-2 text-base font-medium text-[#595959] hover:bg-[#d2d0d0]"
-      onClick={handleAddCard}
-    >
-      <PlusOutlined />
-      <span> Add a card</span>
-    </div>
-    // <div role="presentation" className="min-w-[330px] bg-[#F5F5F5] px-5 py-4" onClick={handleAddCard}>
-    //   <div className="cursor-pointer text-base font-medium text-[#595959] text-['Roboto']">
-    //     <PlusOutlined />
-    //     <span> Add a card</span>
-    //   </div>
-    // </div>
   );
 };
 

@@ -42,6 +42,8 @@ declare global {
     state: "create" | "delete";
   }
 
+  type ImemberRecord = Record<string, Imember>;
+
   interface Iworkspace {
     workspaceId: string;
     workspaceName: string;
@@ -54,10 +56,12 @@ declare global {
     _id: string;
     name: string;
     description: string;
-    reporter: IUser;
+    // reporter: IUser;
+    reporter: string;
     listId: string;
     kanbanId: string;
-    assignee: IUser[];
+    // assignee: IUser[];
+    assignee: string[];
     webLink: ILink[];
     attachment?: string[];
     priority: "Medium" | "Low" | "High";
@@ -69,22 +73,7 @@ declare global {
     actualEndDate: Dayjs | null;
     status: string | null;
     tag: ITag[];
-  }
-
-  interface ICardBK {
-    id: string;
-    title: string;
-    preview: any;
-    priority: string | null;
-    status: string | null;
-    tags: { id: string; name: string }[];
-    reporter: { id: string; avatar: string } | null;
-    assignees: { id: string; avatar: string }[];
-    dueDate: {
-      type: string;
-      start?: string;
-      end: string;
-    } | null;
+    cardComment?: Icomment[];
   }
 
   interface ITag {
@@ -119,7 +108,7 @@ declare global {
     _id?: string;
     createdAt?: Dayjs;
     currentComment: string;
-    userId: IUser;
+    userId: string;
   }
 
   interface IListsCards {
