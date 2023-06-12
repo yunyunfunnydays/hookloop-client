@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import Cookies from "js-cookie";
 import instance from "../instance";
 
 // 取得看板資料
@@ -28,7 +29,11 @@ export const archiveKanban = (key: string, data: Pick<Ikanban, "isArchived">) =>
 
 // 取得所有 Tags
 export const getTags = (kanbanId: string) => {
-  return instance.get(`kanbans/${kanbanId}/tag`);
+  return instance.get(`kanbans/${kanbanId}/tag`, {
+    headers: {
+      Authorization: `Bearer ${Cookies.get("hookloop-token")}`,
+    },
+  });
 };
 
 // 新增 Tag
