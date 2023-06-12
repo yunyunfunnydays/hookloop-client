@@ -20,6 +20,7 @@ import carousel1 from "@/assets/carousel-1.png";
 
 import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
+import PlanComponent from "@/components/Plan";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
@@ -161,8 +162,11 @@ const Home: React.FC = () => {
         </section>
 
         {/* plan */}
-        <section id="Plan" className="flex flex-col items-center gap-[40px] px-[12px] py-[40px]">
-          <h1 className="font-['Montserrat'] text-[24px] font-black lg:text-[40px]">PLAN & PRICING</h1>
+        <section id="Plan" className="w-[90%] md:w-[960px] mx-auto py-[40px] px-[12px] flex flex-col items-center gap-[40px]">
+          <h1 className="font-black text-[24px] md:text-[40px] font-['Montserrat']">PLAN & PRICING</h1>
+          <PlanComponent type="index" />
+          <!-- <section id="Plan" className="flex flex-col items-center gap-[40px] px-[12px] py-[40px]">
+          <h1 className="font-['Montserrat'] text-[24px] font-black lg:text-[40px]">PLAN & PRICING</h1> -->
 
           <div className="flex flex-col flex-wrap justify-center gap-[20px] md:flex-row">
             {/* box */}
