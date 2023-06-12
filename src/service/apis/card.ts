@@ -2,7 +2,7 @@
 import instance from "../instance";
 
 // 新建 kanban
-export const addCard = (data: ICard) => {
+export const addCard = (data: Pick<ICard, "name" | "kanbanId" | "listId">) => {
   return instance.post("cards", data);
 };
 
@@ -12,8 +12,8 @@ export const getCardById = (cardId: string) => {
 };
 
 // 使用 cardId 更新卡片
-export const updateCard = (cardId: string, data: ICard) => {
-  return instance.patch(`cards/${cardId}`, data);
+export const updateCard = (kanbanId: string, cardId: string, data: ICard) => {
+  return instance.patch(`cards/${kanbanId}/${cardId}/update`, data);
 };
 
 // 上傳檔案

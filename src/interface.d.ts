@@ -6,6 +6,7 @@ declare global {
   interface AxiosResponse extends axiosRes {}
 
   interface IUser {
+    _id?: string;
     username: string;
     email: string;
     password: string;
@@ -27,6 +28,7 @@ declare global {
     _id: string;
     name: string;
     key: string;
+    listOrder: IList[];
     workspaceId: string;
     isPinned: boolean;
     isArchived: boolean;
@@ -40,6 +42,8 @@ declare global {
     state: "create" | "delete";
   }
 
+  type ImemberRecord = Record<string, Imember>;
+
   interface Iworkspace {
     workspaceId: string;
     workspaceName: string;
@@ -49,13 +53,18 @@ declare global {
   }
 
   interface ICard {
-    id: string;
+    _id: string;
     name: string;
     description: string;
+    // reporter: IUser;
     reporter: string;
+    listId: string;
+    kanbanId: string;
+    // assignee: IUser[];
     assignee: string[];
     webLink: ILink[];
-    priority: string | null;
+    attachment?: string[];
+    priority: "Medium" | "Low" | "High";
     targetDate?: Dayjs[];
     targetStartDate: Dayjs | null;
     targetEndDate: Dayjs | null;
@@ -63,23 +72,8 @@ declare global {
     actualStartDate: Dayjs | null;
     actualEndDate: Dayjs | null;
     status: string | null;
-    tag: string[];
-  }
-
-  interface ICardBK {
-    id: string;
-    title: string;
-    preview: any;
-    priority: string | null;
-    status: string | null;
-    tags: { id: string; name: string }[];
-    reporter: { id: string; avatar: string } | null;
-    assignees: { id: string; avatar: string }[];
-    dueDate: {
-      type: string;
-      start?: string;
-      end: string;
-    } | null;
+    tag: ITag[];
+    cardComment?: Icomment[];
   }
 
   interface ITag {
@@ -93,11 +87,9 @@ declare global {
   interface IList {
     _id: string;
     name: string;
-    cardOrder: string[];
+    cardOrder: ICard[];
     kanbanId: string;
     isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
   }
 
   interface IOwner {
@@ -116,6 +108,29 @@ declare global {
     _id?: string;
     createdAt?: Dayjs;
     currentComment: string;
-    userId: IUser;
+    userId: string;
+  }
+
+  interface IListsCards {
+    cards: { [key: string]: ICard };
+    lists: { [key: string]: IList };
+    listOrder: string[];
+  }
+
+  interface ICard1 {
+    id: string;
+    text: string;
+  }
+
+  interface IList1 {
+    id: string;
+    cards: ICard1[];
+  }
+  interface IDragItem {
+    private _id(arg0: number, length: number, _id: any, id: string): unknown;
+    id: string;
+    type: string;
+    currentListId: string;
+    currentCardIndex?: number;
   }
 }

@@ -4,24 +4,24 @@ import { Input, Divider, Button, Spin, message as msg } from "antd";
 import GlobalContext from "@/Context/GlobalContext";
 import { addkanban } from "@/service/apis/kanban";
 
-interface IProps {
+type CreateKanbanModalProps = {
   workspaceId: string;
   set_s_isShowModal: ISetStateFunction<boolean>;
-}
+};
 
-interface IFieldProps {
+type FieldLabelProps = {
   children: React.ReactNode;
-}
+};
 
 // 可編輯欄位的 label
-const FieldLabel: React.FC<IFieldProps> = ({ children }) => (
+const FieldLabel: React.FC<FieldLabelProps> = ({ children }) => (
   <span className="text-base font-medium text-[#8C8C8C]">{children}</span>
 );
 
-const CreateKanbanModal: React.FC<IProps> = ({ workspaceId, set_s_isShowModal }) => {
+const CreateKanbanModal: React.FC<CreateKanbanModalProps> = ({ workspaceId, set_s_isShowModal }) => {
   const { c_getAllWorkspace } = useContext(GlobalContext);
   const [messageApi, contextHolder] = msg.useMessage();
-  const [s_isLoaging, set_s_isLoaging] = useState(false);
+  const [s_isLoading, set_s_isLoading] = useState(false);
 
   // 要用來新建的 kanban 資料
   const [s_newDate, set_s_newData] = useState<Pick<Ikanban, "name" | "key" | "workspaceId">>({
@@ -31,15 +31,15 @@ const CreateKanbanModal: React.FC<IProps> = ({ workspaceId, set_s_isShowModal })
   });
 
   const onSubmit = async () => {
-    set_s_isLoaging(true);
+    set_s_isLoading(true);
     if (s_newDate.name === "") {
       messageApi.warning("please type name");
-      set_s_isLoaging(false);
+      set_s_isLoading(false);
       return;
     }
     if (s_newDate.key === "") {
       messageApi.warning("please type key");
-      set_s_isLoaging(false);
+      set_s_isLoading(false);
       return;
     }
     s_newDate.workspaceId = workspaceId;
@@ -51,12 +51,12 @@ const CreateKanbanModal: React.FC<IProps> = ({ workspaceId, set_s_isShowModal })
       msg.error(message);
     }
     c_getAllWorkspace();
-    set_s_isLoaging(false);
+    set_s_isLoading(false);
     set_s_isShowModal(false);
   };
 
   return (
-    <Spin spinning={s_isLoaging}>
+    <Spin spinning={s_isLoading}>
       {contextHolder}
       <section className="flex flex-col gap-3">
         <div className="flex flex-col">

@@ -1,36 +1,35 @@
-import React, { useState } from "react";
-// import Image from "next/image";
+import React, { useState, useContext } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { Avatar, Button, Modal, Tooltip } from "antd";
-import MemberSelect from "@/components/Member/MemberSelect";
+import { Button, Modal, Tooltip, Select } from "antd";
+// import MemberSelect from "@/components/Member/MemberSelect";
+import GlobalContext from "@/Context/GlobalContext";
+import CustAvatar from "../util/CustAvatar";
 
 interface IProps {
-  reporter: IOwner;
-  afterChoose: (_: any, data: IOwner) => void;
+  // reporter: IOwner;
+  reporter: string;
+  afterChoose: (userId: string) => void;
 }
 
 const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
+  const { c_memberMap } = useContext(GlobalContext);
   const [s_showModal, set_s_showModal] = useState(false);
   // 判斷卡片是否有owner
-  const hasOwner = reporter.username?.length > 0;
-
+  const hasOwner = reporter?.length > 0;
+  // console.log("hasOwner = ", hasOwner);
   return (
     <>
       {hasOwner ? (
-        <Tooltip title={reporter.username}>
-          <Avatar
+        <Tooltip title={c_memberMap[reporter]?.username}>
+          <CustAvatar
+            info={c_memberMap[reporter]}
             onClick={() => set_s_showModal(true)}
-            size={32}
             className="cursor-pointer bg-gray-200"
-            // src={reporter.avatar.length > 0 && <Image src={reporter.avatar} alt="user1" />}
-            src={reporter.avatar.length > 0 && reporter.avatar}
-          >
-            {reporter?.avatar.length === 0 ? reporter.username[0] : null}
-          </Avatar>
+          />
         </Tooltip>
       ) : (
         <Button
-          className="bg-[#D9D9D9] float-right text-white"
+          className="float-right bg-[#D9D9D9] text-white"
           onClick={() => set_s_showModal(true)}
           type="primary"
           size="middle"
@@ -49,7 +48,7 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
         maskClosable={false}
         footer={null}
       >
-        <MemberSelect
+        {/* <MemberSelect
           className="w-full"
           value={null}
           placeholder="input email text"
@@ -57,6 +56,25 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
             afterChoose(_, data);
             set_s_showModal(false);
           }}
+        /> */}
+        <Select
+          className="w-full"
+          value={null}
+          onChange={(userId: string) => {
+            // 判斷要新增的人員是否已存在
+            if (!userId) return;
+            afterChoose(userId);
+            set_s_showModal(false);
+          }}
+          options={Object.values(c_memberMap).map((user: Imember) => ({
+            value: user.userId,
+            label: (
+              <span className="flex items-center gap-2">
+                <CustAvatar info={user} />
+                {user.username}
+              </span>
+            ),
+          }))}
         />
       </Modal>
     </>

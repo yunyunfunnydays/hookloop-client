@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React, { useContext } from "react";
 import { Select } from "antd";
 import { UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import MemberSelect from "@/components/Member/MemberSelect";
+import GlobalContext from "@/Context/GlobalContext";
 
 interface IProps {
   members: Imember[];
@@ -11,30 +12,36 @@ interface IProps {
   changeRole: (_: any, newRole: Imember["role"]) => void;
 }
 
-const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeRole, deleteMember }) => {
+const ChooseMember: React.FC<IProps> = ({ members, addMember, changeRole, deleteMember }) => {
+  const { c_user } = useContext(GlobalContext);
+  const auth = members.find((item) => item.userId === c_user.userId)?.role;
+  // console.log("c_user = ", c_user);
   // console.log("members = ", members);
+  // console.log("auth = ", auth);
+  // console.log();
   return (
     <section>
-      <div className="flex flex-col mt-4">
-        <p className="text-base font-medium mb-1">Invite members</p>
-        <MemberSelect value={null} placeholder="input email text" onChange={addMember} />
+      <div className="mt-4 flex flex-col">
+        <p className="mb-1 text-base font-medium">Invite members</p>
+        <MemberSelect disabled={auth === "Member"} value={null} placeholder="input email text" onChange={addMember} />
       </div>
 
-      <section className="flex flex-col mt-4 gap-5">
+      <section className="mt-4 flex flex-col gap-5">
         {members
           ?.filter((item) => item.state !== "delete")
           ?.map((member: Imember) => (
-            <div key={member.username + member.role} className="flex justify-between items-center">
+            <div key={member.username + member.role} className="flex items-center justify-between">
               <p className="text-base leading-[32px]">
                 <UserOutlined />
                 <span className="ml-2">{member.username}</span>
               </p>
               {member.role === "Owner" ? (
-                <span className="flex-center h-8 w-20 bg-[#FFF7E6] text-[#D46B08] rounded-[32px]">Owner</span>
+                <span className="flex-center h-8 w-20 rounded-[32px] bg-[#FFF7E6] text-[#D46B08]">Owner</span>
               ) : (
                 <div className="flex-center gap-2">
                   <Select
                     className="w-24"
+                    disabled={auth === "Member"}
                     onChange={(value) => changeRole(member.username, value)}
                     value={member.role}
                     options={[
@@ -42,7 +49,12 @@ const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeR
                       { value: "Member", label: "Member" },
                     ]}
                   />
-                  <DeleteOutlined className="text-base cursor-pointer" onClick={() => deleteMember(member.username)} />
+                  {auth !== "Member" && (
+                    <DeleteOutlined
+                      className="cursor-pointer text-base"
+                      onClick={() => deleteMember(member.username)}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -50,6 +62,6 @@ const ChooseMember: React.FC<IProps> = React.memo(({ members, addMember, changeR
       </section>
     </section>
   );
-});
+};
 
 export default ChooseMember;

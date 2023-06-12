@@ -1,8 +1,9 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Select, Spin, Avatar } from "antd";
+import { Select, Spin } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import debounce from "lodash/debounce";
 import { getMember } from "@/service/api";
+import CustAvatar from "../util/CustAvatar";
 
 const MemberSelect = (props: any) => {
   const [fetching, setFetching] = useState(false);
@@ -11,6 +12,7 @@ const MemberSelect = (props: any) => {
   const call_getMember = async (value: string = "") => {
     const res: AxiosResponse = await getMember(value);
     const { status, data } = res.data as IApiResponse;
+
     if (status === "success") {
       const _data =
         data.members?.map((member: IUser) => ({
@@ -18,9 +20,10 @@ const MemberSelect = (props: any) => {
           key: member.email,
           label: (
             <span className="flex gap-1">
-              <Avatar size="small" className="bg-gray-200" src={member.avatar.length > 0 && member.avatar}>
+              {/* <Avatar size="small" className="bg-gray-200" src={member.avatar.length > 0 && member.avatar}>
                 {member.username[0]}
-              </Avatar>
+              </Avatar> */}
+              <CustAvatar info={member} size="small" />
               {member.username}
             </span>
           ),

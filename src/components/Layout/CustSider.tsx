@@ -15,6 +15,7 @@ import {
   LogoutOutlined,
   ExclamationCircleFilled,
 } from "@ant-design/icons";
+import { userInitValue, workspaceInitValue } from "@/components/util/initValue";
 // API
 import { archivedWorkspace } from "@/service/apis/workspace";
 // context
@@ -22,6 +23,7 @@ import GlobalContext from "@/Context/GlobalContext";
 // component
 import CreateWorkSpaceModal from "@/components/Workspace/CreateWorkSpaceModal";
 import MemberModal from "../Workspace/MemberModal";
+import SettingModal from "../Workspace/SettingModal";
 
 interface IProps {
   s_collapsed: boolean;
@@ -32,16 +34,13 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   const { c_workspaces, c_getAllWorkspace, set_c_user } = useContext(GlobalContext);
 
   // 目前點選的 workspace
-  const [s_workspace, set_s_workspace] = useState<Iworkspace>({
-    workspaceId: "",
-    workspaceName: "",
-    kanbans: [],
-    members: [],
-    isArchived: false,
-  });
+  const [s_workspace, set_s_workspace] = useState<Iworkspace>(workspaceInitValue);
 
   // 顯示新增 workspace 的開關
   const [s_isShowModal, set_s_isShowModal] = useState(false);
+
+  // 顯示 workspace setting 的開關
+  const [s_showWorkspaceSetting, set_s_showWorkspaceSetting] = useState(false);
 
   // 顯示選擇 Member 的開關
   const [s_isShowMember, set_s_isShowMember] = useState(false);
@@ -58,13 +57,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
   const handleLogout = async () => {
     msg.success("Log out success");
     Cookies.set("hookloop-token", "");
-    set_c_user({
-      username: "",
-      email: "",
-      password: "",
-      avatar: "",
-      userId: "",
-    });
+    set_c_user(userInitValue);
     Router.push("/");
   };
 
@@ -82,11 +75,13 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           key: `${workspace.workspaceId}Kanbans`,
           icon: <AppstoreOutlined />,
           // 這個 children 用來渲染 kanban
-          children: workspace.kanbans.map((kanban) => ({
-            key: workspace.workspaceName + kanban._id,
-            onClick: () => Router.push(`/kanban/${kanban._id}`),
-            label: kanban.name,
-          })),
+          children: workspace.kanbans
+            ?.filter((kanban) => !kanban.isArchived) // 篩掉被封存的 kanban
+            ?.map((kanban) => ({
+              key: workspace.workspaceName + kanban._id,
+              onClick: () => Router.push(`/kanban/${kanban.key}`),
+              label: kanban.name,
+            })),
         },
         {
           label: <span className="members">Members</span>,
@@ -105,6 +100,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
             {
               key: `${workspace.workspaceId}Archive`,
               label: "Archive workspace",
+              // 封存 workspace
               onClick: () => {
                 Modal.confirm({
                   title: "Do you Want to Archive workspace?",
@@ -124,6 +120,10 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
             {
               key: `${workspace.workspaceId}Kanban_setting`,
               label: "Workspace setting",
+              onClick: () => {
+                set_s_workspace(workspace);
+                set_s_showWorkspaceSetting(true);
+              },
             },
           ],
         },
@@ -136,23 +136,23 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       trigger={null}
       width={235}
       collapsedWidth={0}
-      className="border-r-[1px] transition-all duration-500 overflow-hidden"
+      className="overflow-hidden border-r-[1px] transition-all duration-500"
       collapsible
       collapsed={s_collapsed}
     >
       {/* Home */}
-      <section className="w-full py-5 px-7 text-[#595959] text-base">
+      <section className="w-full px-7 py-5 text-base text-[#595959]">
         <HomeOutlined />
-        <span className="font-medium ml-2">Home</span>
+        <span className="ml-2 font-medium">Home</span>
         <DoubleLeftOutlined className="float-right mt-1 cursor-pointer" onClick={() => set_s_collapsed(!s_collapsed)} />
       </section>
 
       {/* create workspace */}
-      <section className=" w-full py-5 px-7 text-[#262626] bg-[#F5F5F5] text-base">
+      <section className=" w-full bg-[#F5F5F5] px-7 py-5 text-base text-[#262626]">
         <DesktopOutlined />
-        <span className="font-medium ml-2">Workspace</span>
+        <span className="ml-2 font-medium">Workspace</span>
         <Button
-          className="bg-[#FFA940] float-right text-white"
+          className="float-right bg-[#FFA940] text-white"
           type="primary"
           size="small"
           shape="circle"
@@ -167,11 +167,11 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       {/* logout */}
       <section
         role="presentation"
-        className="w-full py-5 px-7 text-[#595959] text-base cursor-pointer hover:bg-[#F5F5F5]"
+        className="w-full cursor-pointer px-7 py-5 text-base text-[#595959] hover:bg-[#F5F5F5]"
         onClick={handleLogout}
       >
         <LogoutOutlined />
-        <span className="font-medium ml-2">Log out</span>
+        <span className="ml-2 font-medium">Log out</span>
       </section>
 
       {/* 建立 workspace 的 Modal */}
@@ -192,6 +192,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         open={s_isShowMember}
         onCancel={() => set_s_isShowMember(false)}
         footer={null}
+        destroyOnClose
       >
         {s_isShowMember && (
           <MemberModal
@@ -199,6 +200,26 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
             set_s_workspace={set_s_workspace}
             set_s_isShowMember={set_s_isShowMember}
           />
+        )}
+      </Modal>
+
+      {/* workspace 設定的 Modal */}
+      <Modal
+        title="Workspace setting"
+        width="672px"
+        open={s_showWorkspaceSetting}
+        style={{
+          top: 20,
+        }}
+        destroyOnClose
+        onCancel={() => {
+          set_s_showWorkspaceSetting(false);
+          set_s_workspace(workspaceInitValue);
+        }}
+        footer={null}
+      >
+        {s_showWorkspaceSetting && (
+          <SettingModal s_workspace={s_workspace} set_s_showWorkspaceSetting={set_s_showWorkspaceSetting} />
         )}
       </Modal>
     </Layout.Sider>
