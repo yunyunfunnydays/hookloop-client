@@ -253,7 +253,7 @@ const Home: React.FC = () => {
 
         {/* slider */}
         <section className="flex flex-col items-center bg-[#434343] py-[80px]">
-          <h1 className="font-['Montserrat'] text-[24px] font-black lg:text-[40px]">
+          <h1 className="font-['Montserrat'] text-[24px] text-[#fff] lg:text-[40px]">
             KICKSTART YOUR PROJECT IN SECONDS
           </h1>
           <div className="relative my-5 w-[80%] leading-6">

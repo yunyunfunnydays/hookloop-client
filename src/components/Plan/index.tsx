@@ -64,8 +64,8 @@ const Plan: React.FC<IPlan> = (props) => {
                 selected ? "border-4 border-black" : "border-[#D9D9D9]"
               } `}
             >
-              <div className={`flex-center w-full py-3 bg-[${box.bgColor}] text-[${box.titleColor}]`}>
-                <h5 className="text-[28px] font-bold">{box.title}</h5>
+              <div className={`flex-center w-full py-3 bg-[${box.bgColor}]`}>
+                <h5 className={`text-[28px] font-bold text-[${box.titleColor}]`}>{box.title}</h5>
               </div>
               <div className={`flex flex-col p-6 ${isIndex ? "items-center" : ""} `}>
                 <div>
