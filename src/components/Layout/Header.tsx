@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import Router, { useRouter } from "next/router";
 import Image from "next/image";
 import { Grid, Button, Switch, Breadcrumb } from "antd";
-import { MenuOutlined, CloseOutlined, NotificationOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 // logo
 import logo_white from "@/assets/logo_white.svg";
 import logo_black from "@/assets/logo_black.svg";
@@ -12,6 +12,7 @@ import GlobalContext from "@/Context/GlobalContext";
 // init value
 import { kanbanInitValue, workspaceInitValue } from "@/components/util/initValue";
 // component
+import Notification from "@/components/Notification";
 import Login from "../Login";
 import CustAvatar from "../util/CustAvatar";
 
@@ -86,16 +87,8 @@ const Header: React.FC = () => {
       {hasAuth ? (
         <div className="flex items-center gap-[24px]">
           <Switch className="h-[22px] w-[42px] bg-[#434343]" />
-          <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
+          <Notification />
 
-          {/* <Avatar
-            size={28}
-            // src={c_user.avatar.length > 0 && c_user.avatar}
-            src={c_user.avatar.length > 0 && `https://cdn.filestackcontent.com/${c_user.avatar}`}
-            className="cursor-pointer bg-white text-black"
-          >
-            {c_user?.avatar.length === 0 ? c_user.username[0] : null}
-          </Avatar> */}
           <CustAvatar info={c_user} onClick={() => Router.push("/profile")} />
         </div>
       ) : (

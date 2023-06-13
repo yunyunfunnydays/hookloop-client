@@ -20,6 +20,7 @@ import carousel1 from "@/assets/carousel-1.png";
 
 import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
+import PlanComponent from "@/components/Plan";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
@@ -28,6 +29,11 @@ const Home: React.FC = () => {
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     console.info("click", e);
   };
+
+  // const handleSlectedPlan = (selectedPlan: string) => {
+  //   // eslint-disable-next-line no-console
+  //   console.log(selectedPlan);
+  // };
 
   const items: MenuProps["items"] = [
     {
@@ -160,12 +166,20 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* plan */}
-        <section id="Plan" className="flex flex-col items-center gap-[40px] px-[12px] py-[40px]">
+        {/* plan Emi version */}
+        <section
+          id="Plan"
+          className="mx-auto flex w-[90%] flex-col items-center gap-[40px] px-[12px] py-[40px] md:w-[960px]"
+        >
+          <h1 className="font-['Montserrat'] text-[24px] font-black md:text-[40px]">PLAN & PRICING</h1>
+          <PlanComponent type="index" />
+        </section>
+
+        {/* plan original */}
+        {/* <section id="Plan" className="flex flex-col items-center gap-[40px] px-[12px] py-[40px]">
           <h1 className="font-['Montserrat'] text-[24px] font-black lg:text-[40px]">PLAN & PRICING</h1>
 
           <div className="flex flex-col flex-wrap justify-center gap-[20px] md:flex-row">
-            {/* box */}
             <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
               <div className="flex-center h-[80px] w-full bg-[#FFA940] text-white">
                 <h5 className="text-[30px] font-bold">Premium</h5>
@@ -182,13 +196,16 @@ const Home: React.FC = () => {
                     <strong>Unlimited</strong> Workspace
                   </li>
                 </ul>
-                <Button type="primary" className="mt-[25px] h-[40px] w-[115px] font-bold">
+                <Button
+                  type="primary"
+                  className="mt-[25px] h-[40px] w-[115px] font-bold"
+                  onClick={() => handleSlectedPlan("")}
+                >
                   Best choice!
                 </Button>
               </div>
             </section>
 
-            {/* box */}
             <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
               <div className="flex-center h-[80px] w-full border-0 border-b bg-[#FFF7E6] text-black">
                 <h5 className="text-[30px] font-bold text-[#D46B08]">Standard</h5>
@@ -202,11 +219,15 @@ const Home: React.FC = () => {
                 <ul className="mt-[20px] list-disc text-[20px]">
                   <li>10 workspace</li>
                 </ul>
-                <Button className="mt-[25px] h-[40px] w-[115px] font-bold text-black">Select it</Button>
+                <Button
+                  className="mt-[25px] h-[40px] w-[115px] font-bold text-black"
+                  onClick={() => handleSlectedPlan("")}
+                >
+                  Select it
+                </Button>
               </div>
             </section>
 
-            {/* box */}
             <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
               <div className="flex-center h-[80px] w-full bg-[#D9D9D9] text-black">
                 <h5 className="text-[30px] font-bold">Free</h5>
@@ -219,15 +240,20 @@ const Home: React.FC = () => {
                 <ul className="mt-[20px] list-disc text-[20px]">
                   <li>1 Workspace</li>
                 </ul>
-                <Button className="mt-[25px] h-[40px] w-[115px] font-bold text-black">Select it</Button>
+                <Button
+                  className="mt-[25px] h-[40px] w-[115px] font-bold text-black"
+                  onClick={() => handleSlectedPlan("")}
+                >
+                  Select it
+                </Button>
               </div>
             </section>
           </div>
-        </section>
+        </section> */}
 
         {/* slider */}
         <section className="flex flex-col items-center bg-[#434343] py-[80px]">
-          <h1 className="font-['Montserrat'] text-[24px] font-black lg:text-[40px]">
+          <h1 className="font-['Montserrat'] text-[24px] text-[#fff] lg:text-[40px]">
             KICKSTART YOUR PROJECT IN SECONDS
           </h1>
           <div className="relative my-5 w-[80%] leading-6">
@@ -260,8 +286,8 @@ const Home: React.FC = () => {
                   <h3 className="mt-8 text-center text-2xl font-bold md:mt-0 md:text-left">Kanban</h3>
                   <div>
                     <p className="mt-3">
-                      Explore our organized kanban, where you can effortlessly add new cards by clicking 'add card' or
-                      manage card categories using 'settings.'
+                      Explore our organized kanban, where you can effortlessly add new cards by clicking 『add card』 or
+                      manage card categories using 『settings.』
                     </p>
                     <p className="mt-3">
                       Click to edit cards or drag and drop them to their perfect positions. Plus, with our

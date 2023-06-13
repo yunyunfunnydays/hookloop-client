@@ -1,6 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext, ReactNode } from "react";
 import * as icons from "@ant-design/icons";
+import dynamic from "next/dynamic";
 import {
   Row,
   Col,
@@ -11,6 +13,7 @@ import {
   Select,
   DatePicker,
   Tag,
+  Result,
   Divider,
   Form,
   Spin,
@@ -27,22 +30,28 @@ import {
   LinkOutlined,
   MessageFilled,
 } from "@ant-design/icons";
+import useWebSocket from "react-use-websocket";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
+// import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 // import { getTags } from "@/service/apis/kanban";
-import { updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
+import { getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from "dayjs";
 import KanbanContext from "@/Context/KanbanContext";
 // component
+import GlobalContext from "@/Context/GlobalContext";
 import CommentList from "./CommentList";
 import TagModal from "../Kanban/TagModal";
 import Reporter from "./Reporter";
 import Assignee from "./Assignee";
 import Link from "./Link";
+import CustAvatar from "../util/CustAvatar";
+
+// Ariean and you are both working on the same document. Do you want to overwrite the current file?
 
 interface IProps {
-  s_kanbanId: string;
   card: ICard;
   set_s_showCard: ISetStateFunction<boolean>;
 }
@@ -64,7 +73,6 @@ const FieldLabel: React.FC<IFieldProps> = ({ children }) => (
 );
 
 const tagRender = (props: CustomTagProps) => {
-  // console.log("props = ", props);
   const { label, value, closable, onClose } = props;
   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
@@ -85,10 +93,28 @@ const tagRender = (props: CustomTagProps) => {
   );
 };
 
+// const QuillNoSSRWrapper = dynamic(
+//   async () => {
+//     const { default: RQ } = await import("react-quill");
+
+//     const QuillJS = ({ forwardedRef, ...props }: IWrappedComponent) => <RQ ref={forwardedRef} {...props} />;
+//     return QuillJS;
+//   },
+//   { ssr: false },
+// );
+
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
-const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
+const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
+  const { c_kanbanId } = useContext(KanbanContext);
+  const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+  const [modal, modalContextHolder] = Modal.useModal();
+  // const quillRef = useRef<typeof ReactQuill>(null); // Create a Ref
   // const router = useRouter();
+  const wsUrl = process.env.wsUrl!;
+  const { sendMessage, lastMessage } = useWebSocket(wsUrl);
+  const { c_user, c_socketNotification, c_memberMap } = useContext(GlobalContext);
   const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
+
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
   // 是否顯示建立 Link 的地方
@@ -97,17 +123,13 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   const [s_Links, set_s_Links] = useState<ILink[]>([]);
   // 卡片上傳的檔案
   const [s_attachments, set_s_attachments] = useState<any>([]);
-  // 卡片的 reporter
-  const [s_reporter, set_s_reporter] = useState<IOwner>({
-    _id: "",
-    username: "",
-    avatar: "",
-  });
 
-  // 卡片的 assignee
-  const [s_assignee, set_s_assignee] = useState<IOwner[]>([]);
+  const [s_allComments, set_s_allComments] = useState<Icomment[]>([]);
 
   const [form] = Form.useForm();
+  const f_reporter = Form.useWatch("reporter", form);
+  const f_assignee = Form.useWatch("assignee", form);
+  const f_description = Form.useWatch("description", form);
   const [messageApi, contextHolder] = msg.useMessage();
 
   const onSubmit = async (values: ICard) => {
@@ -115,6 +137,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
 
     const newValues: ICard = {
       ...values,
+      // kanbanId: s_kanbanId,
       webLink: s_Links,
       actualStartDate: values.actualDate?.[0] || null,
       actualEndDate: values.actualDate?.[1] || null,
@@ -125,7 +148,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
     // return;
     delete newValues.targetDate;
     delete newValues.actualDate;
-    const res: AxiosResponse = await updateCard(card._id, newValues);
+    const res: AxiosResponse = await updateCard(c_kanbanId, card._id, newValues);
     const { status, message } = res.data as IApiResponse;
     if (status === "success") {
       messageApi.success(message);
@@ -138,31 +161,20 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
   };
 
   // 選擇owner
-  const chooseOwner = (_: any, data: IOwner) => {
-    // console.log(data);
-    set_s_reporter({
-      _id: data._id,
-      username: data.username,
-      avatar: data.avatar,
-    });
-
+  const chooseOwner = (userId: string) => {
     form.setFieldsValue({
-      reporter: data._id,
+      reporter: userId,
     });
   };
 
-  const chooseAssignee = (data: IOwner[]) => {
-    const assignee_Ids = data?.map((item) => item._id) || [];
+  const chooseAssignee = (data: string[]) => {
     form.setFieldsValue({
-      assignee: assignee_Ids,
+      assignee: data,
     });
-    set_s_assignee(data);
   };
 
   const createLink = (data: { name: string; url: string }) => {
-    // console.log("link = ", data);
     const _links = [...s_Links].concat({ name: data.name, url: data.url });
-    // const _linkIds = [...form.getFieldValue('webLink')].concat();
     set_s_Links(_links);
     set_s_showLink(false);
   };
@@ -183,36 +195,130 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
     }
   };
 
-  useEffect(() => {
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
+      // [{ size: [] }],
+      // [{ font: [] }],
+      // [{ align: ["right", "center", "justify"] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      // ["link", "image"],
+      [{ color: [] }], // [{ color: ["red", "#785412"] }],
+      [{ background: [] }], // [{ background: ["red", "#785412"] }],
+    ],
+  };
+
+  const writeData = (data: ICard) => {
     form.setFieldsValue({
-      ...card,
-      // kanbanId: "646cf5e65916bb0a3de48875",
-      // kanbanId: s_kanbanId,
-      tag: card.tag?.map((item: ITag) => item?._id) || [],
+      ...data,
       // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
-      reporter: card.reporter?._id || "",
-      assignee: card.assignee?.map((item: IOwner) => item._id),
-      actualDate: [dayjs(card.actualStartDate), dayjs(card.actualEndDate)],
-      targetDate: [dayjs(card.targetStartDate), dayjs(card.targetEndDate)],
+      actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
+      targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
     });
-
-    // 如果有reporter就獨立開一個state儲存
-    if ((card.reporter?._id || "").length > 0) {
-      set_s_reporter(card.reporter);
-    }
-    // 如果有assignee就獨立開一個state儲存
-    if (card.assignee?.length > 0) {
-      // console.log("data.assignee = ", data.assignee);
-      set_s_assignee(card.assignee);
+    if (data.cardComment) {
+      set_s_allComments(data.cardComment);
     }
 
-    if ((card?.attachment || "")?.length > 0) {
-      set_s_attachments(card.attachment);
+    if ((data?.attachment || "")?.length > 0) {
+      set_s_attachments(data.attachment);
     }
 
-    if ((card?.webLink || "")?.length > 0) {
-      set_s_Links(card.webLink);
+    if ((data?.webLink || "")?.length > 0) {
+      set_s_Links(data.webLink);
     }
+  };
+
+  const overWrite = (modifyUserId: string, data: ICard) => {
+    const confirmModal = modal.confirm({
+      icon: <div />,
+      // className: "p-0",
+      // width: 550,
+      content: (
+        <Result
+          // status="success"
+          className="p-0"
+          icon={<CustAvatar size={100} info={c_memberMap[modifyUserId]} />}
+          title={<span className="text-lg font-bold">Ariean made changed to this document.</span>}
+          subTitle="Do you want to overwrite the current file?"
+          extra={[
+            <Button
+              type="primary"
+              key="console"
+              onClick={() => {
+                writeData(data);
+                confirmModal.destroy();
+              }}
+            >
+              Over Write
+            </Button>,
+            <Button key="buy" className="ml-2" onClick={() => confirmModal.destroy()}>
+              Cancel
+            </Button>,
+          ]}
+        />
+      ),
+      footer: [],
+    });
+  };
+
+  useEffect(() => {
+    // console.log("card._id=  ", card._id);
+    sendMessage(JSON.stringify({ type: "enterCard", id: card._id }));
+
+    return () => {
+      sendMessage(JSON.stringify({ type: "leaveCard", id: card._id }));
+    };
+  }, []);
+
+  useEffect(() => {
+    // 檢視 WebSocket 訊息
+    // console.log("lastMessage: ", lastMessage?.data);
+    if (!lastMessage || !lastMessage.data) return;
+    const data = JSON.parse(lastMessage.data);
+
+    if (data.type === "comments") {
+      if (data.updateUserId !== c_user.userId) {
+        c_socketNotification(data.updateUserId, <span>add a comment in this card</span>);
+      }
+      set_s_allComments(data.result);
+    }
+
+    if (data.type === "updateCard") {
+      if (data.updateUserId !== c_user.userId) {
+        c_socketNotification(data.updateUserId, <span>update in this card</span>);
+        overWrite(data.updateUserId, data.result);
+      }
+    }
+    // console.log("lastMessage.data = ", data);updateUserId
+  }, [lastMessage]);
+
+  useEffect(() => {
+    const call_getCardById = async () => {
+      const res: AxiosResponse = await getCardById(card._id);
+      const { status, data } = res.data as IApiResponse;
+      if (status === "success") {
+        // console.log("data = ", data);
+        writeData(data);
+        // form.setFieldsValue({
+        //   ...data,
+        //   // 表單內只存 _id，關於reporter的資訊獨立開一個state儲存
+        //   actualDate: [dayjs(data.actualStartDate), dayjs(data.actualEndDate)],
+        //   targetDate: [dayjs(data.targetStartDate), dayjs(data.targetEndDate)],
+        // });
+
+        // set_s_allComments(data.cardComment);
+
+        // if ((data?.attachment || "")?.length > 0) {
+        //   set_s_attachments(data.attachment);
+        // }
+
+        // if ((data?.webLink || "")?.length > 0) {
+        //   set_s_Links(data.webLink);
+        // }
+      }
+    };
+    call_getCardById();
   }, []);
 
   const dropdownRender = (menu: ReactNode) => (
@@ -227,222 +333,242 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
 
   return (
     <Spin spinning={s_isLoaging}>
+      {modalContextHolder}
       <Form form={form} onFinish={onSubmit} layout="vertical">
-        <div className="flex flex-col">
-          {contextHolder}
-          {/* 隱藏欄位 */}
-          <div>
-            {/* <Form.Item name="kanbanId" hidden>
+        {/* <div className="flex flex-col"> */}
+        {contextHolder}
+        {/* 隱藏欄位 */}
+        <div>
+          {/* <Form.Item name="kanbanId" hidden>
               <Input />
             </Form.Item> */}
-            {/* <Form.Item name="_id" hidden>
+          {/* <Form.Item name="_id" hidden>
               <Input />
             </Form.Item> */}
-            <Form.Item name="reporter" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="assignee" hidden>
-              <Input />
-            </Form.Item>
-            <Form.Item name="webLink" hidden>
-              <Input />
-            </Form.Item>
-          </div>
-          <section className="no-scrollbar flex h-[70vh] flex-col gap-4 overflow-auto">
-            <GroupTitle>
-              <EditFilled className="mr-1" />
-              Content
-            </GroupTitle>
+          <Form.Item name="reporter" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="assignee" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="webLink" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" hidden>
+            <Input />
+          </Form.Item>
+        </div>
+        <section className="no-scrollbar flex h-[70vh] flex-col gap-4 overflow-auto">
+          <GroupTitle>
+            <EditFilled className="mr-1" />
+            Content
+          </GroupTitle>
 
-            <Row gutter={[12, 0]}>
-              <Col span={24}>
-                <Form.Item label={<FieldLabel>Title</FieldLabel>} name="name">
-                  <Input placeholder="Write card name" />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={[12, 0]}>
-              <Col span={24}>
-                <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
-                  <Input.TextArea placeholder="Write Description" />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={[12, 0]} align="bottom">
-              <Col span={3} className="flex flex-col">
-                <FieldLabel>Owner</FieldLabel>
-                {/* reporter */}
-                <Reporter reporter={s_reporter} afterChoose={chooseOwner} />
-              </Col>
-
-              <Col span={9} className="flex flex-col">
-                <FieldLabel>Member</FieldLabel>
-                <Assignee assignee={s_assignee} afterChoose={chooseAssignee} />
-              </Col>
-            </Row>
-
-            <GroupTitle>
-              <SettingFilled className="mr-1" />
-              Setting
-            </GroupTitle>
-
-            <Row gutter={[12, 12]}>
-              <Col span={24} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
-                  <DatePicker.RangePicker className="h-[30px] w-full" />
-                </Form.Item>
-              </Col>
-
-              <Col span={24} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Actual period</FieldLabel>} name="actualDate">
-                  <DatePicker.RangePicker className="h-[30px] w-full" />
-                </Form.Item>
-              </Col>
-
-              <Col span={12} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Priority</FieldLabel>} name="priority">
-                  <Select
-                    placeholder="please select priority"
-                    // value={s_cardData.priority}
-                    options={[
-                      { label: "Low", value: "Low" },
-                      { label: "Medium", value: "Medium" },
-                      { label: "High", value: "High" },
-                    ]}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={12} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
-                  <Select
-                    placeholder="please select status"
-                    // value={s_cardData.status}
-                    options={[
-                      { label: "Pending", value: "Pending" },
-                      { label: "In Progress", value: "In Progress" },
-                      { label: "Done", value: "Done" },
-                    ]}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={24} className="flex flex-col">
-                <Form.Item label={<FieldLabel>Tags</FieldLabel>} name="tag">
-                  <Select
-                    mode="multiple"
-                    showArrow
-                    tagRender={tagRender}
-                    options={c_Tags?.map((item) => ({
-                      label: (
-                        <span className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
-                          <IconRenderer iconName={item.icon as keyof typeof icons} />
-                          <span className="ml-2">{item.name}</span>
-                        </span>
-                      ),
-                      value: item._id,
-                      data: "123",
-                    }))}
-                    dropdownRender={dropdownRender}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <GroupTitle>
-              <BookFilled className="mr-1" />
-              Reference
-            </GroupTitle>
-
-            <Row gutter={[12, 8]}>
-              <Col span={24} className="flex gap-3">
-                <FieldLabel>Links</FieldLabel>
-                <Button
-                  size="small"
-                  className="flex items-center text-black"
-                  onClick={() => set_s_showLink(true)}
-                  icon={<LinkOutlined />}
-                >
-                  Add link
-                </Button>
-              </Col>
-              <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
-              {s_Links?.map((item) => (
-                <Col key={item.url + item.name} span={24}>
-                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeLink(item.name + item.url)} />
-                  <Typography.Link underline href={item.url} target="_blank">
-                    {item.name}
-                  </Typography.Link>
-                </Col>
-              ))}
-            </Row>
-
-            <Row gutter={[12, 8]}>
-              <Col span={12} className="flex gap-3">
-                <FieldLabel>Files</FieldLabel>
-                {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-                  Add file
-                </Button> */}
-                <Upload
-                  itemRender={() => null}
-                  listType="picture"
-                  beforeUpload={() => false}
-                  onChange={async ({ file }) => {
-                    set_s_isLoaging(true);
-                    const formData = new FormData();
-                    formData.append("file", file as any);
-                    const res: AxiosResponse = await addAttachment(form.getFieldValue("_id"), formData);
-                    const { status, message, data } = res.data as IApiResponse;
-                    if (status === "success") {
-                      // console.log("data = ", data);
-                      set_s_attachments(data.target.attachment);
-                      messageApi.success(message);
-                    } else {
-                      messageApi.error(message);
-                    }
-                    set_s_isLoaging(false);
-                  }}
-                >
-                  <Button size="small" className="flex items-center text-black" icon={<LinkOutlined />}>
-                    Add file
-                  </Button>
-                </Upload>
-              </Col>
-
-              {s_attachments?.map((item: any) => (
-                <Col key={item.fileId} span={24}>
-                  <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
-                  <Typography.Link underline href={item.url} target="_blank">
-                    {item.name}
-                  </Typography.Link>
-                </Col>
-              ))}
-            </Row>
-
-            <GroupTitle>
-              <MessageFilled className="mr-1" />
-              Comment
-            </GroupTitle>
-
-            <CommentList cardId={card._id} />
-          </section>
-
-          <Divider className="my-3" />
-
-          <Row>
-            <Col span={24} className="flex justify-end gap-1">
-              <Button
-                type="primary"
-                htmlType="submit"
-                // onClick={() => set_s_showCard(false)}
-              >
-                Ok
-              </Button>
+          <Row gutter={[12, 0]}>
+            <Col span={24}>
+              <Form.Item label={<FieldLabel>Title</FieldLabel>} name="name">
+                <Input placeholder="Write card name" />
+              </Form.Item>
             </Col>
           </Row>
-        </div>
+
+          <Row gutter={[12, 0]}>
+            <Col span={24}>
+              {/* <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
+                  <Input.TextArea placeholder="Write Description" />
+                </Form.Item> */}
+              <FieldLabel>Description</FieldLabel>
+              <ReactQuill
+                // forwardedRef={quillRef}
+                theme="snow"
+                value={f_description}
+                modules={modules}
+                // formats={formats}
+                onBlur={(_, __, editor) => {
+                  // console.log("previousRange = ", previousRange);
+                  // console.log("source = ", source);
+                  // console.log("getSelection = ", editor.getSelection());
+                  form.setFieldsValue({
+                    description: editor.getHTML(),
+                  });
+                }}
+              />
+            </Col>
+
+            <Col span={24}>
+              <Row gutter={[12, 0]} align="bottom">
+                <Col span={3} className="flex flex-col">
+                  <FieldLabel>Owner</FieldLabel>
+                  <Reporter reporter={f_reporter} afterChoose={chooseOwner} />
+                </Col>
+
+                <Col span={9} className="flex flex-col">
+                  <FieldLabel>Member</FieldLabel>
+                  <Assignee assignee={f_assignee} afterChoose={chooseAssignee} />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+          <GroupTitle>
+            <SettingFilled className="mr-1" />
+            Setting
+          </GroupTitle>
+
+          <Row gutter={[12, 12]}>
+            <Col span={24} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Target period</FieldLabel>} name="targetDate">
+                <DatePicker.RangePicker className="h-[30px] w-full" />
+              </Form.Item>
+            </Col>
+
+            <Col span={24} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Actual period</FieldLabel>} name="actualDate">
+                <DatePicker.RangePicker className="h-[30px] w-full" />
+              </Form.Item>
+            </Col>
+
+            <Col span={12} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Priority</FieldLabel>} name="priority">
+                <Select
+                  placeholder="please select priority"
+                  // value={s_cardData.priority}
+                  options={[
+                    { label: "Low", value: "Low" },
+                    { label: "Medium", value: "Medium" },
+                    { label: "High", value: "High" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={12} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Status</FieldLabel>} name="status">
+                <Select
+                  placeholder="please select status"
+                  options={[
+                    { label: "Pending", value: "Pending" },
+                    { label: "In Progress", value: "In Progress" },
+                    { label: "Done", value: "Done" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={24} className="flex flex-col">
+              <Form.Item label={<FieldLabel>Tags</FieldLabel>} name="tag">
+                <Select
+                  mode="multiple"
+                  showArrow
+                  tagRender={tagRender}
+                  options={
+                    Object.keys(c_Tags).length > 0
+                      ? Object.values(c_Tags)?.map((item) => ({
+                          label: (
+                            <span key={item.color} className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
+                              <IconRenderer iconName={item.icon as keyof typeof icons} />
+                              <span className="ml-2">{item.name}</span>
+                            </span>
+                          ),
+                          value: item._id,
+                          key: item._id,
+                        }))
+                      : []
+                  }
+                  dropdownRender={dropdownRender}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <GroupTitle>
+            <BookFilled className="mr-1" />
+            Reference
+          </GroupTitle>
+
+          <Row gutter={[12, 8]}>
+            <Col span={24} className="flex gap-3">
+              <FieldLabel>Links</FieldLabel>
+              <Button
+                size="small"
+                className="flex items-center text-black"
+                onClick={() => set_s_showLink(true)}
+                icon={<LinkOutlined />}
+              >
+                Add link
+              </Button>
+            </Col>
+            <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
+            {s_Links?.map((item) => (
+              <Col key={item.url + item.name} span={24}>
+                <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeLink(item.name + item.url)} />
+                <Typography.Link underline href={item.url} target="_blank">
+                  {item.name}
+                </Typography.Link>
+              </Col>
+            ))}
+          </Row>
+
+          <Row gutter={[12, 8]}>
+            <Col span={12} className="flex gap-3">
+              <FieldLabel>Files</FieldLabel>
+              {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
+                  Add file
+                </Button> */}
+              <Upload
+                itemRender={() => null}
+                listType="picture"
+                beforeUpload={() => false}
+                onChange={async ({ file }) => {
+                  set_s_isLoaging(true);
+                  const formData = new FormData();
+                  formData.append("file", file as any);
+                  const res: AxiosResponse = await addAttachment(form.getFieldValue("_id"), formData);
+                  const { status, message, data } = res.data as IApiResponse;
+                  if (status === "success") {
+                    // console.log("data = ", data);
+                    set_s_attachments(data.target.attachment);
+                    messageApi.success(message);
+                  } else {
+                    messageApi.error(message);
+                  }
+                  set_s_isLoaging(false);
+                }}
+              >
+                <Button size="small" className="flex items-center text-black" icon={<LinkOutlined />}>
+                  Add file
+                </Button>
+              </Upload>
+            </Col>
+
+            {s_attachments?.map((item: any) => (
+              <Col key={item.fileId} span={24}>
+                <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
+                <Typography.Link underline href={item.url} target="_blank">
+                  {item.name}
+                </Typography.Link>
+              </Col>
+            ))}
+          </Row>
+
+          <GroupTitle>
+            <MessageFilled className="mr-1" />
+            Comment
+          </GroupTitle>
+
+          <CommentList cardId={card._id} s_allComments={s_allComments} />
+        </section>
+
+        <Divider className="my-3" />
+
+        <Row>
+          <Col span={24} className="flex justify-end gap-1">
+            <Button type="primary" htmlType="submit">
+              Ok
+            </Button>
+          </Col>
+        </Row>
+        {/* </div> */}
       </Form>
 
       {/* tags 的 Modal */}
@@ -455,7 +581,7 @@ const CardModal: React.FC<IProps> = ({ s_kanbanId, card, set_s_showCard }) => {
         maskClosable={false}
         footer={null}
       >
-        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={s_kanbanId} />}
+        {s_showTagModal && <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={c_kanbanId} />}
       </Modal>
     </Spin>
   );

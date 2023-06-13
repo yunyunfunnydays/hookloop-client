@@ -13,10 +13,10 @@ interface IProps {
 }
 
 const MemberModal: React.FC<IProps> = ({ s_workspace, set_s_workspace, set_s_isShowMember }) => {
-  const { c_getAllWorkspace } = useContext(GlobalContext);
+  const { c_getAllWorkspace, c_user } = useContext(GlobalContext);
   const [messageApi, contextHolder] = msg.useMessage();
   const [s_isLoaging, set_s_isLoaging] = useState(false);
-
+  const auth = s_workspace?.members?.find((item) => item.userId === c_user.userId)?.role;
   // 新增 workspace 成員
   const addMember = (_: any, data: Imember) => {
     // console.log("123");
@@ -120,7 +120,7 @@ const MemberModal: React.FC<IProps> = ({ s_workspace, set_s_workspace, set_s_isS
           <Button className="text-black" onClick={() => set_s_isShowMember(false)}>
             Cancel
           </Button>
-          <Button type="primary" onClick={onSubmit}>
+          <Button type="primary" onClick={onSubmit} disabled={auth === "Member"}>
             OK
           </Button>
         </div>

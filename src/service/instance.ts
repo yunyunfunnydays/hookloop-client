@@ -41,7 +41,7 @@ instance.interceptors.response.use(
     } else {
       response.data = {
         data: {},
-        message: "程式錯誤",
+        message: "Server Error",
         status: "fail",
       };
     }
@@ -65,7 +65,7 @@ instance.interceptors.response.use(
       ...error.response,
       data: {
         data: {},
-        message: "程式錯誤",
+        message: "Server Error",
         status: "fail",
       },
     };

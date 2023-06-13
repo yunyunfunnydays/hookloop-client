@@ -1,7 +1,22 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import Router from "next/router";
-import { Grid, Row, Col, Modal, Typography, Form, Input, Button, Tag, notification, message as msg, Spin } from "antd";
+import {
+  Grid,
+  Row,
+  Col,
+  Modal,
+  Typography,
+  Form,
+  Input,
+  Button,
+  Tag,
+  notification,
+  message as msg,
+  Spin,
+  Space,
+} from "antd";
+// eslint-disable-next-line import/no-extraneous-dependencies
 
 import Cookies from "js-cookie";
 // logo
@@ -11,7 +26,8 @@ import GlobalContext from "@/Context/GlobalContext";
 // api
 import { IApiResponse } from "@/service/instance";
 import { createUser, forgetPassword, login } from "@/service/api";
-import useTimer from "@/hooks/useTimer";
+import Timer from "@/components/Timer";
+import { trimValues } from "@/utils";
 
 interface ILogin {
   open: boolean;
@@ -29,8 +45,9 @@ const Login: React.FC<ILogin> = (props) => {
    * close 關閉彈窗時執行
    */
   const { open, close } = props;
-  const { set_c_user } = useContext(GlobalContext);
+  const { set_c_user, c_showPortal } = useContext(GlobalContext);
   const [form] = Form.useForm();
+
   // API 錯誤時用來讓使用者明確知道錯在哪裡
   const [api, contextHolder] = notification.useNotification();
   // antd 用來監聽畫面寬度變化
@@ -41,7 +58,7 @@ const Login: React.FC<ILogin> = (props) => {
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
   const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
-  // const [s_reset_password_timer, set_s_reset_password_timer] = useState<number>(0);
+  const [s_reset_password_timer, set_s_reset_password_timer] = useState(false);
 
   // const ICON_STYLE = "cursor-pointer mb-2";
 
@@ -59,7 +76,15 @@ const Login: React.FC<ILogin> = (props) => {
   // 關閉彈窗
   const handleCancel = (): void => {
     // ...
+
     close();
+
+    form.setFieldsValue({
+      email: "",
+      password: "",
+      confirm: "",
+    });
+    set_s_editType("login");
   };
 
   // 取得彈窗寬度，每一個size都寫是方便之後改寬度
@@ -99,17 +124,25 @@ const Login: React.FC<ILogin> = (props) => {
   const handleResponse = (res: IApiResponse) => {
     const { data, message, status } = res;
     if (status === "success") {
-      msg.success(message);
+      // msg.success(message);
+      // console.log("login data = ", data);
       Cookies.set("hookloop-token", data.token);
       set_c_user({
-        ...data.user,
         userId: data.user.id,
+        ...data.user,
       });
+      c_showPortal();
       Router.push("/dashboard");
       close();
     } else {
       msg.error(message);
     }
+    form.setFieldsValue({
+      email: "",
+      password: "",
+      confirm: "",
+    });
+    set_s_editType("login");
     set_s_loading(false);
   };
 
@@ -132,7 +165,7 @@ const Login: React.FC<ILogin> = (props) => {
   const onFinish = async (values: IUser) => {
     if (s_editType === "login") {
       set_s_loading(true);
-      const res: AxiosResponse = await login(values);
+      const res: AxiosResponse = await login(trimValues(values));
 
       const { status } = res.data as IApiResponse;
       if (status === "success") {
@@ -145,7 +178,7 @@ const Login: React.FC<ILogin> = (props) => {
 
     if (s_editType === "signUp") {
       set_s_loading(true);
-      const res: AxiosResponse = await createUser(values);
+      const res: AxiosResponse = await createUser(trimValues(values));
       const { status } = res.data as IApiResponse;
       if (status === "success") {
         handleResponse(res.data);
@@ -157,10 +190,11 @@ const Login: React.FC<ILogin> = (props) => {
 
     if (s_editType === "forgetPassword") {
       set_s_loading(true);
-      const res: AxiosResponse = await forgetPassword({ email: values.email });
+      const res: AxiosResponse = await forgetPassword({ email: values.email.trim() });
       const { status, message } = res.data as IApiResponse;
       if (status === "success") {
         set_s_reset_password_email_status(true);
+        set_s_reset_password_timer(true);
         msg.success(message);
       } else {
         set_s_reset_password_email_status(false);
@@ -170,7 +204,13 @@ const Login: React.FC<ILogin> = (props) => {
     }
   };
 
-  // useEffect(() => {}, [us]);
+  useEffect(() => {
+    if (open) {
+      set_s_editType("login");
+      set_s_reset_password_email_status(false);
+      set_s_reset_password_timer(false);
+    }
+  }, [open]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
@@ -283,10 +323,17 @@ const Login: React.FC<ILogin> = (props) => {
                     type="primary"
                     className={s_editType === "forgetPassword" ? RESET_PASSWORD_SUBMIT_BTN : SUBMIT_BTN}
                     htmlType="submit"
+                    disabled={s_editType === "forgetPassword" && s_reset_password_timer === true}
                   >
                     {s_editType === "login" && "Log in"}
                     {s_editType === "signUp" && "Sign up"}
-                    {s_editType === "forgetPassword" && "Send Reset Password Email"}
+                    {s_editType === "forgetPassword" && s_reset_password_timer === true && (
+                      <Space>
+                        Re-Send Email in
+                        <Timer setTimerTrigger={set_s_reset_password_timer} />
+                      </Space>
+                    )}
+                    {s_editType === "forgetPassword" && s_reset_password_timer === false && "Send Reset Password Email"}
                   </Button>
                 </Form.Item>
               </Col>
@@ -333,7 +380,7 @@ const Login: React.FC<ILogin> = (props) => {
             </div>
           )}
         </div>
-        {useTimer(600000).minute}:{useTimer(600000).second}
+        {/* {useTimer(10000, set_s_reset_password_timer).minute}:{useTimer(10000, set_s_reset_password_timer).second} */}
       </Spin>
     </Modal>
   );

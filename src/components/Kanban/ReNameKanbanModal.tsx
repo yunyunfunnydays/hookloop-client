@@ -11,17 +11,17 @@ interface IProps {
   set_s_showNameModal: ISetStateFunction<boolean>;
 }
 
-const ReNameKanbanModal: React.FC<IProps> = ({ kanbanData, set_s_showNameModal }) => {
+const RenameKanbanModal: React.FC<IProps> = ({ kanbanData, set_s_showNameModal }) => {
   const { c_getAllWorkspace } = useContext(GlobalContext);
   const [messageApi, contextHolder] = msg.useMessage();
   const [s_newName, set_s_newName] = useState("");
-  const [s_isLoaging, set_s_isLoaging] = useState(false);
+  const [s_isLoading, set_s_isLoading] = useState(false);
 
   const onSubmit = async () => {
-    set_s_isLoaging(true);
+    set_s_isLoading(true);
     if (s_newName === "") {
       messageApi.warning("please type name");
-      set_s_isLoaging(false);
+      set_s_isLoading(false);
       return;
     }
 
@@ -33,12 +33,12 @@ const ReNameKanbanModal: React.FC<IProps> = ({ kanbanData, set_s_showNameModal }
       msg.error(message);
     }
     c_getAllWorkspace();
-    set_s_isLoaging(false);
+    set_s_isLoading(false);
     set_s_showNameModal(false);
   };
 
   return (
-    <Spin spinning={s_isLoaging}>
+    <Spin spinning={s_isLoading}>
       {contextHolder}
       <section className="flex flex-col gap-3">
         <div className="flex flex-col">
@@ -65,4 +65,4 @@ const ReNameKanbanModal: React.FC<IProps> = ({ kanbanData, set_s_showNameModal }
   );
 };
 
-export default ReNameKanbanModal;
+export default RenameKanbanModal;

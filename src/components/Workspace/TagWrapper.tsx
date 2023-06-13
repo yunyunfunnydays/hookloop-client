@@ -29,6 +29,7 @@ const TagWrapper: React.FC<IProps> = ({ kanbanId }) => {
 
   return (
     <Spin spinning={s_spin}>
+      {/* @ts-ignore */}
       <TagModal c_Tags={c_Tags} set_c_Tags={set_c_Tags} kanbanId={kanbanId} />
     </Spin>
   );

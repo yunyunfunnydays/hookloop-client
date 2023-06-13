@@ -12,6 +12,7 @@ const MemberSelect = (props: any) => {
   const call_getMember = async (value: string = "") => {
     const res: AxiosResponse = await getMember(value);
     const { status, data } = res.data as IApiResponse;
+
     if (status === "success") {
       const _data =
         data.members?.map((member: IUser) => ({

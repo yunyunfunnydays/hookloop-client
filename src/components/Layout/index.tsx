@@ -12,7 +12,6 @@ interface IProps {
 const Index: React.FC<IProps> = ({ children }) => {
   // 控制 Sider 收合的開關
   const [s_collapsed, set_s_collapsed] = useState(true);
-
   return (
     <Layout className="h-[calc(100vh_-_80px)] bg-white p-0">
       {/* Sider */}

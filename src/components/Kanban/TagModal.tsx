@@ -9,14 +9,14 @@ import TagColors from "../util/TagColors";
 
 interface IProps {
   kanbanId: string;
-  c_Tags: ITag[];
-  set_c_Tags: ISetStateFunction<ITag[]>;
+  c_Tags: ITagRecord;
+  set_c_Tags: ISetStateFunction<ITagRecord>;
 }
 
 interface ICreateProps {
   kanbanId: string;
   s_editTag: ITag;
-  set_c_Tags: ISetStateFunction<ITag[]>;
+  set_c_Tags: ISetStateFunction<ITagRecord>;
   set_s_showCreate: ISetStateFunction<boolean>;
 }
 
@@ -38,7 +38,12 @@ const CreateModal: React.FC<ICreateProps> = ({ s_editTag, set_c_Tags, kanbanId, 
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
       // console.log("Tags = ", data);
-      set_c_Tags(data);
+      const tmp_tags = (data as ITag[]).reduce((prev: ITagRecord, curr) => {
+        if (!curr._id) return prev;
+        prev[curr._id] = curr;
+        return prev;
+      }, {});
+      set_c_Tags(tmp_tags);
     }
     set_s_showCreate(false);
   };
@@ -114,26 +119,27 @@ const TagModal: React.FC<IProps> = ({ c_Tags, set_c_Tags, kanbanId }) => {
   return (
     <section className="flex flex-col">
       <div className="flex flex-col gap-3">
-        {c_Tags?.map((tag: ITag) => (
-          <div className="flex gap-2">
-            <Tag
-              key={tag._id}
-              color="#edebeb"
-              className={`${tag.color} flex-center h-3/5 flex-1 gap-3 rounded-md px-5 py-2 text-[20px] font-medium`}
-              style={{ marginRight: 3 }}
-            >
-              <IconRenderer iconName={tag.icon as keyof typeof icons} />
-              <span>{tag.name}</span>
-            </Tag>
-            <EditOutlined
-              className="cursor-pointer text-[25px]"
-              onClick={() => {
-                set_s_editTag(tag);
-                set_s_showCreate(true);
-              }}
-            />
-          </div>
-        ))}
+        {Object.keys(c_Tags).length > 0 &&
+          Object.values(c_Tags)?.map((tag: ITag) => (
+            <div key={tag._id} className="flex gap-2">
+              <Tag
+                key={tag._id}
+                color="#edebeb"
+                className={`${tag.color} flex-center h-3/5 flex-1 gap-3 rounded-md px-5 py-2 text-[20px] font-medium`}
+                style={{ marginRight: 3 }}
+              >
+                <IconRenderer iconName={tag.icon as keyof typeof icons} />
+                <span>{tag.name}</span>
+              </Tag>
+              <EditOutlined
+                className="cursor-pointer text-[25px]"
+                onClick={() => {
+                  set_s_editTag(tag);
+                  set_s_showCreate(true);
+                }}
+              />
+            </div>
+          ))}
       </div>
 
       <Button type="primary" className="mt-3" onClick={() => set_s_showCreate(true)}>
