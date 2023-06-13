@@ -132,7 +132,11 @@ const Login: React.FC<ILogin> = (props) => {
         ...data.user,
       });
       c_showPortal();
-      Router.push("/dashboard");
+      if (Router.pathname.includes("/plan")) {
+        Router.push(Router.asPath);
+      } else {
+        Router.push("/dashboard");
+      }
       close();
     } else {
       msg.error(message);
