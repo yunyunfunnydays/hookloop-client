@@ -41,6 +41,7 @@ const AddCard: React.FC<AddCardProps> = ({ listData }) => {
         const targetList = draft.find((list) => list._id === listData._id);
 
         if (targetList) {
+          // @ts-ignore
           targetList.cardOrder.push({
             _id: "123",
             name: s_cardName,

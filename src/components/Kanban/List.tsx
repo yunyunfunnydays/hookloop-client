@@ -18,12 +18,12 @@ type ListProps = {
   index: number;
 };
 
-const List: React.FC<ListProps> = ({ list, cards, index }) => {
+const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
   const { c_listData, set_c_listData, c_kanbanId } = useContext(KanbanContext);
   const [s_isEditingList, set_s_isEditingList] = useState(false);
   const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
     name: "",
-    _id: list?._id,
+    _id: currentList?._id,
   });
   const inputRef = useRef<InputRef>(null);
 
@@ -34,7 +34,7 @@ const List: React.FC<ListProps> = ({ list, cards, index }) => {
   }, [s_isEditingList]);
 
   const handleEditList = () => {
-    set_s_newData({ name: list.name, _id: list?._id });
+    set_s_newData({ name: currentList.name, _id: currentList?._id });
     set_s_isEditingList(true);
   };
 
@@ -72,7 +72,7 @@ const List: React.FC<ListProps> = ({ list, cards, index }) => {
   };
 
   return (
-    <Draggable draggableId={list._id} index={index} key={list._id}>
+    <Draggable draggableId={currentList._id} index={index} key={currentList._id}>
       {(provided2) => (
         <div
           ref={provided2.innerRef}
@@ -80,7 +80,7 @@ const List: React.FC<ListProps> = ({ list, cards, index }) => {
           {...provided2.dragHandleProps}
           className="cursor-pointer"
         >
-          <Droppable droppableId={list._id} type="card">
+          <Droppable droppableId={currentList._id} type="card">
             {(provided) => (
               <div
                 className=" min-w-[330px] bg-[#F5F5F5] px-5 py-4"
@@ -104,7 +104,7 @@ const List: React.FC<ListProps> = ({ list, cards, index }) => {
                       className="grow text-xl font-medium text-[#262626] text-['Roboto']"
                       onClick={handleEditList}
                     >
-                      {list.name}
+                      {currentList.name}
                     </span>
                     <EllipsisOutlined className="cursor-pointer text-xl" />
                   </div>
@@ -114,7 +114,7 @@ const List: React.FC<ListProps> = ({ list, cards, index }) => {
                 </div>
                 {cards.length > 0 && <Cards cards={cards} />}
                 {provided.placeholder}
-                <AddCard listData={list} />
+                <AddCard listData={currentList} />
               </div>
             )}
           </Droppable>

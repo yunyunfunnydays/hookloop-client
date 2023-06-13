@@ -11,7 +11,7 @@ interface IProps {
   set_s_showNameModal: ISetStateFunction<boolean>;
 }
 
-const ReNameKanbanModal: React.FC<IProps> = ({ kanbanData, set_s_showNameModal }) => {
+const RenameKanbanModal: React.FC<IProps> = ({ kanbanData, set_s_showNameModal }) => {
   const { c_getAllWorkspace } = useContext(GlobalContext);
   const [messageApi, contextHolder] = msg.useMessage();
   const [s_newName, set_s_newName] = useState("");
@@ -65,4 +65,4 @@ const ReNameKanbanModal: React.FC<IProps> = ({ kanbanData, set_s_showNameModal }
   );
 };
 
-export default ReNameKanbanModal;
+export default RenameKanbanModal;

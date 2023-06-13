@@ -16,7 +16,7 @@ import {
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // api
-import ReNameKanbanModal from "@/components/Kanban/RenameKanbanModal";
+import RenameKanbanModal from "@/components/Kanban/RenameKanbanModal";
 import { pinKanban, archiveKanban } from "@/service/apis/kanban";
 import TagWrapper from "./TagWrapper";
 
@@ -142,7 +142,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         onCancel={() => set_s_showNameModal(false)}
         footer={null}
       >
-        {s_showNameModal && <ReNameKanbanModal kanbanData={kanbanData} set_s_showNameModal={set_s_showNameModal} />}
+        {s_showNameModal && <RenameKanbanModal kanbanData={kanbanData} set_s_showNameModal={set_s_showNameModal} />}
       </Modal>
 
       {/* tags 的 Modal */}
