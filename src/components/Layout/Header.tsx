@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import Router, { useRouter } from "next/router";
 import Image from "next/image";
 import { Grid, Button, Switch, Breadcrumb } from "antd";
-import { MenuOutlined, CloseOutlined, NotificationOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 // logo
 import logo_white from "@/assets/logo_white.svg";
 import logo_black from "@/assets/logo_black.svg";

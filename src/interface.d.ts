@@ -136,7 +136,6 @@ declare global {
   }
 
   interface IPlanOrder {
-    plan: PlanOptions;
-    userId: string;
+    targetPlan: PlanOptions;
   }
 }

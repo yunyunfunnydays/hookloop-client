@@ -8,7 +8,11 @@ import { useRouter } from "next/router";
 interface IPlan {
   source: "landing-page" | "plan-page";
 }
-
+export enum PriceOptions {
+  FREE = 0,
+  STANDARD = 310,
+  PREMIUM = 250,
+}
 export enum PlanOptions {
   FREE = "Free",
   STANDARD = "Standard",
@@ -19,7 +23,7 @@ const plans = [
     title: PlanOptions.FREE,
     titleColor: "black",
     bgColor: "#D9D9D9",
-    cost: "0",
+    cost: PriceOptions.FREE,
     perMonth: false,
     workspaces: "1",
     btnTxt: "Select it",
@@ -31,7 +35,7 @@ const plans = [
     title: PlanOptions.STANDARD,
     titleColor: "#D46B08",
     bgColor: "#FFF7E6",
-    cost: "310.0",
+    cost: PriceOptions.STANDARD,
     perMonth: true,
     workspaces: "10",
     btnTxt: "Select it",
@@ -43,13 +47,13 @@ const plans = [
     title: PlanOptions.PREMIUM,
     titleColor: "#fff",
     bgColor: "#FFA940",
-    cost: "207.5",
+    cost: PriceOptions.PREMIUM,
     costComment: true,
     perMonth: true,
     workspaces: "Unlimited",
     btnTxt: "Best choice!",
     btnPrimary: true,
-    planPerMonth: "Per user/month if billed annually",
+    planPerMonth: "Per user/month", //  if billed annually
     planDescription: "Enhanced Collaboration for Large Teams: Streamline Work and Boost Cooperation",
   },
 ];
@@ -97,7 +101,7 @@ const Plan: React.FC<IPlan> = (props) => {
                 </div>
 
                 {isIndex ? (
-                  <span className="my-1 text-[#595959] md:h-[21px]">{plan.costComment && "NT $ 2490.0 / year"}</span>
+                  <span className="my-1 text-[#595959] md:h-[21px]">{plan.costComment}</span> // && "NT $ 2490.0 / year"
                 ) : (
                   <span className="my-1 h-[21px] text-[#595959]">{plan.planPerMonth}</span>
                 )}
