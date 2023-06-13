@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React, { useEffect, useState, useContext } from "react";
-import { Avatar, Popover, Switch } from "antd";
+import { Avatar, Badge, Popover, Switch } from "antd";
 import { NotificationOutlined } from "@ant-design/icons";
 import useWebSocket from "react-use-websocket";
 // context
@@ -11,6 +11,7 @@ const Notification: React.FC = () => {
   const { c_user } = useContext(GlobalContext);
   const wsUrl = process.env.wsUrl!;
   const { lastMessage, sendMessage } = useWebSocket(wsUrl);
+  const [s_show_red_dot, set_s_show_red_dot] = useState(false);
   const [s_showUnreadOnly, set_s_showUnreadOnly] = useState(true);
   const [s_notifications, set_s_notifications] = useState([
     {
@@ -37,6 +38,8 @@ const Notification: React.FC = () => {
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
       set_s_notifications(data);
+      // 有未讀訊息時顯示紅點
+      set_s_show_red_dot(!!data.filter((msg: { isRead: boolean }) => !msg.isRead).length);
     }
   };
 
@@ -146,7 +149,9 @@ const Notification: React.FC = () => {
       }
       trigger="click"
     >
-      <NotificationOutlined className="custPopover text-white" style={{ fontSize: 28 }} />
+      <Badge count={s_show_red_dot ? " " : 0} size="small">
+        <NotificationOutlined className="custPopover text-white" style={{ fontSize: 28 }} />
+      </Badge>
     </Popover>
   );
 };
