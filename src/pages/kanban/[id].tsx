@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import { Drawer, Spin } from "antd";
@@ -86,7 +85,7 @@ const Kanban: React.FC = () => {
             oldCardOrder: sourceList.cardOrder.map((item) => item._id),
             socketData: newListData,
           }).then((res) => {
-            console.log("res", res);
+            console.info("res", res);
           });
         }
       } else if (type === "list") {
