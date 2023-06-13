@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import { Drawer, Spin } from "antd";
@@ -25,123 +23,47 @@ const Kanban: React.FC = () => {
   const [s_kanbanKey, set_s_kanbanKey] = useState("");
   const [c_Tags, set_c_Tags] = useState<ITagRecord>({});
   const [s_open, set_s_open] = useState(false);
-  const [s_isDragging, set_s_isDragging] = useState<boolean>(false);
   const [c_query, set_c_query] = useState({});
-
-  const handleDragStart = () => {
-    set_s_isDragging(true);
-  };
 
   const c_getAllTags = async (kanbanId = "") => {
     if (!kanbanId) return;
     const res: AxiosResponse = await getTags(kanbanId);
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
-      console.log("data = ", data);
       if (data.length === 0) return;
       const tmp_tags = (data as ITag[]).reduce((prev: ITagRecord, curr) => {
         if (!curr._id) return prev;
         prev[curr._id] = curr;
         return prev;
       }, {});
-      console.log("tmp_tags = ", tmp_tags);
       set_c_Tags(tmp_tags);
     }
   };
 
   const c_getKanbanByKey = async () => {
-    if (!s_kanbanKey) return;
-    set_s_spinning(true);
-    const res: AxiosResponse = await getKanbanByKey(s_kanbanKey, c_query);
-    const { status, data } = res.data as IApiResponse;
-    if (status === "success") {
-      // set_s_allComments(data);
-
-      set_c_listData(data.listOrder);
-
-      // console.log("data.listOrder", data.listOrder);
-      // [
-      //   {
-      //     _id: "6485d557f60e78828e78074d",
-      //     name: "list2",
-      //     kanbanId: "6485d539f60e78828e78071c",
-      //     cardOrder: [
-      //       {
-      //         _id: "6485d563f60e78828e780769",
-      //         name: "Card 2",
-      //         assignee: [],
-      //         priority: "Medium",
-      //         status: "Pending",
-      //         tag: [],
-      //         isArchived: false,
-      //         cardCommentCount: 0,
-      //       },
-      //     ],
-      //     isArchived: false,
-      //     createdAt: "2023-06-11T14:08:23.765Z",
-      //     updatedAt: "2023-06-11T15:02:59.446Z",
-      //   },
-      //   {
-      //     _id: "6485d606f60e78828e7807ef",
-      //     name: "list 4",
-      //     kanbanId: "6485d539f60e78828e78071c",
-      //     cardOrder: [
-      //       {
-      //         _id: "6485f6d111af2dbdfd661ea4",
-      //         name: "Card 8",
-      //         assignee: [],
-      //         priority: "Medium",
-      //         status: "Pending",
-      //         tag: [],
-      //         isArchived: false,
-      //         actualEndDate: "2023-06-11T16:31:19.159Z",
-      //         actualStartDate: "2023-06-11T16:31:19.159Z",
-      //         targetEndDate: "2023-06-11T16:31:19.159Z",
-      //         targetStartDate: "2023-06-11T16:31:19.159Z",
-      //         cardCommentCount: 0,
-      //       },
-      //     ],
-      //     isArchived: false,
-      //     createdAt: "2023-06-11T14:11:18.142Z",
-      //     updatedAt: "2023-06-11T16:31:13.267Z",
-      //   },
-      // ];
-
-      set_c_kanbanId(data._id);
-
-      c_getAllTags(data._id);
+    try {
+      if (!s_kanbanKey) return;
+      set_s_spinning(true);
+      const res: AxiosResponse = await getKanbanByKey(s_kanbanKey, c_query);
+      const { status, data } = res.data as IApiResponse;
+      if (status === "success") {
+        set_c_listData(data.listOrder);
+        set_c_kanbanId(data._id);
+        c_getAllTags(data._id);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
       set_s_spinning(false);
     }
   };
 
-  const handleDragEnd = async (result: DropResult) => {
-    console.log("result", result);
+  const handleDragEnd = async (dropResult: DropResult) => {
     try {
-      const { destination, source, draggableId, type } = result;
-      // console.log("result", result);
-      // {
-      //   "draggableId": "64848edccfcdf01ded2935de", 移動的元素
-      //   "type": "card", 移動的類型 'card' | 'list'
-      //   "source": { 移動前的位置
-      //       "index": 0,
-      //       "droppableId": "64844a6087532678e71e20e2"
-      //   },
-      //   "reason": "DROP",
-      //   "mode": "FLUID",
-      //   "destination": { 移動後的位置，如果沒有則為 null
-      //       "droppableId": "64844a6387532678e71e20e7",
-      //       "index": 0
-      //   },
-      //   "combine": null
-      // }
+      const { destination, source, type } = dropResult;
 
-      // 沒有取得到 c_kanbanId
-      if (!c_kanbanId) return;
-
-      // 沒有移動後的位置，即放的地方不是有效區域
       if (!destination) return;
 
-      // 移動前和移動後的位置相等，不進行任何邏輯計算
       if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
       const newListData = Array.from(c_listData);
@@ -163,6 +85,8 @@ const Kanban: React.FC = () => {
             newCardOrder: destinationList.cardOrder.map((item) => item._id),
             oldCardOrder: sourceList.cardOrder.map((item) => item._id),
             socketData: newListData,
+          }).then((res) => {
+            console.log("res", res);
           });
         }
       } else if (type === "list") {
@@ -178,44 +102,28 @@ const Kanban: React.FC = () => {
       }
     } catch (errorInfo) {
       console.error(errorInfo);
-    } finally {
-      set_s_isDragging(false);
     }
   };
 
   // 連接 websocket
   useEffect(() => {
-    console.log(`enterKanban: ${c_kanbanId}`);
     sendMessage(JSON.stringify({ type: "enterKanban", id: c_kanbanId }));
 
     return () => {
-      console.log(`leaveKanban: ${c_kanbanId}`);
       sendMessage(JSON.stringify({ type: "leaveKanban", id: c_kanbanId }));
     };
   }, [c_kanbanId]);
 
-  // websocket 收到訊息時重新取得 kanban
   useEffect(() => {
-    // 檢視 WebSocket 訊息
-    // console.log("lastMessage: ", lastMessage?.data);
-
     if (!lastMessage || !lastMessage.data) return;
     const data = JSON.parse(lastMessage.data);
-    console.log("=".repeat(64));
-    console.log("lastMessage.data = ", data);
 
     if (data.type === "moveList") {
       set_c_listData(data.result.listOrder);
     } else if (data.type === "createList") {
       // TODO: CreateList
-      // CreateList
-      console.log("socket: createList");
-      // 更新 list
-      // set_c_listData((prev) => [...prev, data.result]);
-      // 上面會少了 key
       c_getKanbanByKey();
     } else if (data.type === "renameList") {
-      console.log("socket: renameList");
       set_c_listData(data.result);
     } else if (data.type === "createCard") {
       // TODO: CreateCard
@@ -224,10 +132,9 @@ const Kanban: React.FC = () => {
       set_c_listData(data.result);
     } else if (data.type === "renameCard") {
       // TODO: RenameCard
-      console.log("socket: renameCard");
       c_getKanbanByKey();
     } else {
-      console.log("socket: 不明 socket 事件");
+      console.error("socket: 不明 socket 事件");
     }
   }, [lastMessage]);
 
@@ -239,7 +146,6 @@ const Kanban: React.FC = () => {
     c_getKanbanByKey();
   }, [s_kanbanKey]);
 
-  console.log("c_Tags = ", c_Tags);
   const contextValue = useMemo(
     () => ({
       c_Tags,
@@ -261,7 +167,7 @@ const Kanban: React.FC = () => {
           <section className="h-full">
             <Filter set_s_open={set_s_open} />
             <section className="">
-              <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+              <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
                   {(provided) => (
                     <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
@@ -282,7 +188,6 @@ const Kanban: React.FC = () => {
                 open={s_open}
                 getContainer={false}
               >
-                {/* <FilterContainer s_kanbanId={s_kanbanId} c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} /> */}
                 <FilterContainer c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} />
               </Drawer>
             </section>
