@@ -4,6 +4,7 @@ import { Input } from "antd";
 import { addCard } from "@/service/apis/card";
 import { PlusOutlined } from "@ant-design/icons";
 import KanbanContext from "@/Context/KanbanContext";
+import { produce } from "immer";
 
 type AddCardProps = {
   listData: IList;
@@ -11,7 +12,7 @@ type AddCardProps = {
 
 const AddCard: React.FC<AddCardProps> = ({ listData }) => {
   const inputRef = useRef<InputRef>(null);
-  const { c_kanbanId, c_getKanbanByKey } = useContext(KanbanContext);
+  const { c_kanbanId, c_listData, set_c_listData } = useContext(KanbanContext);
   const [s_isAddingCard, set_s_isAddingCard] = useState(false);
   const [s_cardName, set_s_cardName] = useState<string>("");
 
@@ -27,20 +28,28 @@ const AddCard: React.FC<AddCardProps> = ({ listData }) => {
 
   const handleInputEnd = async () => {
     try {
-      if (s_cardName === "" || s_cardName === null) return;
-      if (c_kanbanId === "" || c_kanbanId === null) return;
+      if (!s_cardName) return;
+      if (!c_kanbanId) return;
 
-      const res: AxiosResponse = await addCard({
+      addCard({
         name: s_cardName,
         kanbanId: c_kanbanId,
         listId: listData._id,
       });
-      const { status, message } = res.data as IApiResponse;
-      if (status === "success") {
-        c_getKanbanByKey();
-      } else {
-        console.error(message);
-      }
+
+      produce(c_listData, (draft) => {
+        const targetList = draft.find((list) => list._id === listData._id);
+
+        if (targetList) {
+          // @ts-ignore
+          targetList.cardOrder.push({
+            _id: "123",
+            name: s_cardName,
+            listId: listData._id,
+          });
+        }
+      });
+
       set_s_cardName("");
     } catch (errorInfo) {
       console.error(errorInfo);

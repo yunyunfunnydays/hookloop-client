@@ -1,8 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useState, useContext } from "react";
-import { Modal, Avatar, Tooltip } from "antd";
+import React, { useRef, useState, useEffect, useContext } from "react";
+import type { InputRef } from "antd";
+import { Modal, Input, Avatar, Tooltip } from "antd";
+import { addCard } from "@/service/apis/card";
+import * as AntdIcons from "@ant-design/icons";
 import GlobalContext from "@/Context/GlobalContext";
+import KanbanContext from "@/Context/KanbanContext";
 import { BellFilled, MessageOutlined } from "@ant-design/icons";
 import { Draggable } from "@hello-pangea/dnd";
 import CardPriority from "@/components/Kanban/CardPriority";
@@ -18,8 +22,9 @@ type CardProps = {
 const Card: React.FC<CardProps> = ({ card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
   const { c_memberMap } = useContext(GlobalContext);
+  const { c_Tags } = useContext(KanbanContext);
 
-  // console.log("card = ", card);
+  // console.log("card.tag = ", card.tag);
   if (!card) return null;
   return (
     <>
@@ -57,12 +62,13 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
             </div>
             {/* 標籤 */}
             <div className="flex gap-2">
-              {card.tag?.map((item: any) => (
-                <span key={item._id} className={`${item.color} rounded-[50px] px-2 py-1`}>
-                  <IconRenderer iconName={item.icon} />
-                  <span className="ml-2">{item.name}</span>
-                </span>
-              ))}
+              {Object.keys(c_Tags).length > 0 &&
+                card.tag?.map((tagId: string) => (
+                  <span key={tagId} className={`${c_Tags[tagId].color} rounded-[50px] px-2 py-1`}>
+                    <IconRenderer iconName={c_Tags[tagId].icon as keyof typeof AntdIcons} />
+                    <span className="ml-2">{c_Tags[tagId]?.name}</span>
+                  </span>
+                ))}
             </div>
             <div className="mt-5 flex justify-between">
               {/* 成員 */}

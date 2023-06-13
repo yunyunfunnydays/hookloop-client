@@ -45,6 +45,6 @@
   }
 }
 
-.member-chackbox > .ant-checkbox {
+.member-chackbox .ant-checkbox {
   margin-top: 5px !important;
 }

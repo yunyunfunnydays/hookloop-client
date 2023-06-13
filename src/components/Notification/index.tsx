@@ -1,13 +1,17 @@
 import Link from "next/link";
 import React, { useEffect, useState, useContext } from "react";
-import { Avatar, Popover, Switch } from "antd";
+import { Avatar, Badge, Popover, Switch } from "antd";
 import { NotificationOutlined } from "@ant-design/icons";
+import useWebSocket from "react-use-websocket";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 import { getNotificationsByUserId, isReadNotification, markAllIsReadByUserId } from "@/service/apis/notification";
 
 const Notification: React.FC = () => {
   const { c_user } = useContext(GlobalContext);
+  const wsUrl = process.env.wsUrl!;
+  const { lastMessage, sendMessage } = useWebSocket(wsUrl);
+  const [s_show_red_dot, set_s_show_red_dot] = useState(false);
   const [s_showUnreadOnly, set_s_showUnreadOnly] = useState(true);
   const [s_notifications, set_s_notifications] = useState([
     {
@@ -34,6 +38,8 @@ const Notification: React.FC = () => {
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
       set_s_notifications(data);
+      // 有未讀訊息時顯示紅點
+      set_s_show_red_dot(!!data.filter((msg: { isRead: boolean }) => !msg.isRead).length);
     }
   };
 
@@ -57,13 +63,40 @@ const Notification: React.FC = () => {
     }
   };
 
+  // 初始化
   useEffect(() => {
+    // 更新訊息
     c_getNotificationsByUserId();
+
+    // 註冊 Websocket
+    console.log(`enterNotification: ${c_user.userId}`);
+    sendMessage(JSON.stringify({ type: "enterNotification", id: c_user.userId }));
+
+    // 登出 Websocket
+    return () => {
+      console.log(`leaveNotification: ${c_user.userId}`);
+      sendMessage(JSON.stringify({ type: "leaveNotification", id: c_user.userId }));
+    };
   }, []);
+
+  // 檢視 WebSocket 訊息
+  useEffect(() => {
+    if (!lastMessage || !lastMessage.data) return;
+    const data = JSON.parse(lastMessage.data);
+
+    if (data.type === "notification") {
+      const { toUserId } = data.result;
+      if (toUserId === c_user.userId) {
+        console.log("socket: notification");
+        c_getNotificationsByUserId();
+      }
+    }
+  }, [lastMessage]);
 
   return (
     <Popover
       arrow={false}
+      className="custPopover"
       title={
         <div className="flex border-b pb-2">
           <h3 className="mr-auto text-[24px] font-medium">Notification</h3>
@@ -116,7 +149,9 @@ const Notification: React.FC = () => {
       }
       trigger="click"
     >
-      <NotificationOutlined className="text-white" style={{ fontSize: 28 }} />
+      <Badge count={s_show_red_dot ? " " : 0} size="small">
+        <NotificationOutlined className="custPopover text-white" style={{ fontSize: 28 }} />
+      </Badge>
     </Popover>
   );
 };

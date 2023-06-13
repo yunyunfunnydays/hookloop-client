@@ -73,7 +73,7 @@ declare global {
     actualStartDate: Dayjs | null;
     actualEndDate: Dayjs | null;
     status: string | null;
-    tag: ITag[];
+    tag: string[];
     cardComment?: Icomment[];
   }
 
@@ -84,6 +84,8 @@ declare global {
     color: string;
     kanbanId: string;
   }
+
+  type ITagRecord = Record<string, ITag>;
 
   interface IList {
     _id: string;

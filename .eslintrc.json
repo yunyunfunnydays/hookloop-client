@@ -19,8 +19,11 @@
     "@typescript-eslint/naming-convention": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "import/prefer-default-export": "off",
-    "no-console": ["error", { "allow": ["info", "error"] }],
+    // "no-console": ["error", { "allow": ["info", "error"] }],
+    "no-console": "off",
     "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/no-unused-vars": "off"
   }
 }

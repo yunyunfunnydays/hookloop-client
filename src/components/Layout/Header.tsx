@@ -89,14 +89,6 @@ const Header: React.FC = () => {
           <Switch className="h-[22px] w-[42px] bg-[#434343]" />
           <Notification />
 
-          {/* <Avatar
-            size={28}
-            // src={c_user.avatar.length > 0 && c_user.avatar}
-            src={c_user.avatar.length > 0 && `https://cdn.filestackcontent.com/${c_user.avatar}`}
-            className="cursor-pointer bg-white text-black"
-          >
-            {c_user?.avatar.length === 0 ? c_user.username[0] : null}
-          </Avatar> */}
           <CustAvatar info={c_user} onClick={() => Router.push("/profile")} />
         </div>
       ) : (
