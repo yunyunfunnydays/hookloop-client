@@ -12,9 +12,9 @@ import GlobalContext from "@/Context/GlobalContext";
 // init value
 import { kanbanInitValue, workspaceInitValue } from "@/components/util/initValue";
 // component
+import Notification from "@/components/Notification";
 import Login from "../Login";
 import CustAvatar from "../util/CustAvatar";
-import Notification from "@/components/Notification";
 
 const Header: React.FC = () => {
   const { c_user, c_workspaces } = useContext(GlobalContext);

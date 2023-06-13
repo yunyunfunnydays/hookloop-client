@@ -1,6 +1,7 @@
 import { AxiosResponse as axiosRes } from "axios";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Dayjs } from "dayjs";
+import { PlanOptions } from "./components/Plan";
 
 declare global {
   interface AxiosResponse extends axiosRes {}
@@ -132,5 +133,10 @@ declare global {
     type: string;
     currentListId: string;
     currentCardIndex?: number;
+  }
+
+  interface IPlanOrder {
+    plan: PlanOptions;
+    userId: string;
   }
 }

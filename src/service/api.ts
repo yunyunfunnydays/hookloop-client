@@ -80,3 +80,12 @@ export const verifyPassword = (data: { newPassword: string; resetPasswordToken: 
     },
   });
 };
+
+export const encryptOrderData = (data: IPlanOrder) => {
+  return instance.post(`22`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "",
+    },
+  });
+};

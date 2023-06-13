@@ -9,17 +9,55 @@ import balloon_white from "@/assets/balloon_white.svg";
 import logo_black from "@/assets/logo_black.svg";
 import icon_menu from "@/assets/icon_menu.svg";
 import icon_creditcard from "@/assets/icon_creditcard.svg";
+import { useRouter } from "next/router";
+import { verifyUserToken } from "@/service/api";
+import Login from "@/components/Login";
 
 const Plan = () => {
+  const router = useRouter();
   const [s_current, set_s_current] = useState(0);
   const [s_showModal, set_s_showModal] = useState(false);
+  const [s_loading, set_s_loading] = useState(false);
+  const [s_showLogin, set_s_showLogin] = useState(false);
 
-  const next = () => {
-    set_s_current(s_current + 1);
-  };
+  // const next = () => {
+  //   set_s_current(s_current + 1);
+  // };
 
   const prev = () => {
     set_s_current(s_current - 1);
+  };
+
+  // 關閉 Login 組件時執行
+  const closeLogin = (): void => {
+    set_s_showLogin(false);
+  };
+
+  const handleConfirmOrder = async () => {
+    set_s_loading(true);
+    try {
+      // (1) 確認使用者身份：
+      const verifyUserResult = await verifyUserToken();
+      const { status, data } = verifyUserResult.data as IApiResponse;
+      if (status !== "success" || !data.user.userId) {
+        // (2) 導向 登入Ｍodal 畫面
+        set_s_showLogin(true);
+        return;
+      }
+      // (3) 取得加密訂單資料
+      // const orderData: IPlanOrder = {
+      //   plan: router.query.targetPlan as PlanOptions,
+      //   userId: data.user.userId,
+      // };
+      // const encryptionOderData = await encryptOrderData(orderData);
+
+      // (4) 向藍新金流 call API
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log("verifyUserResult/encryptionOderData err: ", err);
+    } finally {
+      set_s_loading(false);
+    }
   };
 
   const tableContent = [
@@ -63,7 +101,7 @@ const Plan = () => {
             HookLoop is trusted by millions and provides support to teams around the world.
           </p>
           <p className="mx-auto mb-6">Discover which option suits you.</p>
-          <PlanComponent type="plan-page" />
+          <PlanComponent source="plan-page" />
         </section>
       ),
     },
@@ -135,14 +173,18 @@ const Plan = () => {
         <Steps current={s_current} items={items} />
         <div className="my-8">{steps[s_current].content}</div>
         <div className="mx-auto mb-4 mt-16">
-          {s_current < 1 && <Button className="mr-2">Cancel</Button>}
+          {s_current < 1 && (
+            <Button className="mr-2" onClick={() => router.push("/")}>
+              Go Back to Home Page
+            </Button>
+          )}
           {s_current > 0 && (
             <Button className="mr-2" onClick={() => prev()}>
               Previous
             </Button>
           )}
           {s_current < steps.length - 1 && (
-            <Button type="primary" onClick={() => next()}>
+            <Button type="primary" onClick={handleConfirmOrder} loading={s_loading}>
               Confirm
             </Button>
           )}
@@ -153,6 +195,9 @@ const Plan = () => {
           )}
         </div>
       </section>
+
+      {/* 登入的彈窗 */}
+      <Login open={s_showLogin} close={closeLogin} />
 
       {/* 取消訂閱的 Modal */}
       <Modal
