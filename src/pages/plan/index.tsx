@@ -1,25 +1,68 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { Button, message, Modal, Steps } from "antd";
+import { Button, message, Modal, Spin, Steps } from "antd";
 
-import PlanComponent from "@/components/Plan";
+import PlanComponent, { PlanOptions } from "@/components/Plan";
 import exclamation_circle from "@/assets/exclamation_circle.svg";
 import balloon_orange from "@/assets/balloon_orange.svg";
 import balloon_white from "@/assets/balloon_white.svg";
 import logo_black from "@/assets/logo_black.svg";
 import icon_menu from "@/assets/icon_menu.svg";
 import icon_creditcard from "@/assets/icon_creditcard.svg";
+import { useRouter } from "next/router";
+import { createOrder, verifyUserToken } from "@/service/api";
+import Login from "@/components/Login";
+import axios from "axios";
 
 const Plan = () => {
+  const router = useRouter();
   const [s_current, set_s_current] = useState(0);
   const [s_showModal, set_s_showModal] = useState(false);
+  const [s_loading, set_s_loading] = useState(false);
+  const [s_showLogin, set_s_showLogin] = useState(false);
 
-  const next = () => {
-    set_s_current(s_current + 1);
-  };
+  // const next = () => {
+  //   set_s_current(s_current + 1);
+  // };
 
   const prev = () => {
     set_s_current(s_current - 1);
+  };
+
+  // 關閉 Login 組件時執行
+  const closeLogin = (): void => {
+    set_s_showLogin(false);
+  };
+
+  const handleConfirmOrder = async () => {
+    set_s_loading(true);
+    try {
+      // (1) 確認使用者身份：
+      const verifyUserResult = await verifyUserToken();
+      const { status, data } = verifyUserResult.data as IApiResponse;
+      if (status !== "success" || !data._id) {
+        // (2) 導向 登入Ｍodal 畫面
+        set_s_showLogin(true);
+        return;
+      }
+      // (3) 取得加密訂單資料
+      const orderData: IPlanOrder = {
+        targetPlan: router.query.targetPlan as PlanOptions,
+      };
+      const encryptionOderData = await createOrder(orderData);
+      // eslint-disable-next-line no-console
+      console.log("🚀 ~ file: index.tsx:52 ~ handleConfirmOrder ~ encryptionOderData:", encryptionOderData);
+
+      // (4) 向藍新金流 call API
+      const pay = await axios.post("https://ccore.newebpay.com/MPG/mpg_gateway", encryptionOderData);
+      // eslint-disable-next-line no-console
+      console.log("🚀 ~ file: index.tsx:58 ~ handleConfirmOrder ~ pay:", pay);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log("verifyUserResult/encryptionOderData err: ", err);
+    } finally {
+      set_s_loading(false);
+    }
   };
 
   const tableContent = [
@@ -58,12 +101,12 @@ const Plan = () => {
       title: "Plan",
       content: (
         <section className="flex flex-col">
-          <h1 className="mx-auto text-[32px] font-bold">Your mission Our priority</h1>
+          <h1 className="mx-auto text-[32px] font-bold">Confirm Your Order & Payment</h1>
           <p className="mx-auto mt-6">
             HookLoop is trusted by millions and provides support to teams around the world.
           </p>
           <p className="mx-auto mb-6">Discover which option suits you.</p>
-          <PlanComponent type="plan-page" />
+          <PlanComponent source="plan-page" />
         </section>
       ),
     },
@@ -130,20 +173,24 @@ const Plan = () => {
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   return (
-    <>
+    <Spin spinning={s_loading} tip="Create Order...">
       <section className="mx-auto mt-8 flex h-full w-[80%] flex-col justify-center lg:w-[860px]">
         <Steps current={s_current} items={items} />
         <div className="my-8">{steps[s_current].content}</div>
         <div className="mx-auto mb-4 mt-16">
-          {s_current < 1 && <Button className="mr-2">Cancel</Button>}
+          {s_current < 1 && (
+            <Button className="mr-2" type="dashed" onClick={() => router.push("/")}>
+              Go Back to Home Page
+            </Button>
+          )}
           {s_current > 0 && (
             <Button className="mr-2" onClick={() => prev()}>
               Previous
             </Button>
           )}
           {s_current < steps.length - 1 && (
-            <Button type="primary" onClick={() => next()}>
-              Confirm
+            <Button type="primary" onClick={handleConfirmOrder}>
+              Confirm & Pay Now
             </Button>
           )}
           {s_current === steps.length - 1 && (
@@ -153,6 +200,9 @@ const Plan = () => {
           )}
         </div>
       </section>
+
+      {/* 登入的彈窗 */}
+      <Login open={s_showLogin} close={closeLogin} />
 
       {/* 取消訂閱的 Modal */}
       <Modal
@@ -178,7 +228,7 @@ const Plan = () => {
           </Button>
         </div>
       </Modal>
-    </>
+    </Spin>
   );
 };
 

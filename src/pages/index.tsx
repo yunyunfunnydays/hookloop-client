@@ -30,11 +30,6 @@ const Home: React.FC = () => {
     console.info("click", e);
   };
 
-  // const handleSlectedPlan = (selectedPlan: string) => {
-  //   // eslint-disable-next-line no-console
-  //   console.log(selectedPlan);
-  // };
-
   const items: MenuProps["items"] = [
     {
       label: "English",
@@ -172,7 +167,7 @@ const Home: React.FC = () => {
           className="mx-auto flex w-[90%] flex-col items-center gap-[40px] px-[12px] py-[40px] md:w-[960px]"
         >
           <h1 className="font-['Montserrat'] text-[24px] font-black md:text-[40px]">PLAN & PRICING</h1>
-          <PlanComponent type="index" />
+          <PlanComponent source="landing-page" />
         </section>
 
         {/* plan original */}
