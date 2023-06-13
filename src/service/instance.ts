@@ -11,7 +11,7 @@ export interface IApiResponse {
 // 创建一个 Axios instance
 const instance: AxiosInstance = axios.create({
   baseURL: `${process.env.rootUrl}/api/v1`,
-  timeout: 5000,
+  timeout: 50000,
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${Cookies.get("hookloop-token")}`, // 在標頭中設定 Authorization
