@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
-import { Drawer, Spin } from "antd";
+import { Drawer, Spin, message } from "antd";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import useWebSocket from "react-use-websocket";
+import { produce } from "immer";
 
 import { moveCard } from "@/service/apis/card";
 import { getKanbanByKey, getTags } from "@/service/apis/kanban";
@@ -65,46 +66,70 @@ const Kanban: React.FC = () => {
 
       if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
-      const newListData = Array.from(c_listData);
+      const prev_c_listData = c_listData;
 
       if (type === "card") {
-        const sourceList = newListData.find((list) => list._id === source.droppableId);
-        const destinationList = newListData.find((list) => list._id === destination.droppableId);
+        const new_c_listData = produce(c_listData, (draft) => {
+          const sourceList = draft.find((list) => list._id === source.droppableId);
+          const destinationList = draft.find((list) => list._id === destination.droppableId);
 
-        if (sourceList && destinationList) {
-          const card = sourceList.cardOrder.splice(source.index, 1)[0];
-          destinationList.cardOrder.splice(destination.index, 0, card);
+          if (sourceList && destinationList) {
+            const card = sourceList.cardOrder.splice(source.index, 1)[0];
+            destinationList.cardOrder.splice(destination.index, 0, card);
 
-          set_c_listData(newListData);
-
-          moveCard({
-            kanbanId: c_kanbanId,
-            newListId: destination.droppableId,
-            oldListId: source.droppableId,
-            newCardOrder: destinationList.cardOrder.map((item) => item._id),
-            oldCardOrder: sourceList.cardOrder.map((item) => item._id),
-            socketData: newListData,
-          }).then((res) => {
-            console.info("res", res);
-          });
-        }
-      } else if (type === "list") {
-        const [removed] = newListData.splice(source.index, 1);
-        newListData.splice(destination.index, 0, removed);
-
-        set_c_listData(newListData);
-
-        moveList({
-          kanbanId: c_kanbanId,
-          listOrder: newListData.map((listData: IList) => listData._id),
+            moveCard({
+              kanbanId: c_kanbanId,
+              newListId: destination.droppableId,
+              oldListId: source.droppableId,
+              newCardOrder: destinationList.cardOrder.map((item) => item._id),
+              oldCardOrder: sourceList.cardOrder.map((item) => item._id),
+              socketData: draft,
+            })
+              .then((res) => {
+                if (res.data.status !== "success") {
+                  set_c_listData(prev_c_listData);
+                  message.error("Update card failed");
+                }
+              })
+              .catch((errorInfo) => {
+                set_c_listData(prev_c_listData);
+                console.error(errorInfo);
+                message.error("Update card failed");
+              });
+          }
         });
+
+        set_c_listData(new_c_listData);
+      } else if (type === "list") {
+        const new_c_listData = produce(c_listData, (draft) => {
+          const [moved] = draft.splice(source.index, 1);
+          draft.splice(destination.index, 0, moved);
+
+          moveList({
+            kanbanId: c_kanbanId,
+            listOrder: draft.map((listData: IList) => listData._id),
+          })
+            .then((res) => {
+              if (res.data.status !== "success") {
+                set_c_listData(prev_c_listData);
+                message.error("Update list failed");
+              }
+            })
+            .catch((errorInfo) => {
+              set_c_listData(prev_c_listData);
+              console.error(errorInfo);
+              message.error("Update list failed");
+            });
+        });
+
+        set_c_listData(new_c_listData);
       }
     } catch (errorInfo) {
       console.error(errorInfo);
     }
   };
 
-  // 連接 websocket
+  // connect websocket
   useEffect(() => {
     sendMessage(JSON.stringify({ type: "enterKanban", id: c_kanbanId }));
 
