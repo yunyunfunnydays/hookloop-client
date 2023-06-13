@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Input } from "antd";
 import type { InputRef } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { renameList } from "@/service/apis/list";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 
+import KanbanContext from "@/Context/KanbanContext";
+import { produce } from "immer";
 import AddCard from "./AddCard";
 import Cards from "./Cards";
 
@@ -16,6 +18,7 @@ type ListProps = {
 };
 
 const List: React.FC<ListProps> = ({ list, cards, index }) => {
+  const { c_listData, set_c_listData, c_kanbanId } = useContext(KanbanContext);
   const [s_isEditingList, set_s_isEditingList] = useState(false);
   const [s_newData, set_s_newData] = useState<Pick<IList, "name" | "_id">>({
     name: "",
@@ -45,10 +48,21 @@ const List: React.FC<ListProps> = ({ list, cards, index }) => {
     try {
       if (!s_newData) return;
 
-      const res: AxiosResponse = await renameList(s_newData);
-      const { status, message, data } = res.data as IApiResponse;
+      // 使用 produce 函數來創建新的 c_listData 陣列
+      const newListData = produce(c_listData, (draft) => {
+        // 找到目標 list 並更新名稱
+        const targetList = draft.find((list) => list._id === s_newData._id);
+        if (targetList) {
+          targetList.name = s_newData.name;
+        }
+      });
 
-      console.info(status, message, data);
+      console.log("newListData", newListData);
+
+      // 更新 c_listData 狀態
+      set_c_listData(newListData);
+
+      renameList({ kanbanId: c_kanbanId, list: s_newData, socketData: newListData });
     } catch (errorInfo) {
       console.error(errorInfo);
     } finally {

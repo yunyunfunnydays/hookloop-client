@@ -207,6 +207,8 @@ const Kanban: React.FC = () => {
     if (data.type === "moveList") {
       set_c_listData(data.result.listOrder);
     } else if (data.type === "createList") {
+      // TODO: CreateList
+      // CreateList
       console.log("socket: createList");
       // 更新 list
       // set_c_listData((prev) => [...prev, data.result]);
@@ -214,14 +216,14 @@ const Kanban: React.FC = () => {
       c_getKanbanByKey();
     } else if (data.type === "renameList") {
       console.log("socket: renameList");
-      c_getKanbanByKey();
+      set_c_listData(data.result);
     } else if (data.type === "createCard") {
+      // TODO: CreateCard
       c_getKanbanByKey();
     } else if (data.type === "moveCard") {
-      console.log("data.result.socketData", data.result.socketData);
-      // set_c_listData(data.result.socketData);
       set_c_listData(data.result);
     } else if (data.type === "renameCard") {
+      // TODO: RenameCard
       console.log("socket: renameCard");
       c_getKanbanByKey();
     } else {
@@ -263,7 +265,7 @@ const Kanban: React.FC = () => {
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
                   {(provided) => (
                     <div className="flex items-start space-x-6" ref={provided.innerRef} {...provided.droppableProps}>
-                      {c_listData.map((list: IList, index: number) => (
+                      {c_listData?.map((list: IList, index: number) => (
                         <List key={list._id} list={list} cards={list.cardOrder} index={index} />
                       ))}
                       {provided.placeholder}
