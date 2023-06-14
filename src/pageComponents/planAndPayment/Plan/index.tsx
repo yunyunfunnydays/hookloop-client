@@ -10,8 +10,8 @@ interface IPlan {
 }
 export enum PriceOptions {
   FREE = 0,
-  STANDARD = 310,
-  PREMIUM = 250,
+  STANDARD = 250,
+  PREMIUM = 310,
 }
 export enum PlanOptions {
   FREE = "Free",
