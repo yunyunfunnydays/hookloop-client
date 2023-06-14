@@ -244,7 +244,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
     // console.log("lastMessage: ", lastMessage?.data);
     if (!lastMessage || !lastMessage.data) return;
     const data = JSON.parse(lastMessage.data);
-
+    console.log("data = ", data);
     if (data.type === "comments") {
       if (data.updateUserId !== c_user.userId) {
         c_socketNotification(data.updateUserId, <span>add a comment in this card</span>);
@@ -345,14 +345,19 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
                 theme="snow"
                 value={f_description}
                 modules={modules}
+                onChange={(value) => {
+                  form.setFieldsValue({
+                    description: value,
+                  });
+                }}
                 // formats={formats}
                 onBlur={(_, __, editor) => {
-                  // console.log("previousRange = ", previousRange);
-                  // console.log("source = ", source);
-                  // console.log("getSelection = ", editor.getSelection());
-                  form.setFieldsValue({
-                    description: editor.getHTML(),
-                  });
+                  // // console.log("previousRange = ", previousRange);
+                  // // console.log("source = ", source);
+                  // // console.log("getSelection = ", editor.getSelection());
+                  // form.setFieldsValue({
+                  //   description: editor.getHTML(),
+                  // });
                 }}
               />
             </Col>
