@@ -50,7 +50,6 @@ const ConfirmPayment = (props: ConfirmPaymentProps) => {
               >
                 Pay Now
               </button>
-
             </footer>
           </form>
         </div>
