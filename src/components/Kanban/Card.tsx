@@ -31,9 +31,8 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
       <Draggable draggableId={card._id} index={index} key={card._id}>
         {(provided2) => (
           <div
-            id="first-card"
             role="presentation"
-            className="cursor-pointer bg-white px-3 py-4"
+            className="mb-6 cursor-pointer bg-white px-3 py-4"
             key={card._id}
             onClick={() => set_s_showCard(true)}
             ref={provided2.innerRef}
