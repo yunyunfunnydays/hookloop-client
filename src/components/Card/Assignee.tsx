@@ -29,11 +29,6 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
     <div className="flex gap-2">
       {contextHolder}
       <Avatar.Group maxCount={2} size={32} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
-        {/* {s_tmpAssignee?.map((userId) => (
-          <Tooltip key={userId} title={c_memberMap[userId]?.username}>
-            <CustAvatar info={c_memberMap[userId]} />
-          </Tooltip>
-        ))} */}
         {assignee?.map((userId) => (
           <Tooltip key={userId} title={c_memberMap[userId]?.username}>
             <CustAvatar info={c_memberMap[userId]} />
@@ -64,7 +59,6 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
           value={null}
           onChange={(userId) => {
             // 判斷要新增的人員是否已存在
-            // console.log("data = ", data);
             const owner = s_tmpAssignee.find((id) => userId === id);
 
             if (owner) {
