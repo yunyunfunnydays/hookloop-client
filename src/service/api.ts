@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Cookies from "js-cookie";
+import { AxiosResponse } from "axios";
 import instance from "./instance";
 
 // 登入
@@ -81,7 +82,7 @@ export const verifyPassword = (data: { newPassword: string; resetPasswordToken: 
   });
 };
 
-export const createOrder = (data: IPlanOrder) => {
+export const createOrder = (data: IPlanOrder): Promise<AxiosResponse<IApiResponse<ICreateOrderReturnType>>> => {
   return instance.post("/plan/createOrder", data, {
     headers: {
       "Content-Type": "application/json",

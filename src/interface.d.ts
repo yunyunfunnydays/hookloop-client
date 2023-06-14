@@ -1,7 +1,7 @@
 import { AxiosResponse as axiosRes } from "axios";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Dayjs } from "dayjs";
-import { PlanOptions } from "./components/Plan";
+import { PlanOptions } from "./pageComponents/planAndPayment/Plan";
 
 declare global {
   interface AxiosResponse extends axiosRes {}
@@ -15,10 +15,10 @@ declare global {
     userId: string;
   }
 
-  interface IApiResponse {
+  interface IApiResponse<T = any> {
     status: "success" | "fail" | "error";
     message: string;
-    data: any;
+    data: T;
   }
 
   interface ISetStateFunction<T> {
@@ -139,5 +139,28 @@ declare global {
 
   interface IPlanOrder {
     targetPlan: PlanOptions;
+  }
+
+  interface IPaymentTradeInfoType {
+    MerchantID: string;
+    RespondType: string;
+    TimeStamp: string;
+    Version: string;
+    LoginType: string;
+    MerchantOrderNo: string;
+    Amt: number;
+    ItemDesc: PlanOptions;
+    TradeLimit: number;
+    ReturnURL: string;
+    NotifyURL: string;
+    Email: string;
+    EmailModify: number;
+    WEBATM: number;
+  }
+
+  interface ICreateOrderReturnType {
+    tradeInfo: IPaymentTradeInfoType;
+    aesEncrypted: string;
+    shaEncrypted: string;
   }
 }
