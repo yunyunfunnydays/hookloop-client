@@ -1,6 +1,4 @@
-import { Button, Divider, Form, Input, InputNumber } from "antd";
-import { useForm } from "antd/es/form/Form";
-import { useEffect } from "react";
+import { Button, Divider } from "antd";
 
 interface ConfirmPaymentProps {
   handlePrevious: () => void;
@@ -8,103 +6,55 @@ interface ConfirmPaymentProps {
 }
 const ConfirmPayment = (props: ConfirmPaymentProps) => {
   const { handlePrevious, encryptionOderData } = props;
-  const [form] = Form.useForm<IPaymentTradeInfoType>();
 
-  useEffect(() => {
-    console.log("encryptionOderData", encryptionOderData);
-    if (encryptionOderData?.tradeInfo) {
-      form.setFieldsValue(encryptionOderData?.tradeInfo);
-    }
-  }, [encryptionOderData]);
-
-  console.log("form: ", form.getFieldsValue());
   return (
     <section>
-      <Form
-        name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600 }}
-        // onFinish={onFinish}
-        form={form}
-        action="https://ccore.spgateway.com/MPG/mpg_gateway"
-        method="post"
-      >
-        <Form.Item label="MerchantID" name="MerchantID">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="RespondType" name="RespondType" hidden>
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="TimeStamp" name="TimeStamp">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="Version" name="Version" hidden>
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="LoginType" name="LoginType" hidden>
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="MerchantOrderNo" name="MerchantOrderNo">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="Amt" name="Amt">
-          <InputNumber disabled style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item label="ItemDesc" name="ItemDesc">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="TradeLimit" name="TradeLimit">
-          <InputNumber disabled style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item label="TradeSha" name="TradeSha" hidden>
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="ReturnURL" name="ReturnURL" hidden>
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="NotifyURL" name="NotifyURL" hidden>
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="TradeInfo" name="TradeInfo" hidden>
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="Email" name="Email">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="EmailModify" name="Email">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item label="WEBATM" name="WEBATM" hidden>
-          <InputNumber disabled style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            Pay Now
-          </Button>
-        </Form.Item>
-      </Form>
-      <Divider />
-      <form action="https://ccore.spgateway.com/MPG/mpg_gateway" method="post">
-        <input type="text" name="MerchantID" value={encryptionOderData?.tradeInfo?.MerchantID} />
-        <input type="text" name="TradeSha" value={encryptionOderData?.shaEncrypted} />
-        <input type="text" name="TradeInfo" value={encryptionOderData?.aesEncrypted} />
-        <input type="text" name="TimeStamp" value={encryptionOderData?.tradeInfo?.TimeStamp} />
-        <input type="text" name="Version" value={encryptionOderData?.tradeInfo?.Version} />
-        <input type="text" name="MerchantOrderNo" value={encryptionOderData?.tradeInfo?.MerchantOrderNo} />
-        <input type="text" name="Amt" value={encryptionOderData?.tradeInfo?.Amt} />
-        <input type="email" name="Email" value={encryptionOderData?.tradeInfo?.Email} />
-        <button type="submit">Pay Now</button>
-      </form>
-      <Divider />
-      <footer className="mx-auto mb-4 mt-16">
-        <Button className="mr-2" onClick={handlePrevious}>
-          Previous
-        </Button>
-        {/* <Button type="primary">
-            Pay Now form submit
-        </Button> */}
-      </footer>
+      <main className="relative flex flex-col">
+        {/* <Image className="mx-auto mb-5" src={logo_black} alt="HOOK LOOP" /> */}
+
+        <h2 className="m-auto mb-5 flex text-[30px] font-bold">Confirm Payment</h2>
+        <div className="border border-black p-8">
+          <h2 className="flex text-[20px] font-bold">Check List</h2>
+          <div className="my-3 w-full border-b-2" />
+
+          <form action="https://ccore.newebpay.com/MPG/mpg_gateway" method="post">
+            <input type="text" name="TradeSha" value={encryptionOderData?.shaEncrypted} hidden />
+            <input type="text" name="TradeInfo" value={encryptionOderData?.aesEncrypted} hidden />
+            <input type="text" name="TimeStamp" value={encryptionOderData?.tradeInfo?.TimeStamp} hidden />
+            <input type="text" name="Version" value={encryptionOderData?.tradeInfo?.Version} hidden />
+            <input type="text" name="MerchantID" value={encryptionOderData?.tradeInfo?.MerchantID} hidden />
+            <label htmlFor="MerchantOrderNo" className="text-[14px] font-bold">
+              MerchantOrderNo:{" "}
+              <input type="text" name="MerchantOrderNo" value={encryptionOderData?.tradeInfo?.MerchantOrderNo} />
+            </label>
+            <br />
+            <label htmlFor="Amt" className="text-[14px] font-bold">
+              Amount: <input type="text" name="Amt" value={encryptionOderData?.tradeInfo?.Amt} />
+            </label>
+            <br />
+            <label htmlFor="Email" className="text-[14px] font-bold">
+              Email:{" "}
+              <input
+                type="email"
+                name="Email"
+                value={encryptionOderData?.tradeInfo?.Email}
+                style={{ width: "300px" }}
+              />
+            </label>
+            <Divider />
+            <footer className="m-auto">
+              <Button onClick={handlePrevious}>Previous</Button>
+              <button
+                type="submit"
+                style={{ display: "inline-block", background: "#000", color: "#fff", padding: "5px 15px" }}
+              >
+                Pay Now
+              </button>
+
+            </footer>
+          </form>
+        </div>
+      </main>
     </section>
   );
 };
