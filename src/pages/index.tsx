@@ -20,7 +20,7 @@ import carousel1 from "@/assets/carousel-1.png";
 
 import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import PlanComponent from "@/components/Plan";
+import PlanComponent from "@/pageComponents/planAndPayment/Plan";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
