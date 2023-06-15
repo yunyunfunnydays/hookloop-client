@@ -12,7 +12,7 @@ const ChooseYourPlan = (props: ChooseYourPlanProps) => {
   return (
     <section>
       <main className="flex flex-col">
-        <h2 className="m-auto mb-3 flex text-[30px] font-bold">Confirm Payment</h2>
+        <h2 className="m-auto mb-3 flex text-[30px] font-bold">Choose Your Plan</h2>
         <p className="mx-auto">HookLoop is trusted by millions and provides support to teams around the world.</p>
         <p className="mx-auto mb-10">Discover which option suits you.</p>
         <PlanComponent source="plan-page" />
