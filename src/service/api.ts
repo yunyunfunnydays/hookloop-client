@@ -83,7 +83,7 @@ export const verifyPassword = (data: { newPassword: string; resetPasswordToken: 
 };
 
 export const createOrder = (data: IPlanOrder): Promise<AxiosResponse<IApiResponse<ICreateOrderReturnType>>> => {
-  return instance.post("/plan/createOrder", data, {
+  return instance.post("/plans/createOrder", data, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${Cookies.get("hookloop-token")}`,
