@@ -93,7 +93,7 @@ const Plan = () => {
     <Spin spinning={s_loading} tip="Create Order...">
       <section className="mx-auto mt-8 flex h-full w-[80%] flex-col justify-center lg:w-[860px]">
         <Steps current={s_current} items={items} />
-        {/* <div className="my-8">{steps[s_current].content}</div> */}
+        <div className="my-8">{steps[s_current].content}</div>
       </section>
 
       {/* 登入的彈窗 */}
