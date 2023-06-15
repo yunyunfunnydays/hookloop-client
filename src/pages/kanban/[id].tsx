@@ -9,6 +9,7 @@ import { moveCard } from "@/service/apis/card";
 import { getKanbanByKey, getTags } from "@/service/apis/kanban";
 import { moveList } from "@/service/apis/list";
 import { AddList, List, Filter, FilterContainer } from "@/components/Kanban";
+import { queryTypeInitValue } from "@/components/util/initValue";
 import CustLayout from "@/components/Layout";
 
 import KanbanContext from "@/Context/KanbanContext";
@@ -23,7 +24,7 @@ const Kanban: React.FC = () => {
   const [s_kanbanKey, set_s_kanbanKey] = useState("");
   const [c_Tags, set_c_Tags] = useState<ITagRecord>({});
   const [s_open, set_s_open] = useState(false);
-  const [c_query, set_c_query] = useState({});
+  const [c_query, set_c_query] = useState<IqueryType>(queryTypeInitValue);
 
   const c_getAllTags = async (kanbanId = "") => {
     if (!kanbanId) return;
@@ -44,7 +45,7 @@ const Kanban: React.FC = () => {
     try {
       if (!s_kanbanKey) return;
       set_s_spinning(true);
-      const res: AxiosResponse = await getKanbanByKey(s_kanbanKey, c_query);
+      const res: AxiosResponse = await getKanbanByKey(s_kanbanKey);
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
         set_c_listData(data.listOrder);

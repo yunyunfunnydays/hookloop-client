@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext, ReactNode } from "react";
-import * as icons from "@ant-design/icons";
+import * as Icons from "@ant-design/icons";
 import dynamic from "next/dynamic";
 import {
   Row,
@@ -20,21 +20,9 @@ import {
   message as msg,
   Modal,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditFilled,
-  PlusOutlined,
-  SettingFilled,
-  CloseOutlined,
-  BookFilled,
-  LinkOutlined,
-  MessageFilled,
-} from "@ant-design/icons";
 import useWebSocket from "react-use-websocket";
 import type { CustomTagProps } from "rc-select/lib/BaseSelect";
-// import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-// import { getTags } from "@/service/apis/kanban";
 import { getCardById, updateCard, addAttachment, deleteAttachment } from "@/service/apis/card";
 import IconRenderer from "@/components/util/IconRender";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -42,6 +30,7 @@ import dayjs from "dayjs";
 import KanbanContext from "@/Context/KanbanContext";
 // component
 import GlobalContext from "@/Context/GlobalContext";
+import FieldLabel from "../util/FieldLabel";
 import CommentList from "./CommentList";
 import TagModal from "../Kanban/TagModal";
 import Reporter from "./Reporter";
@@ -49,27 +38,18 @@ import Assignee from "./Assignee";
 import Link from "./Link";
 import CustAvatar from "../util/CustAvatar";
 
-// Ariean and you are both working on the same document. Do you want to overwrite the current file?
-
 interface IProps {
   card: ICard;
   set_s_showCard: ISetStateFunction<boolean>;
 }
 
-interface IFieldProps {
+interface IGroupTitle {
   children: React.ReactNode;
 }
-
-interface IGroupTitle extends IFieldProps {}
 
 // 每個區域的 title
 const GroupTitle: React.FC<IGroupTitle> = ({ children }) => (
   <h5 className="bg-[#F0F0F0] p-1 text-base font-bold">{children}</h5>
-);
-
-// 可編輯欄位的 label
-const FieldLabel: React.FC<IFieldProps> = ({ children }) => (
-  <span className="text-base font-medium text-[#8C8C8C]">{children}</span>
 );
 
 const tagRender = (props: CustomTagProps) => {
@@ -84,7 +64,7 @@ const tagRender = (props: CustomTagProps) => {
       onMouseDown={onPreventMouseDown}
       closable={closable}
       onClose={onClose}
-      closeIcon={<CloseOutlined className="ml-1 text-black" />}
+      closeIcon={<Icons.CloseOutlined className="ml-1 text-black" />}
       // className="bg-[#edebeb] rounded-xl text-[#595959] text-sm font-medium flex"
       style={{ marginRight: 3 }}
     >
@@ -93,28 +73,16 @@ const tagRender = (props: CustomTagProps) => {
   );
 };
 
-// const QuillNoSSRWrapper = dynamic(
-//   async () => {
-//     const { default: RQ } = await import("react-quill");
-
-//     const QuillJS = ({ forwardedRef, ...props }: IWrappedComponent) => <RQ ref={forwardedRef} {...props} />;
-//     return QuillJS;
-//   },
-//   { ssr: false },
-// );
-
 // 等正式串接時要從 c_workspace 拿到 kanban 資料
 const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
   const { c_kanbanId } = useContext(KanbanContext);
   const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
   const [modal, modalContextHolder] = Modal.useModal();
-  // const quillRef = useRef<typeof ReactQuill>(null); // Create a Ref
-  // const router = useRouter();
   const wsUrl = process.env.wsUrl!;
   const { sendMessage, lastMessage } = useWebSocket(wsUrl);
   const { c_user, c_socketNotification, c_memberMap } = useContext(GlobalContext);
   const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
-
+  const [editorValue, setEditorValue] = useState("");
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
   // 是否顯示建立 Link 的地方
@@ -129,7 +97,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
   const [form] = Form.useForm();
   const f_reporter = Form.useWatch("reporter", form);
   const f_assignee = Form.useWatch("assignee", form);
-  const f_description = Form.useWatch("description", form);
+  // const f_description = Form.useWatch("description", form);
   const [messageApi, contextHolder] = msg.useMessage();
 
   const onSubmit = async (values: ICard) => {
@@ -263,7 +231,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
   };
 
   useEffect(() => {
-    // console.log("card._id=  ", card._id);
+    console.log("card._id=  ", card._id);
     sendMessage(JSON.stringify({ type: "enterCard", id: card._id }));
 
     return () => {
@@ -276,7 +244,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
     // console.log("lastMessage: ", lastMessage?.data);
     if (!lastMessage || !lastMessage.data) return;
     const data = JSON.parse(lastMessage.data);
-
+    console.log("data = ", data);
     if (data.type === "comments") {
       if (data.updateUserId !== c_user.userId) {
         c_socketNotification(data.updateUserId, <span>add a comment in this card</span>);
@@ -325,7 +293,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
     <>
       {menu}
       <Divider style={{ margin: "8px 0" }} />
-      <Button type="primary" icon={<PlusOutlined />} onClick={() => set_s_showTagModal(true)}>
+      <Button type="primary" icon={<Icons.PlusOutlined />} onClick={() => set_s_showTagModal(true)}>
         Add item
       </Button>
     </>
@@ -339,12 +307,6 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
         {contextHolder}
         {/* 隱藏欄位 */}
         <div>
-          {/* <Form.Item name="kanbanId" hidden>
-              <Input />
-            </Form.Item> */}
-          {/* <Form.Item name="_id" hidden>
-              <Input />
-            </Form.Item> */}
           <Form.Item name="reporter" hidden>
             <Input />
           </Form.Item>
@@ -360,7 +322,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
         </div>
         <section className="no-scrollbar flex h-[70vh] flex-col gap-4 overflow-auto">
           <GroupTitle>
-            <EditFilled className="mr-1" />
+            <Icons.EditFilled className="mr-1" />
             Content
           </GroupTitle>
 
@@ -374,22 +336,15 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
 
           <Row gutter={[12, 0]}>
             <Col span={24}>
-              {/* <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
-                  <Input.TextArea placeholder="Write Description" />
-                </Form.Item> */}
               <FieldLabel>Description</FieldLabel>
+
               <ReactQuill
-                // forwardedRef={quillRef}
                 theme="snow"
-                value={f_description}
+                defaultValue={form.getFieldValue("description")}
                 modules={modules}
-                // formats={formats}
-                onBlur={(_, __, editor) => {
-                  // console.log("previousRange = ", previousRange);
-                  // console.log("source = ", source);
-                  // console.log("getSelection = ", editor.getSelection());
+                onChange={(value) => {
                   form.setFieldsValue({
-                    description: editor.getHTML(),
+                    description: value,
                   });
                 }}
               />
@@ -411,7 +366,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
           </Row>
 
           <GroupTitle>
-            <SettingFilled className="mr-1" />
+            <Icons.SettingFilled className="mr-1" />
             Setting
           </GroupTitle>
 
@@ -466,7 +421,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
                       ? Object.values(c_Tags)?.map((item) => ({
                           label: (
                             <span key={item.color} className={`${item.color} rounded-[100px] px-2 py-1 font-medium`}>
-                              <IconRenderer iconName={item.icon as keyof typeof icons} />
+                              <IconRenderer iconName={item.icon as keyof typeof Icons} />
                               <span className="ml-2">{item.name}</span>
                             </span>
                           ),
@@ -482,7 +437,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
           </Row>
 
           <GroupTitle>
-            <BookFilled className="mr-1" />
+            <Icons.BookFilled className="mr-1" />
             Reference
           </GroupTitle>
 
@@ -493,7 +448,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
                 size="small"
                 className="flex items-center text-black"
                 onClick={() => set_s_showLink(true)}
-                icon={<LinkOutlined />}
+                icon={<Icons.LinkOutlined />}
               >
                 Add link
               </Button>
@@ -501,7 +456,10 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
             <Col span={24}>{s_showLink && <Link afterfinish={createLink} />}</Col>
             {s_Links?.map((item) => (
               <Col key={item.url + item.name} span={24}>
-                <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeLink(item.name + item.url)} />
+                <Icons.DeleteOutlined
+                  className="mr-2 cursor-pointer"
+                  onClick={() => removeLink(item.name + item.url)}
+                />
                 <Typography.Link underline href={item.url} target="_blank">
                   {item.name}
                 </Typography.Link>
@@ -512,9 +470,6 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
           <Row gutter={[12, 8]}>
             <Col span={12} className="flex gap-3">
               <FieldLabel>Files</FieldLabel>
-              {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-                  Add file
-                </Button> */}
               <Upload
                 itemRender={() => null}
                 listType="picture"
@@ -535,7 +490,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
                   set_s_isLoaging(false);
                 }}
               >
-                <Button size="small" className="flex items-center text-black" icon={<LinkOutlined />}>
+                <Button size="small" className="flex items-center text-black" icon={<Icons.LinkOutlined />}>
                   Add file
                 </Button>
               </Upload>
@@ -543,7 +498,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
 
             {s_attachments?.map((item: any) => (
               <Col key={item.fileId} span={24}>
-                <DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
+                <Icons.DeleteOutlined className="mr-2 cursor-pointer" onClick={() => removeAttachment(item.fileId)} />
                 <Typography.Link underline href={item.url} target="_blank">
                   {item.name}
                 </Typography.Link>
@@ -552,7 +507,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
           </Row>
 
           <GroupTitle>
-            <MessageFilled className="mr-1" />
+            <Icons.MessageFilled className="mr-1" />
             Comment
           </GroupTitle>
 
