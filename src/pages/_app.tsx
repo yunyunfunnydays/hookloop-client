@@ -5,6 +5,8 @@ import "../styles/protal.css";
 import "../styles/globals.css";
 import "../../public/antd.min.css";
 import "../../public/custom.css";
+// import Head from "next/head";
+
 import type { AppProps } from "next/app";
 import Router, { useRouter } from "next/router";
 import { Spin, notification } from "antd";
@@ -145,7 +147,9 @@ export default function App({ Component, pageProps }: AppProps) {
       {portal}
       {contextHolder}
       <Spin spinning={s_isLoading}>
-        {/* <Button onClick={() => c_socketNotification("645db55959ac4f3c4fec1c1a", "move list")}>open notification</Button> */}
+        {/* <Head>
+          <meta name="google" content="notranslate" />
+        </Head> */}
         <Header />
         <Component {...pageProps} />
       </Spin>

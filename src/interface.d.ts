@@ -87,6 +87,14 @@ declare global {
 
   type ITagRecord = Record<string, ITag>;
 
+  interface IqueryType {
+    members: string[];
+    tags: string[];
+    priority: string;
+    status: string;
+    isMatch: boolean;
+  }
+
   interface IList {
     _id: string;
     name: string;

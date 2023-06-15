@@ -1,12 +1,10 @@
 import React, { useState, useContext } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Modal, Tooltip, Select } from "antd";
-// import MemberSelect from "@/components/Member/MemberSelect";
 import GlobalContext from "@/Context/GlobalContext";
 import CustAvatar from "../util/CustAvatar";
 
 interface IProps {
-  // reporter: IOwner;
   reporter: string;
   afterChoose: (userId: string) => void;
 }
@@ -16,7 +14,7 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
   const [s_showModal, set_s_showModal] = useState(false);
   // 判斷卡片是否有owner
   const hasOwner = reporter?.length > 0;
-  // console.log("hasOwner = ", hasOwner);
+
   return (
     <>
       {hasOwner ? (
@@ -48,15 +46,6 @@ const Reporter: React.FC<IProps> = ({ reporter, afterChoose }) => {
         maskClosable={false}
         footer={null}
       >
-        {/* <MemberSelect
-          className="w-full"
-          value={null}
-          placeholder="input email text"
-          onChange={(_: any, data: IOwner) => {
-            afterChoose(_, data);
-            set_s_showModal(false);
-          }}
-        /> */}
         <Select
           className="w-full"
           value={null}

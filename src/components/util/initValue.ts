@@ -23,3 +23,11 @@ export const kanbanInitValue: Ikanban = {
   isPinned: false,
   isArchived: false,
 };
+
+export const queryTypeInitValue: IqueryType = {
+  members: [],
+  tags: [],
+  priority: "",
+  status: "",
+  isMatch: false,
+};
