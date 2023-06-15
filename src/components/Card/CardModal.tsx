@@ -82,7 +82,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
   const { sendMessage, lastMessage } = useWebSocket(wsUrl);
   const { c_user, c_socketNotification, c_memberMap } = useContext(GlobalContext);
   const { c_Tags, set_c_Tags, c_getKanbanByKey } = useContext(KanbanContext);
-
+  const [editorValue, setEditorValue] = useState("");
   const [s_isLoaging, set_s_isLoaging] = useState(false);
   const [s_showTagModal, set_s_showTagModal] = useState(false);
   // 是否顯示建立 Link 的地方
@@ -97,7 +97,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
   const [form] = Form.useForm();
   const f_reporter = Form.useWatch("reporter", form);
   const f_assignee = Form.useWatch("assignee", form);
-  const f_description = Form.useWatch("description", form);
+  // const f_description = Form.useWatch("description", form);
   const [messageApi, contextHolder] = msg.useMessage();
 
   const onSubmit = async (values: ICard) => {
@@ -231,7 +231,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
   };
 
   useEffect(() => {
-    // console.log("card._id=  ", card._id);
+    console.log("card._id=  ", card._id);
     sendMessage(JSON.stringify({ type: "enterCard", id: card._id }));
 
     return () => {
@@ -336,28 +336,16 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
 
           <Row gutter={[12, 0]}>
             <Col span={24}>
-              {/* <Form.Item label={<FieldLabel>Description</FieldLabel>} name="description">
-                  <Input.TextArea placeholder="Write Description" />
-                </Form.Item> */}
               <FieldLabel>Description</FieldLabel>
+
               <ReactQuill
-                // forwardedRef={quillRef}
                 theme="snow"
-                value={f_description}
+                defaultValue={form.getFieldValue("description")}
                 modules={modules}
                 onChange={(value) => {
                   form.setFieldsValue({
                     description: value,
                   });
-                }}
-                // formats={formats}
-                onBlur={(_, __, editor) => {
-                  // // console.log("previousRange = ", previousRange);
-                  // // console.log("source = ", source);
-                  // // console.log("getSelection = ", editor.getSelection());
-                  // form.setFieldsValue({
-                  //   description: editor.getHTML(),
-                  // });
                 }}
               />
             </Col>
@@ -482,9 +470,6 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
           <Row gutter={[12, 8]}>
             <Col span={12} className="flex gap-3">
               <FieldLabel>Files</FieldLabel>
-              {/* <Button size="small" className="text-black flex items-center" icon={<LinkOutlined />}>
-                  Add file
-                </Button> */}
               <Upload
                 itemRender={() => null}
                 listType="picture"
