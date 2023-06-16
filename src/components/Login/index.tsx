@@ -125,8 +125,9 @@ const Login: React.FC<ILogin> = (props) => {
     const { data, message, status } = res;
     if (status === "success") {
       Cookies.set("hookloop-token", data.token);
+      // 這邊登入、註冊後端給的不一樣, 之後記得改
       set_c_user({
-        userId: data.user.id,
+        userId: data.user.id || data.user._id,
         ...data.user,
       });
       c_showPortal();
