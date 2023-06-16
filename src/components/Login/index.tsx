@@ -343,16 +343,14 @@ const Login: React.FC<ILogin> = (props) => {
               </Col>
 
               {s_editType === "login" && (
-                <Col span={24}>
-                  <Text
-                    type="secondary"
-                    underline
-                    className="flex-center cursor-pointer"
-                    onClick={() => toggleEditType("forgetPassword")}
-                  >
-                    Forget your password?
-                  </Text>
-                </Col>
+                <Text
+                  type="secondary"
+                  underline
+                  className="flex-center mx-auto block cursor-pointer"
+                  onClick={() => toggleEditType("forgetPassword")}
+                >
+                  Forget your password?
+                </Text>
               )}
             </Row>
           </Form>
