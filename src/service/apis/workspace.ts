@@ -13,7 +13,11 @@ export const getWorkspacesByUserId = () => {
 
 // 新建 workspace
 export const addWorkspace = (data: Pick<Iworkspace, "workspaceName" | "members">) => {
-  return instance.post("workspaces", data);
+  return instance.post("workspaces", data, {
+    headers: {
+      Authorization: `Bearer ${Cookies.get("hookloop-token")}`,
+    },
+  });
 };
 // 修改 workspace
 export const updateWorkspace = (workspaceId: string, data: Pick<Iworkspace, "workspaceName" | "members">) => {
