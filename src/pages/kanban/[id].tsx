@@ -25,6 +25,7 @@ const Kanban: React.FC = () => {
   const [c_Tags, set_c_Tags] = useState<ITagRecord>({});
   const [s_open, set_s_open] = useState(false);
   const [c_query, set_c_query] = useState<IqueryType>(queryTypeInitValue);
+  const [c_clearMode, set_c_clearMode] = useState(false);
 
   const c_getAllTags = async (kanbanId = "") => {
     if (!kanbanId) return;
@@ -174,6 +175,7 @@ const Kanban: React.FC = () => {
   const contextValue = useMemo(
     () => ({
       c_Tags,
+      c_query,
       set_c_Tags,
       c_getAllTags,
       c_getKanbanByKey,
@@ -182,6 +184,8 @@ const Kanban: React.FC = () => {
       set_c_listData,
       sendMessage,
       lastMessage,
+      c_clearMode,
+      set_c_clearMode,
     }),
     [c_Tags, set_c_Tags, c_getAllTags, c_getKanbanByKey, c_kanbanId, c_listData, set_c_listData],
   );

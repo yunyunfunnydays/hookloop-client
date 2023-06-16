@@ -358,7 +358,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
                 </Col>
 
                 <Col span={9} className="flex flex-col">
-                  <FieldLabel>Member</FieldLabel>
+                  <FieldLabel>Assignee</FieldLabel>
                   <Assignee assignee={f_assignee} afterChoose={chooseAssignee} />
                 </Col>
               </Row>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Divider, Space, Modal } from "antd";
-import { DesktopOutlined, AppstoreOutlined, UserOutlined, SettingOutlined } from "@ant-design/icons";
+import { DesktopOutlined, AppstoreOutlined, UserOutlined } from "@ant-design/icons";
 import CreateKanbanModal from "@/components/Kanban/CreateKanbanModal";
 import KanbanCard, { CreateKanbanCard } from "./KanbanCard";
 
@@ -41,7 +41,7 @@ const Workspace: React.FC<IProps> = ({ workspaceData }) => {
           <UserOutlined />
           {/* 看板人員總數 */}
           <span className="ml-1 mr-2">{members.length}</span>
-          <SettingOutlined />
+          {/* <SettingOutlined /> */}
         </div>
       </section>
 

@@ -22,7 +22,7 @@ type CardProps = {
 const Card: React.FC<CardProps> = ({ card, index }) => {
   const [s_showCard, set_s_showCard] = useState(false);
   const { c_memberMap } = useContext(GlobalContext);
-  const { c_Tags } = useContext(KanbanContext);
+  const { c_Tags, c_clearMode, set_c_clearMode } = useContext(KanbanContext);
 
   // console.log("card.tag = ", card.tag);
   if (!card) return null;
@@ -43,21 +43,35 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
             <div className="mb-3 flex gap-2 text-base">
               <div className="flex items-center gap-1 text-[#FA541C]">
                 <BellFilled />
-                <span className="text-sm"> 3</span>
+                <span className="text-sm"> {card.notificationCommentCount}</span>
               </div>
               <div className="flex items-center gap-1">
                 <MessageOutlined />
-                <span className="text-sm"> 3</span>
+                <span className="text-sm"> {card.cardCommentCount}</span>
               </div>
             </div>
             {/* 標題 */}
             <div className="mb-2 text-lg font-bold text-[#262626]">{card.name}</div>
             {/* 優先度、狀態 */}
-            <div className="my-5">
+            <div
+              className="my-5 flex"
+              role="presentation"
+              onClick={(e) => {
+                set_c_clearMode(!c_clearMode);
+                e.stopPropagation();
+              }}
+            >
               <CardPriority priority={card.priority} />
-              <span className="ml-2 rounded-md border-2 border-[#BFBFBF] bg-[#F5F5F5] p-1 font-['Roboto'] font-medium text-[#595959] ">
+              <div className="ml-2 rounded-md border-2 border-[#BFBFBF] bg-[#F5F5F5] p-1 font-['Roboto'] font-medium text-[#595959]">
                 Status: {card.status}
-              </span>
+              </div>
+              {/* <div
+                className={`ml-2 rounded-md border-2 border-[#BFBFBF] bg-[#F5F5F5] p-1 font-['Roboto'] font-medium text-[#595959] transition-all duration-700 ${
+                  c_clearMode && "px-7 text-[0px]"
+                }`}
+              >
+                Status: {card.status}
+              </div> */}
             </div>
             {/* 標籤 */}
             <div className="flex gap-2">
@@ -85,87 +99,11 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
                 ))}
               </Avatar.Group>
             </div>
-            {/* {(card.preview || card.priority || card.tag.length > 0 || card.reporter) && <div className="mt-4" />} */}
-            {/* 預覽圖 */}
-            {/* {card.preview && <Image src={card.preview.src} alt={card.preview.filename} className="mb-4" />} */}
-            {/* 優先度 */}
-            {/* {card.priority && (
-            <div className="mb-3 flex gap-2">
-              <PriorityBadge priority={card.priority} />
-              <div className="rounded border border-[#BFBFBF] bg-[#FAFAFA] px-2 py-0.5">
-                <div className="whitespace-nowrap text-[14px] font-medium leading-[22px] tracking-tight text-[#595959] text-['Roboto']">
-                  Status:&nbsp;{card.status}
-                </div>
-              </div>
-            </div>
-          )} */}
-            {/* 標籤 */}
-            {/* {card.tag.length > 0 && (
-            <div className="mb-6 flex flex-wrap gap-2">
-              {card.tag.map((tag: { id: string; name: string }) => {
-                if (tag.name === "bug") {
-                  return (
-                    <div className="flex gap-1 rounded-[32px] bg-[#F5F5F5] px-3 py-0.5 text-['Roboto']" key={tag.id}>
-                      <BugOutlined className="text-[13px]" />
-                      <span className="text-sm leading-[22px]">{tag.name}</span>
-                    </div>
-                  );
-                }
-                if (tag.name === "new") {
-                  return (
-                    <div className="flex gap-1 rounded-[32px] bg-[#F5F5F5] px-3 py-0.5 text-['Roboto']" key={tag.id}>
-                      <ThunderboltOutlined className="text-[13px]" />
-                      <span className="text-sm leading-[22px]">{tag.name}</span>
-                    </div>
-                  );
-                }
-                return (
-                  <div className="flex gap-1 rounded-[32px] bg-[#F5F5F5] px-3 py-0.5 text-['Roboto']" key={tag.id}>
-                    <TagOutlined className="text-[13px]" />
-                    <span className="text-sm leading-[22px]">{tag.name}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )} */}
-            <div className="flex items-center justify-between">
-              {/* 成員 */}
-              {/* {card.reporter && (
-              <div className="flex space-x-[-12px]">
-                <Image
-                  src={card.reporter.avatar}
-                  className="z-40 h-8 w-8 rounded-full outline outline-2 outline-[#FA8C16]"
-                  alt="reporter"
-                />
-                {card.assignees.map((assignee: any, index2: number) => (
-                  <Image
-                    key={assignee.id}
-                    src={assignee.avatar}
-                    className="h-8 w-8 rounded-full border border-[#D9D9D9]"
-                    style={{ zIndex: 30 - index2 * 10 }}
-                    alt="assignee"
-                  />
-                ))}
-              </div>
-            )} */}
-              {/* 時間 */}
-              {/* {card.dueDate && (
-              <div className="flex gap-1 text-[14px] leading-[22px] text-[#595959] text-['Roboto']">
-                <ClockCircleOutlined />
-                {card.dueDate.type === "daterange" && (
-                  <span>
-                    {card.dueDate.start} - {card.dueDate.end}
-                  </span>
-                )}
-                {card.dueDate.type === "date" && <span>{card.dueDate.end}</span>}
-              </div>
-            )} */}
-            </div>
           </div>
         )}
       </Draggable>
       <Modal
-        title="Add Card"
+        title="Card Info"
         width="572px"
         open={s_showCard}
         style={{
@@ -175,7 +113,6 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
         onCancel={() => set_s_showCard(false)}
         footer={null}
       >
-        {/* {s_showCard && <CardModal set_s_showCard={set_s_showCard} />} */}
         {s_showCard === true ? <CardModal card={card} set_s_showCard={set_s_showCard} /> : null}
       </Modal>
     </>

@@ -124,8 +124,6 @@ const Login: React.FC<ILogin> = (props) => {
   const handleResponse = (res: IApiResponse) => {
     const { data, message, status } = res;
     if (status === "success") {
-      // msg.success(message);
-      // console.log("login data = ", data);
       Cookies.set("hookloop-token", data.token);
       set_c_user({
         userId: data.user.id,
