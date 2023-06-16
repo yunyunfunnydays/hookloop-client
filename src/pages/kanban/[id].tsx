@@ -195,7 +195,7 @@ const Kanban: React.FC = () => {
         <Spin spinning={s_spinning}>
           <section id="board" className="h-[calc(100vh_-_80px)] overflow-y-hidden">
             <Filter set_s_open={set_s_open} />
-            <section className="overflow-y-hidden">
+            <section className="relative top-[90px]">
               <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
                   {(provided) => (
@@ -209,17 +209,17 @@ const Kanban: React.FC = () => {
                   )}
                 </Droppable>
               </DragDropContext>
-              <Drawer
-                title="Filter"
-                placement="right"
-                closable
-                onClose={() => set_s_open(false)}
-                open={s_open}
-                getContainer={false}
-              >
-                <FilterContainer c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} />
-              </Drawer>
             </section>
+            <Drawer
+              title="Filter"
+              placement="right"
+              closable
+              onClose={() => set_s_open(false)}
+              open={s_open}
+              getContainer={false}
+            >
+              <FilterContainer c_Tags={c_Tags} c_query={c_query} set_c_query={set_c_query} />
+            </Drawer>
           </section>
         </Spin>
       </KanbanContext.Provider>

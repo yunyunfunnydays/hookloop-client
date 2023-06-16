@@ -26,7 +26,7 @@ const Filter: React.FC<FilterProps> = ({ set_s_open }) => {
   // }, [c_workspaces, c_kanbanId]);
 
   return (
-    <div className="flex h-[90px] w-full items-center justify-end">
+    <div className="fixed right-[25px] flex h-[90px] w-full items-center justify-end">
       <Button type="text" className="flex items-center" onClick={() => set_s_open(true)}>
         <FilterOutlined />
         Filter
