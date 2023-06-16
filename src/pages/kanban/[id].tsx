@@ -193,7 +193,7 @@ const Kanban: React.FC = () => {
     <CustLayout>
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
-          <section className="h-full">
+          <section id="board" className="h-[calc(100vh_-_80px)] overflow-y-hidden">
             <Filter set_s_open={set_s_open} />
             <section className="">
               <DragDropContext onDragEnd={handleDragEnd}>
