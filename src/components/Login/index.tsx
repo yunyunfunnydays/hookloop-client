@@ -377,12 +377,11 @@ const Login: React.FC<ILogin> = (props) => {
               </Title>
               <Paragraph type="danger">
                 Follow the directions in the email to reset your password. <br />
-                The email reset authorization is availablefor 10 minutes.
+                The email reset authorization is available for 10 minutes.
               </Paragraph>
             </div>
           )}
         </div>
-        {/* {useTimer(10000, set_s_reset_password_timer).minute}:{useTimer(10000, set_s_reset_password_timer).second} */}
       </Spin>
     </Modal>
   );

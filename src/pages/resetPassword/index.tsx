@@ -83,7 +83,7 @@ const ResetPassword = () => {
   }, []);
 
   return (
-    <Spin spinning={s_loading}>
+    <Spin spinning={s_loading} className="overflow-y-auto overflow-x-hidden">
       {contextHolder}
       <div className="m-auto flex max-w-[600px] flex-col items-center p-[25px]">
         <Form
