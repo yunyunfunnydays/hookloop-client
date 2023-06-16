@@ -1,3 +1,7 @@
+body {
+  overflow-x: hidden;
+}
+
 .ant-input-search-button {
   display: flex;
   justify-content: center;
