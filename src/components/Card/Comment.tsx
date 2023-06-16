@@ -19,7 +19,7 @@ const Comment: React.FC<IProps> = ({ comments }) => {
   }, [comments]);
 
   return (
-    <div ref={divRef} className="flex h-[200px] flex-col gap-3 overflow-auto">
+    <div ref={divRef} className="flex flex-col gap-3 overflow-auto">
       {comments?.map((item) => (
         <div key={item._id} className="flex flex-col gap-1">
           <section className="flex items-center justify-between">
