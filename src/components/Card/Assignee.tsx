@@ -46,7 +46,7 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
 
       {/* 選擇 assignee 的彈窗 */}
       <Modal
-        title="choose owner"
+        title="choose assignee"
         width="350px"
         open={s_showModal}
         destroyOnClose
@@ -80,34 +80,11 @@ const Assignee: React.FC<IProps> = ({ assignee, afterChoose }) => {
             ),
           }))}
         />
-        {/* <MemberSelect
-          className="w-full"
-          value={null}
-          placeholder="input email text"
-          onChange={(_: any, data: IOwner) => {
-            // 判斷要新增的人員是否已存在
-            const owner = s_tmpAssignee.find((userId) => userId === data._id);
-
-            if (owner) {
-              messageApi.error("this user is exitied");
-              return;
-            }
-
-            set_s_tmpAssignee((prev) => {
-              return prev.concat([data._id as string]);
-            });
-            // afterChoose(_, data);
-            // set_s_showModal(false);
-          }}
-        /> */}
 
         <div className="mt-2 flex flex-col gap-2">
           {s_tmpAssignee?.map((userId: string) => (
             <div key={userId} className="flex justify-between">
               <div className="flex items-center gap-2">
-                {/* <Avatar size={28} src={item?.avatar?.length > 0 && item?.avatar} className="bg-gray-200">
-                  {item?.avatar?.length === 0 ? item?.username[0] : null}
-                </Avatar> */}
                 <CustAvatar info={c_memberMap[userId]} />
                 {c_memberMap[userId]?.username}
               </div>

@@ -19,12 +19,13 @@ const MemberSelect = (props: any) => {
           ...member,
           key: member.email,
           label: (
-            <span className="flex gap-1">
-              {/* <Avatar size="small" className="bg-gray-200" src={member.avatar.length > 0 && member.avatar}>
-                {member.username[0]}
-              </Avatar> */}
-              <CustAvatar info={member} size="small" />
-              {member.username}
+            <span className="flex gap-3">
+              <CustAvatar info={member} size={40} />
+              <span>
+                {member.username}
+                <br />
+                <span className="text-gray-400">{member.email}</span>
+              </span>
             </span>
           ),
           value: member.userId,

@@ -21,13 +21,34 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
   const handleChange = (type: keyof IqueryType, value: HandleChangeValue) => {
     set_c_query({
       ...c_query,
-      [type]: value,
+      [type]: value || "",
     });
   };
   console.log("c_query = ", c_query);
   return (
     <div className="flex flex-col">
       <Row gutter={[12, 12]}>
+        <Col span={24}>
+          <Typography.Title level={5}>Reporters</Typography.Title>
+        </Col>
+        <Checkbox.Group
+          className="member-chackbox flex flex-col gap-2"
+          onChange={(values) => handleChange("reporters", values)}
+          value={c_query.reporters}
+          options={
+            Object.keys(c_memberMap).length > 0
+              ? Object.values(c_memberMap).map((user: Imember) => ({
+                  label: (
+                    <span>
+                      <CustAvatar info={user} />
+                      <span className="ml-2">{user.username}</span>
+                    </span>
+                  ),
+                  value: user.userId,
+                }))
+              : []
+          }
+        />
         <Col span={24}>
           <Typography.Title level={5}>Members</Typography.Title>
         </Col>
@@ -85,6 +106,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
               <Select
                 placeholder="priority"
                 className="w-full"
+                allowClear
                 value={c_query.priority}
                 onChange={(value) => handleChange("priority", value)}
                 options={[
@@ -106,6 +128,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
               <Select
                 placeholder="Status"
                 className="w-full"
+                allowClear
                 value={c_query.status}
                 onChange={(value) => handleChange("status", value)}
                 options={[
