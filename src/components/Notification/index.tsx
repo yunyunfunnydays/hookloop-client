@@ -2,6 +2,7 @@ import Link from "next/link";
 import React, { useEffect, useState, useContext } from "react";
 import { Avatar, Badge, Popover, Switch } from "antd";
 import { NotificationOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 import useWebSocket from "react-use-websocket";
 // context
 import GlobalContext from "@/Context/GlobalContext";
@@ -100,9 +101,9 @@ const Notification: React.FC = () => {
       title={
         <div className="flex border-b pb-2">
           <h3 className="mr-auto text-[24px] font-medium">Notification</h3>
-          <div className="mt-1 flex items-center">
-            <Switch size="small" defaultChecked onClick={() => set_s_showUnreadOnly((state) => !state)} />
-            <p className="ml-1">unread only</p>
+          <div className="ml-auto flex flex-col">
+            <Switch size="small" className="ml-auto" checked={s_showUnreadOnly} onClick={() => set_s_showUnreadOnly((state) => !state)} />
+            <p className="ml-1 font-medium">Unread only</p>
           </div>
         </div>
       }
@@ -114,9 +115,9 @@ const Notification: React.FC = () => {
           {s_notifications.map((msg, i) => (
             <div
               key={i}
-              className={`my-3 rounded border p-3 shadow-md shadow-slate-100 ${
+              className={`msg my-3 rounded border p-3 shadow-md shadow-slate-100 whitespace-pre-line ${
                 s_showUnreadOnly && msg.isRead ? "hidden" : ""
-              } `}
+              }`}
             >
               <div className="flex items-center">
                 <h3 className="text-[20px] font-medium">{msg.subject}</h3>
@@ -131,18 +132,19 @@ const Notification: React.FC = () => {
                   <small className="ml-auto block">mark as read</small>
                 </div>
               </div>
-              <p className="msg-content">{msg.content}</p>
-              <small className="font-medium">
-                in <Link href={`/kanban/${msg.kanbanId.key}`}>{msg.kanbanId.name}</Link>
-              </small>
-              <div className="flex flex-wrap items-end">
+              <p>{msg.content}</p>
+              <div className="flex flex-wrap items-end mt-2">
+                <p className="mr-1">by </p>
                 <Avatar
                   size={20}
                   src={msg.fromUserId.avatar.length > 0 && `https://cdn.filestackcontent.com/${msg.fromUserId.avatar}`}
                 />
                 <p className="ml-1 font-medium">{msg.fromUserId.username}</p>
-                <small className="ml-1">{msg.createdAt}</small>
               </div>
+              <small className="block font-medium">
+                in <Link href={`/kanban/${msg.kanbanId.key}`}>{msg.kanbanId.name}</Link>
+              </small>
+              <small className="block">{dayjs(msg.createdAt).format("YYYY-MM-DD HH:mm")}</small>
             </div>
           ))}
         </div>
