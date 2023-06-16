@@ -18,7 +18,7 @@ const Index: React.FC<IProps> = ({ children }) => {
       <CustSider s_collapsed={s_collapsed} set_s_collapsed={set_s_collapsed} />
 
       {/* content */}
-      <Layout.Content className="relative overflow-auto px-[25px]">
+      <Layout.Content className="relative overflow-auto">
         {children}
 
         {/* 收合sider的按鈕，因使用絕對定位所以放在最下方 */}

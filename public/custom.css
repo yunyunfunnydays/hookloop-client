@@ -196,3 +196,9 @@ body {
 .ant-popover .ant-popover-title {
   font-weight: normal;
 }
+
+.ant-drawer .ant-drawer-content-wrapper {
+  position: fixed;
+  top: 80px;
+  height: calc(100% - 97px);
+}
