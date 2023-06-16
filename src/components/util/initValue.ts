@@ -25,6 +25,7 @@ export const kanbanInitValue: Ikanban = {
 };
 
 export const queryTypeInitValue: IqueryType = {
+  reporters: [],
   members: [],
   tags: [],
   priority: "",
