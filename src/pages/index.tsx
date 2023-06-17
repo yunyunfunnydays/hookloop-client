@@ -1,4 +1,4 @@
-import React, { useRef,useState } from "react";
+import React, { useRef, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Button, Dropdown, Carousel } from "antd";
@@ -100,7 +100,11 @@ const Home: React.FC = () => {
 
             <p className="mt-[24px] text-center">The online workspace loop tasks, teammates and tools together.</p>
 
-            <Button type="primary" className="mt-[40px] h-[40px] w-[115px] font-bold" onClick={() => set_s_showLogin(true)}>
+            <Button
+              type="primary"
+              className="mt-[40px] h-[40px] w-[115px] font-bold"
+              onClick={() => set_s_showLogin(true)}
+            >
               Get Start
             </Button>
           </div>
@@ -179,10 +183,7 @@ const Home: React.FC = () => {
         </section>
 
         {/* slider */}
-        <section
-          id="Quick-Start"
-          className="flex flex-col items-center bg-[#434343] py-[80px]"
-        >
+        <section id="Quick-Start" className="flex flex-col items-center bg-[#434343] py-[80px]">
           <h1 className="font-['Montserrat'] text-[24px] text-[#fff] lg:text-[40px]">
             KICKSTART YOUR PROJECT IN SECONDS
           </h1>
@@ -341,11 +342,7 @@ const Home: React.FC = () => {
         </section>
       </section>
       {/* 登入的彈窗 */}
-      <Login 
-        open={s_showLogin} 
-        close={closeLogin} 
-        editType="signUp"
-      />
+      <Login open={s_showLogin} close={closeLogin} editType="signUp" />
     </>
   );
 };

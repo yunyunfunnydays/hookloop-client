@@ -101,7 +101,6 @@ const ResetPassword = () => {
       validateResetToken(router.query.resetToken.toString());
     }
   }, [router.query.resetToken]);
-  console.log("*************** window.location.href *********************", window.location.href);
   console.log("*************** router.asPath *********************", router.asPath);
   console.log("*************** router.query *********************", router.query);
 

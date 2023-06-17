@@ -84,7 +84,7 @@ const Header: React.FC = () => {
           src={hasAuth ? logo_white : logo_black}
           alt="HOOK LOOP"
           className="cursor-pointer"
-          onClick={() => Router.push("/dashboard")}
+          onClick={() => Router.push(hasAuth ? "/dashboard" : "/")}
         />
 
         {s_Breadcrumbs.length > 0 && <Breadcrumb items={s_Breadcrumbs} />}
@@ -140,11 +140,7 @@ const Header: React.FC = () => {
       )}
 
       {/* 登入的彈窗 */}
-      <Login
-        open={s_showLogin}
-        close={closeLogin}
-        editType={s_loginEditType}
-      />
+      <Login open={s_showLogin} close={closeLogin} editType={s_loginEditType} />
     </header>
   );
 };
