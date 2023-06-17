@@ -18,7 +18,7 @@ const ChooseYourPlan = (props: ChooseYourPlanProps) => {
         <PlanComponent source="plan-page" />
       </main>
 
-      <footer className="mt-30 mx-auto mb-4 block">
+      <footer className="m-auto mt-20 block text-center">
         <Button className="mr-2" type="dashed" onClick={() => router.push("/")}>
           Go Back to Home Page
         </Button>
