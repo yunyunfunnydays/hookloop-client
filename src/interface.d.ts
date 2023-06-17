@@ -57,7 +57,8 @@ declare global {
     _id: string;
     name: string;
     description: string;
-    // reporter: IUser;
+    cardCommentCount: number;
+    notificationCommentCount: number;
     reporter: string;
     listId: string;
     kanbanId: string;
@@ -86,6 +87,15 @@ declare global {
   }
 
   type ITagRecord = Record<string, ITag>;
+
+  interface IqueryType {
+    reporters: string[];
+    members: string[];
+    tags: string[];
+    priority: string;
+    status: string;
+    isMatch: boolean;
+  }
 
   interface IList {
     _id: string;

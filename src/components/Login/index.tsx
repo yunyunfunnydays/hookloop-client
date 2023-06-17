@@ -125,11 +125,10 @@ const Login: React.FC<ILogin> = (props) => {
   const handleResponse = (res: IApiResponse) => {
     const { data, message, status } = res;
     if (status === "success") {
-      // msg.success(message);
-      // console.log("login data = ", data);
       Cookies.set("hookloop-token", data.token);
+      // 這邊登入、註冊後端給的不一樣, 之後記得改
       set_c_user({
-        userId: data.user.id,
+        userId: data.user.id || data.user._id,
         ...data.user,
       });
       c_showPortal();

@@ -94,7 +94,7 @@ export const validateResetPasswordToken = (resetToken: string) => {
 
 // 建立方案付費訂單
 export const createOrder = (data: IPlanOrder): Promise<AxiosResponse<IApiResponse<ICreateOrderReturnType>>> => {
-  return instance.post("/plan/createOrder", data, {
+  return instance.post("/plans/createOrder", data, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${Cookies.get("hookloop-token")}`,

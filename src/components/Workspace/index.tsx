@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Divider, Space, Modal } from "antd";
-import { DesktopOutlined, AppstoreOutlined, UserOutlined, SettingOutlined } from "@ant-design/icons";
+import { DesktopOutlined, AppstoreOutlined, UserOutlined } from "@ant-design/icons";
 import CreateKanbanModal from "@/components/Kanban/CreateKanbanModal";
 import KanbanCard, { CreateKanbanCard } from "./KanbanCard";
 
@@ -26,7 +26,7 @@ const Workspace: React.FC<IProps> = ({ workspaceData }) => {
   });
 
   return (
-    <div className="flex flex-col justify-start">
+    <div className="flex flex-col justify-start px-[25px]">
       {/* 資訊欄區域 */}
       <section className="flex justify-between">
         <h5 className="text-[24px] font-medium text-[#595959]">
@@ -41,7 +41,7 @@ const Workspace: React.FC<IProps> = ({ workspaceData }) => {
           <UserOutlined />
           {/* 看板人員總數 */}
           <span className="ml-1 mr-2">{members.length}</span>
-          <SettingOutlined />
+          {/* <SettingOutlined /> */}
         </div>
       </section>
 

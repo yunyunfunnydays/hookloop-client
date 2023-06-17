@@ -97,7 +97,7 @@ const Profile = () => {
   return (
     <Spin spinning={s_spinning}>
       <section className="flex h-full justify-center">
-        <div className="mt-8 w-[685px]">
+        <div className="py-8 w-[685px]">
           <Row justify="center">
             <Col>
               <Upload
@@ -175,7 +175,7 @@ const Profile = () => {
               </Form.Item>
             </Form>
           </section>
-          <section>
+          {/* <section>
             <Title level={2}>Groups</Title>
             <Divider />
             <Row className="mb-[20px] w-full">
@@ -198,7 +198,7 @@ const Profile = () => {
                 </Button>
               </Col>
             </Row>
-          </section>
+          </section> */}
           <Button danger className="mt-6 rounded" onClick={() => handleCloseAccount()}>
             Close Account
           </Button>

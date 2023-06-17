@@ -81,10 +81,10 @@ const Plan = () => {
         <PayResultSuccess encryptionOderData={s_encryptionOderData} setCancelSubscribeModalVisible={set_s_showModal} />
       ),
     },
-    {
-      title: "Pay Results : Failed",
-      content: <PayResultFail />,
-    },
+    // {
+    //   title: "Pay Results : Failed",
+    //   content: <PayResultFail />,
+    // },
   ];
 
   const items = steps.map((item) => ({ key: item.title, title: item.title }));

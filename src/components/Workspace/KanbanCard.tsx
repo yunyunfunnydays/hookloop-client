@@ -110,8 +110,10 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         className={`${CARD_BASICSTYLE} flex flex-col items-end justify-between border px-3 py-4`}
         role="presentation"
         onClick={(e) => {
-          Router.push(`/kanban/${kanbanData.key}`);
-          e.stopPropagation();
+          if (e.target instanceof HTMLElement && e.target.className !== ICON_BASICSTYLE) {
+            Router.push(`/kanban/${kanbanData.key}`);
+            e.stopPropagation();
+          }
         }}
       >
         {contextHolder}
