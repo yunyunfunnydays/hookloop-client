@@ -161,7 +161,7 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* plan Emi version */}
+        {/* plan */}
         <section
           id="Plan"
           className="mx-auto flex w-[90%] flex-col items-center gap-[40px] px-[12px] py-[40px] md:w-[900px]"
@@ -169,82 +169,6 @@ const Home: React.FC = () => {
           <h1 className="font-['Montserrat'] text-[24px] font-black md:text-[40px]">PLAN & PRICING</h1>
           <PlanComponent source="landing-page" />
         </section>
-
-        {/* plan original */}
-        {/* <section id="Plan" className="flex flex-col items-center gap-[40px] px-[12px] py-[40px]">
-          <h1 className="font-['Montserrat'] text-[24px] font-black lg:text-[40px]">PLAN & PRICING</h1>
-
-          <div className="flex flex-col flex-wrap justify-center gap-[20px] md:flex-row">
-            <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
-              <div className="flex-center h-[80px] w-full bg-[#FFA940] text-white">
-                <h5 className="text-[30px] font-bold">Premium</h5>
-              </div>
-              <div className="flex w-[250px] flex-col items-center pt-[25px]">
-                <div className="flex-center">
-                  <strong className="font-['Roboto'] text-[30px] font-medium">NT&nbsp;$&nbsp;207.5</strong>
-                  <span className="ml-[16px] text-[24px]">/&nbsp;month</span>
-                </div>
-                <span className="mt-[8px] text-[#595959]">NT $ 2490.0 / year</span>
-                <div className="mt-[20px] w-full border-0 border-b-2" />
-                <ul className="mt-[20px] list-disc text-[20px]">
-                  <li>
-                    <strong>Unlimited</strong> Workspace
-                  </li>
-                </ul>
-                <Button
-                  type="primary"
-                  className="mt-[25px] h-[40px] w-[115px] font-bold"
-                  onClick={() => handleSlectedPlan("")}
-                >
-                  Best choice!
-                </Button>
-              </div>
-            </section>
-
-            <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
-              <div className="flex-center h-[80px] w-full border-0 border-b bg-[#FFF7E6] text-black">
-                <h5 className="text-[30px] font-bold text-[#D46B08]">Standard</h5>
-              </div>
-              <div className="flex w-[250px] flex-col items-center pt-[25px]">
-                <div className="flex-center">
-                  <strong className="font-['Roboto'] text-[30px] font-medium">NT&nbsp;$&nbsp;310.0</strong>
-                  <span className="ml-[16px] text-[24px]">/&nbsp;month</span>
-                </div>
-                <div className="mt-[50px] w-full border-0 border-b-2" />
-                <ul className="mt-[20px] list-disc text-[20px]">
-                  <li>10 workspace</li>
-                </ul>
-                <Button
-                  className="mt-[25px] h-[40px] w-[115px] font-bold text-black"
-                  onClick={() => handleSlectedPlan("")}
-                >
-                  Select it
-                </Button>
-              </div>
-            </section>
-
-            <section className="flex min-h-[340px] w-[350px] flex-col items-center overflow-hidden rounded-lg border border-[#D9D9D9] md:w-[300px]">
-              <div className="flex-center h-[80px] w-full bg-[#D9D9D9] text-black">
-                <h5 className="text-[30px] font-bold">Free</h5>
-              </div>
-              <div className="flex w-[250px] flex-col items-center pt-[25px]">
-                <div className="flex-center">
-                  <strong className="font-['Roboto'] text-[30px] font-medium">NT&nbsp;$&nbsp;0</strong>
-                </div>
-                <div className="mt-[50px] w-full border-0 border-b-2" />
-                <ul className="mt-[20px] list-disc text-[20px]">
-                  <li>1 Workspace</li>
-                </ul>
-                <Button
-                  className="mt-[25px] h-[40px] w-[115px] font-bold text-black"
-                  onClick={() => handleSlectedPlan("")}
-                >
-                  Select it
-                </Button>
-              </div>
-            </section>
-          </div>
-        </section> */}
 
         {/* slider */}
         <section className="flex flex-col items-center bg-[#434343] py-[80px]">

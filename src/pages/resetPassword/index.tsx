@@ -91,13 +91,14 @@ const ResetPassword = () => {
   };
 
   useEffect(() => {
-    // console.log("🚀 ~ file: index.tsx:114 ~ useEffect ~ window.location.href:", window.location.href);
+    if (s_isResetTokenValid === false) {
+      return;
+    }
     router.replace(window.location.href);
-  }, []);
+  }, [s_isResetTokenValid]);
 
   useEffect(() => {
     if (router.query.resetToken) {
-      console.log("🚀 ~ ~ ~ ~ ~ ~ ~ router.query.resetToken:", router.query.resetToken);
       // 一進來畫面，先 call API 去確認 重設密碼時效是否過期
       validateResetToken(router.query.resetToken.toString());
     }

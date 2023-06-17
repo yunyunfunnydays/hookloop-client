@@ -1,4 +1,4 @@
-import { Button, Divider } from "antd";
+import { Button } from "antd";
 import { useRouter } from "next/router";
 import PlanComponent from "@/pageComponents/planAndPayment/Plan";
 
@@ -14,7 +14,7 @@ const ChooseYourPlan = (props: ChooseYourPlanProps) => {
       <main className="flex flex-col">
         <h2 className="m-auto mb-3 flex text-[30px] font-bold">Choose Your Plan</h2>
         <p className="mx-auto">HookLoop is trusted by millions and provides support to teams around the world.</p>
-        <p className="mx-auto mb-10">Discover which option suits you.</p>
+        <p className="mb-10 mb-5 mt-3 text-center font-semibold">Discover which option suits you.</p>
         <PlanComponent source="plan-page" />
       </main>
 
@@ -23,7 +23,7 @@ const ChooseYourPlan = (props: ChooseYourPlanProps) => {
           Go Back to Home Page
         </Button>
         <Button type="primary" onClick={handleConfirmOrder}>
-          Confirm
+          Next Step
         </Button>
       </footer>
     </section>
