@@ -91,8 +91,8 @@ const Plan = () => {
 
   return (
     <Spin spinning={s_loading} tip="Create Order...">
-      <section className="mx-auto mt-8 flex h-full w-[80%] flex-col justify-center lg:w-[860px]">
-        <Steps current={s_current} items={items} />
+      <section className="mx-auto mt-8 flex h-full w-[80%] flex-col justify-center lg:w-[900px]">
+        <Steps progressDot current={s_current} items={items} />
         <div className="my-8">{steps[s_current].content}</div>
       </section>
 

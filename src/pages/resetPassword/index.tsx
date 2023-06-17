@@ -104,7 +104,7 @@ const ResetPassword = () => {
   }, [router.query]);
 
   return (
-    <Spin spinning={s_loading} tip="Sending Reset Password Email..." className="overflow-y-auto overflow-x-hidden">
+    <Spin spinning={s_loading} className="overflow-y-auto overflow-x-hidden">
       {contextHolder}
       {s_isResetTokenValid ? (
         <div className="m-auto flex max-w-[600px] flex-col items-center p-[25px]">
