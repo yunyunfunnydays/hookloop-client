@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef,useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Button, Dropdown, Carousel } from "antd";
@@ -21,10 +21,13 @@ import carousel1 from "@/assets/carousel-1.png";
 import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import PlanComponent from "@/pageComponents/planAndPayment/Plan";
+import Login from "@/components/Login";
 
 const Home: React.FC = () => {
   // const images = [mission, dashboard, kanban, card];
   const carouselRef = useRef(null);
+  // 控制要不要顯示 Login 組件
+  const [s_showLogin, set_s_showLogin] = useState(false);
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     console.info("click", e);
@@ -40,6 +43,11 @@ const Home: React.FC = () => {
   const menuProps = {
     items,
     onClick: handleMenuClick,
+  };
+
+  // 關閉 Login 組件時執行
+  const closeLogin = (): void => {
+    set_s_showLogin(false);
   };
 
   return (
@@ -92,7 +100,7 @@ const Home: React.FC = () => {
 
             <p className="mt-[24px] text-center">The online workspace loop tasks, teammates and tools together.</p>
 
-            <Button type="primary" className="mt-[40px] h-[40px] w-[115px] font-bold">
+            <Button type="primary" className="mt-[40px] h-[40px] w-[115px] font-bold" onClick={() => set_s_showLogin(true)}>
               Get Start
             </Button>
           </div>
@@ -332,6 +340,12 @@ const Home: React.FC = () => {
           </div>
         </section>
       </section>
+      {/* 登入的彈窗 */}
+      <Login 
+        open={s_showLogin} 
+        close={closeLogin} 
+        editType="signUp"
+      />
     </>
   );
 };
