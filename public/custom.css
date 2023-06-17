@@ -105,9 +105,8 @@ body {
 }
 
 /* Plan */
-.ant-steps .ant-steps-item-finish .ant-steps-item-icon,
-.ant-steps .ant-steps-item-process .ant-steps-item-icon {
-  background-color: #ffa940;
+.ant-steps .ant-steps-item-icon >.ant-steps-icon .ant-steps-icon-dot {
+  background-color: #ffa940 !important;
   border-color: #ffa940;
 }
 .ant-steps .ant-steps-item-wait .ant-steps-item-icon {
@@ -125,28 +124,18 @@ body {
 .ant-steps .ant-steps-item > .ant-steps-item-container > .ant-steps-item-content {
   font-weight: bold;
 }
+.ant-steps .ant-steps-item-finish>.ant-steps-item-container>.ant-steps-item-tail::after {
+  background-color: #00000080;
+}
 @media (min-width: 576px) {
-  .ant-steps .ant-steps-item-icon >.ant-steps-icon .ant-steps-icon-dot{
-    background: #ffa940 !important;
-    width: 30px;
-    height: 30px;
+  .ant-steps.ant-steps-dot .ant-steps-item-process .ant-steps-item-icon{
     position: relative;
     top: -11px;
     right: 11px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
   }
-  .ant-steps.ant-steps-dot .ant-steps-item-content{
-    position: relative;
-    right: -10px;
-  }
-  .ant-steps.ant-steps-dot .ant-steps-item-tail::after{
-    width: 100%;
-    /* position: relative;
-    right: -10px;
-    height: 3px; */
-  }
-  .ant-steps .ant-steps-item-finish>.ant-steps-item-container>.ant-steps-item-tail::after {
-    background-color: #00000040;
-}
 }
 
 .ant-popover {
