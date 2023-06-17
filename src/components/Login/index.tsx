@@ -32,6 +32,7 @@ import { trimValues } from "@/utils";
 interface ILogin {
   open: boolean;
   close: () => void;
+  editType?: "login" | "signUp" | "forgetPassword";
 }
 
 const { useBreakpoint } = Grid;
@@ -44,7 +45,7 @@ const Login: React.FC<ILogin> = (props) => {
    * open 用來控制要不要開啟登入彈窗
    * close 關閉彈窗時執行
    */
-  const { open, close } = props;
+  const { open, close, editType } = props;
   const { set_c_user, c_showPortal } = useContext(GlobalContext);
   const [form] = Form.useForm();
 
@@ -210,11 +211,16 @@ const Login: React.FC<ILogin> = (props) => {
 
   useEffect(() => {
     if (open) {
-      set_s_editType("login");
       set_s_reset_password_email_status(false);
       set_s_reset_password_timer(false);
+
+      if (editType) {
+        set_s_editType(editType);
+      } else {
+        set_s_editType("login");
+      }
     }
-  }, [open]);
+  }, [open, editType]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
