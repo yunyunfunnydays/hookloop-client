@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { Drawer, Spin, message } from "antd";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import useWebSocket from "react-use-websocket";
 import { produce } from "immer";
-
 import { moveCard } from "@/service/apis/card";
 import { getKanbanByKey, getTags } from "@/service/apis/kanban";
 import { moveList } from "@/service/apis/list";
@@ -22,6 +22,7 @@ const Kanban: React.FC = () => {
   const [c_kanbanId, set_c_kanbanId] = useState("");
   const [s_spinning, set_s_spinning] = useState(false);
   const [s_kanbanKey, set_s_kanbanKey] = useState("");
+  const [s_kanbanName, set_s_kanbanName] = useState("");
   const [c_Tags, set_c_Tags] = useState<ITagRecord>({});
   const [s_open, set_s_open] = useState(false);
   const [c_query, set_c_query] = useState<IqueryType>(queryTypeInitValue);
@@ -49,7 +50,9 @@ const Kanban: React.FC = () => {
       const res: AxiosResponse = await getKanbanByKey(s_kanbanKey);
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
-        set_c_listData(data.listOrder);
+        const newListOrder = data.listOrder.filter((item: any) => item.isArchived !== true);
+        set_c_listData(newListOrder);
+        set_s_kanbanName(data.name);
         set_c_kanbanId(data._id);
         c_getAllTags(data._id);
       }
@@ -151,6 +154,8 @@ const Kanban: React.FC = () => {
       c_getKanbanByKey();
     } else if (data.type === "renameList") {
       set_c_listData(data.result);
+    } else if (data.type === "archiveList") {
+      set_c_listData(data.result);
     } else if (data.type === "createCard") {
       // TODO: CreateCard
       c_getKanbanByKey();
@@ -191,6 +196,9 @@ const Kanban: React.FC = () => {
   );
   return (
     <CustLayout>
+      <Head>
+        <title>{s_kanbanName}</title>
+      </Head>
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
           <section id="board" className="relative inline-block min-h-[calc(100vh-80px)] min-w-full px-4 pb-4">

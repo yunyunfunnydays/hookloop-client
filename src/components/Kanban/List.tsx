@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Input } from "antd";
+import { Button, Input, Popover, Tooltip } from "antd";
 import type { InputRef } from "antd";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { produce } from "immer";
 import { EllipsisOutlined } from "@ant-design/icons";
 
-import { renameList } from "@/service/apis/list";
+import { renameList, archiveList } from "@/service/apis/list";
 import KanbanContext from "@/Context/KanbanContext";
 
 import AddCard from "./AddCard";
@@ -71,6 +71,26 @@ const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
     }
   };
 
+  const handleArchiveList = async () => {
+    try {
+      console.log("currentList._id", currentList._id);
+      const newListData = produce(c_listData, (draft) => {
+        const removedIndex = draft.findIndex((list) => list._id === currentList._id);
+        if (removedIndex !== -1) {
+          draft.splice(removedIndex, 1);
+        }
+      });
+
+      console.log("newListData", newListData);
+
+      set_c_listData(newListData);
+
+      archiveList({ kanbanId: c_kanbanId, id: currentList._id, socketData: newListData });
+    } catch (errorInfo) {
+      console.error(errorInfo);
+    }
+  };
+
   return (
     <Draggable draggableId={currentList._id} index={index} key={currentList._id}>
       {(provided2) => (
@@ -82,11 +102,7 @@ const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
         >
           <Droppable droppableId={currentList._id} type="card">
             {(provided) => (
-              <div
-                className="min-w-[330px] bg-[#F5F5F5] px-5 py-4"
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
+              <div className="w-[330px] bg-[#F5F5F5] px-5 py-4" ref={provided.innerRef} {...provided.droppableProps}>
                 {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
                 {s_isEditingList ? (
                   <Input
@@ -106,7 +122,17 @@ const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
                     >
                       {currentList.name}
                     </span>
-                    <EllipsisOutlined className="cursor-pointer text-xl" />
+                    <Tooltip
+                      placement="topLeft"
+                      color="white"
+                      title={
+                        <Button type="text" onClick={handleArchiveList}>
+                          Archive List
+                        </Button>
+                      }
+                    >
+                      <EllipsisOutlined className="cursor-pointer text-xl" />
+                    </Tooltip>
                   </div>
                 )}
                 <div className="mb-2 text-sm font-medium text-[#8C8C8C] text-['Roboto']">

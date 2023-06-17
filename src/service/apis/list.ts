@@ -11,3 +11,11 @@ export const renameList = (data: { kanbanId: string; list: Pick<IList, "name" | 
 export const moveList = (data: { kanbanId: string; listOrder: string[] }) => {
   return instance.patch("lists/move", data);
 };
+
+export const archiveList = (data: { kanbanId: string; id: string; socketData: any }) => {
+  return instance.patch(`lists/${data.id}/archive`, {
+    isArchived: true,
+    kanbanId: data.kanbanId,
+    socketData: data.socketData,
+  });
+};
