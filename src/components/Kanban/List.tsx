@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Input } from "antd";
+import { Button, Input, Popover } from "antd";
 import type { InputRef } from "antd";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { produce } from "immer";
 import { EllipsisOutlined } from "@ant-design/icons";
 
-import { renameList } from "@/service/apis/list";
+import { renameList, archiveList } from "@/service/apis/list";
 import KanbanContext from "@/Context/KanbanContext";
 
 import AddCard from "./AddCard";
@@ -71,6 +71,26 @@ const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
     }
   };
 
+  const handleArchiveList = async () => {
+    try {
+      console.log("currentList._id", currentList._id);
+      const newListData = produce(c_listData, (draft) => {
+        const removedIndex = draft.findIndex((list) => list._id === currentList._id);
+        if (removedIndex !== -1) {
+          draft.splice(removedIndex, 1);
+        }
+      });
+
+      console.log("newListData", newListData);
+
+      set_c_listData(newListData);
+
+      archiveList({ kanbanId: c_kanbanId, id: currentList._id, socketData: newListData });
+    } catch (errorInfo) {
+      console.error(errorInfo);
+    }
+  };
+
   return (
     <Draggable draggableId={currentList._id} index={index} key={currentList._id}>
       {(provided2) => (
@@ -106,7 +126,19 @@ const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
                     >
                       {currentList.name}
                     </span>
-                    <EllipsisOutlined className="cursor-pointer text-xl" />
+                    <Popover
+                      placement="rightBottom"
+                      title={
+                        <Button type="text" onClick={handleArchiveList}>
+                          Archive List
+                        </Button>
+                      }
+                      trigger="click"
+                      arrow={false}
+                      className="w-10"
+                    >
+                      <EllipsisOutlined className="cursor-pointer text-xl" />
+                    </Popover>
                   </div>
                 )}
                 <div className="mb-2 text-sm font-medium text-[#8C8C8C] text-['Roboto']">

@@ -50,6 +50,7 @@ const Kanban: React.FC = () => {
       const res: AxiosResponse = await getKanbanByKey(s_kanbanKey);
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
+        console.log("data.listOrder", data.listOrder);
         set_c_listData(data.listOrder);
         set_s_kanbanName(data.name);
         set_c_kanbanId(data._id);
