@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Spin, Steps } from "antd";
+import { Spin, Steps, message } from "antd";
 
 import { PlanOptions } from "@/pageComponents/planAndPayment/Plan";
 import { useRouter } from "next/router";
@@ -36,15 +36,20 @@ const Plan = () => {
   const handleConfirmOrder = async () => {
     set_s_loading(true);
     try {
-      // (1) 確認使用者身份：
+      // (1) 確認方案：
+      if (!router.query.targetPlan) {
+        message.error("Choose a target Paln!");
+      }
+
+      // (2) 確認使用者身份：
       const verifyUserResult = await verifyUserToken();
       const { status, data } = verifyUserResult.data as IApiResponse;
       if (status !== "success" || !data._id) {
-        // (2) 導向 登入Ｍodal 畫面
+        // (3) 導向 登入Ｍodal 畫面
         set_s_showLogin(true);
         return;
       }
-      // (3) 取得加密訂單資料
+      // (4) 取得加密訂單資料
       const orderData: IPlanOrder = {
         targetPlan: router.query.targetPlan as PlanOptions,
       };
@@ -52,7 +57,7 @@ const Plan = () => {
       set_s_encryptionOderData(res.data.data);
       set_s_current(s_current + 1);
       // eslint-disable-next-line no-console
-      console.log("🚀 ~ file: index.tsx:52 ~ handleConfirmOrder ~ encryptionOderData:", res.data);
+      console.log("🚀 ~ ~ ~ handleConfirmOrder ~ encryptionOderData:", res.data);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log("verifyUserResult/encryptionOderData err: ", err);
@@ -97,7 +102,11 @@ const Plan = () => {
       </section>
 
       {/* 登入的彈窗 */}
-      <Login open={s_showLogin} close={closeLogin} />
+      <Login
+        open={s_showLogin}
+        close={closeLogin}
+        editType={router.query.targetPlan === PlanOptions.FREE ? "signUp" : "login"}
+      />
 
       {/* 取消訂閱的 Modal */}
       <CancelSubscribeModal visible={s_showModal} setVisible={set_s_showModal} />

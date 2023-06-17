@@ -211,6 +211,7 @@ const Login: React.FC<ILogin> = (props) => {
 
   useEffect(() => {
     if (open) {
+      form.resetFields();
       set_s_reset_password_email_status(false);
       set_s_reset_password_timer(false);
 
@@ -221,11 +222,6 @@ const Login: React.FC<ILogin> = (props) => {
       }
     }
   }, [open, editType]);
-
-  useEffect(() => {
-    set_s_reset_password_email_status(false);
-    set_s_reset_password_timer(false);
-  }, [s_editType]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>

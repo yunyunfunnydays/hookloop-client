@@ -1,4 +1,4 @@
-import { Button, Divider } from "antd";
+import { Button } from "antd";
 import { useRouter } from "next/router";
 import PlanComponent from "@/pageComponents/planAndPayment/Plan";
 
@@ -23,7 +23,7 @@ const ChooseYourPlan = (props: ChooseYourPlanProps) => {
           Go Back to Home Page
         </Button>
         <Button type="primary" onClick={handleConfirmOrder}>
-          Next
+          Next Step
         </Button>
       </footer>
     </section>
