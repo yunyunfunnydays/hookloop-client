@@ -32,6 +32,7 @@ import { trimValues } from "@/utils";
 interface ILogin {
   open: boolean;
   close: () => void;
+  editType?: "login" | "signUp" | "forgetPassword";
 }
 
 const { useBreakpoint } = Grid;
@@ -44,7 +45,7 @@ const Login: React.FC<ILogin> = (props) => {
    * open 用來控制要不要開啟登入彈窗
    * close 關閉彈窗時執行
    */
-  const { open, close } = props;
+  const { open, close, editType } = props;
   const { set_c_user, c_showPortal } = useContext(GlobalContext);
   const [form] = Form.useForm();
 
@@ -209,11 +210,16 @@ const Login: React.FC<ILogin> = (props) => {
 
   useEffect(() => {
     if (open) {
-      set_s_editType("login");
       set_s_reset_password_email_status(false);
       set_s_reset_password_timer(false);
+
+      if (editType) {
+        set_s_editType(editType);
+      } else {
+        set_s_editType("login");
+      }
     }
-  }, [open]);
+  }, [open, editType]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
@@ -342,16 +348,14 @@ const Login: React.FC<ILogin> = (props) => {
               </Col>
 
               {s_editType === "login" && (
-                <Col span={24}>
-                  <Text
-                    type="secondary"
-                    underline
-                    className="flex-center cursor-pointer"
-                    onClick={() => toggleEditType("forgetPassword")}
-                  >
-                    Forget your password?
-                  </Text>
-                </Col>
+                <Text
+                  type="secondary"
+                  underline
+                  className="flex-center mx-auto block cursor-pointer"
+                  onClick={() => toggleEditType("forgetPassword")}
+                >
+                  Forget your password?
+                </Text>
               )}
             </Row>
           </Form>
@@ -378,12 +382,11 @@ const Login: React.FC<ILogin> = (props) => {
               </Title>
               <Paragraph type="danger">
                 Follow the directions in the email to reset your password. <br />
-                The email reset authorization is availablefor 10 minutes.
+                The email reset authorization is available for 10 minutes.
               </Paragraph>
             </div>
           )}
         </div>
-        {/* {useTimer(10000, set_s_reset_password_timer).minute}:{useTimer(10000, set_s_reset_password_timer).second} */}
       </Spin>
     </Modal>
   );

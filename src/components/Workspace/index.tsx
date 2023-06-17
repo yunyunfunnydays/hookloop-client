@@ -26,7 +26,7 @@ const Workspace: React.FC<IProps> = ({ workspaceData }) => {
   });
 
   return (
-    <div className="flex flex-col justify-start">
+    <div className="flex flex-col justify-start px-[25px]">
       {/* 資訊欄區域 */}
       <section className="flex justify-between">
         <h5 className="text-[24px] font-medium text-[#595959]">

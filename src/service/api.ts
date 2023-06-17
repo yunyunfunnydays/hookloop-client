@@ -82,6 +82,17 @@ export const verifyPassword = (data: { newPassword: string; resetPasswordToken: 
   });
 };
 
+// 驗證新密碼
+export const validateResetPasswordToken = (resetToken: string) => {
+  return instance.get(`/${resetToken}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "",
+    },
+  });
+};
+
+// 建立方案付費訂單
 export const createOrder = (data: IPlanOrder): Promise<AxiosResponse<IApiResponse<ICreateOrderReturnType>>> => {
   return instance.post("/plans/createOrder", data, {
     headers: {

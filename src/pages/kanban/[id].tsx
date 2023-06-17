@@ -193,9 +193,9 @@ const Kanban: React.FC = () => {
     <CustLayout>
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
-          <section className="h-full">
+          <section id="board" className="relative inline-block px-4 pb-4 min-w-full min-h-[calc(100vh-80px)]">
             <Filter set_s_open={set_s_open} />
-            <section className="">
+            <section className="w-full pt-[90px]">
               <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="all-lists" direction="horizontal" type="list">
                   {(provided) => (
