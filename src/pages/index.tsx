@@ -66,7 +66,7 @@ const Home: React.FC = () => {
         <a href="#Plan" className="shrink-0">
           Plan & Pricing
         </a>
-        <a href="#" className="shrink-0">
+        <a href="#Quick-Start" className="shrink-0">
           Quick Start
         </a>
       </nav>
@@ -171,7 +171,10 @@ const Home: React.FC = () => {
         </section>
 
         {/* slider */}
-        <section className="flex flex-col items-center bg-[#434343] py-[80px]">
+        <section
+          id="Quick-Start"
+          className="flex flex-col items-center bg-[#434343] py-[80px]"
+        >
           <h1 className="font-['Montserrat'] text-[24px] text-[#fff] lg:text-[40px]">
             KICKSTART YOUR PROJECT IN SECONDS
           </h1>
