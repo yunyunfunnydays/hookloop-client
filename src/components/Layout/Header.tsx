@@ -27,11 +27,17 @@ const Header: React.FC = () => {
   const [s_showMenu, set_s_showMenu] = useState(false);
   // 控制要不要顯示 Login 組件
   const [s_showLogin, set_s_showLogin] = useState(false);
+  const [s_loginEditType, set_s_loginEditType] = useState<"login" | "signUp">("login");
   const [s_Breadcrumbs, set_s_Breadcrumbs] = useState<any[]>([]);
 
   // Header 上按鈕的基礎樣式
   const BTN_STYLE = "h-[32px] w-[105px] font-bold";
 
+  // 開啟 Login 組件事件
+  const showLogin = (editType: "login" | "signUp"): void => {
+    set_s_showLogin(true);
+    set_s_loginEditType(editType);
+  };
   // 關閉 Login 組件時執行
   const closeLogin = (): void => {
     set_s_showLogin(false);
@@ -94,10 +100,10 @@ const Header: React.FC = () => {
         <>
           {/* 大尺寸螢幕使用的 menu */}
           <div className="hidden gap-[24px] md:flex">
-            <Button className={`${BTN_STYLE} text-black`} onClick={() => set_s_showLogin(true)}>
+            <Button className={`${BTN_STYLE} text-black`} onClick={() => showLogin("login")}>
               Log in
             </Button>
-            <Button type="primary" className={BTN_STYLE}>
+            <Button type="primary" className={BTN_STYLE} onClick={() => showLogin("signUp")}>
               Get Start
             </Button>
           </div>
@@ -122,10 +128,10 @@ const Header: React.FC = () => {
                 s_showMenu ? "h-[80px]" : "h-[0px]"
               }`}
             >
-              <Button className={`${BTN_STYLE} text-black`} onClick={() => set_s_showLogin(true)}>
+              <Button className={`${BTN_STYLE} text-black`} onClick={() => showLogin("login")}>
                 Log in
               </Button>
-              <Button type="primary" className={BTN_STYLE}>
+              <Button type="primary" className={BTN_STYLE} onClick={() => showLogin("signUp")}>
                 Get Start
               </Button>
             </div>
@@ -134,7 +140,11 @@ const Header: React.FC = () => {
       )}
 
       {/* 登入的彈窗 */}
-      <Login open={s_showLogin} close={closeLogin} />
+      <Login
+        open={s_showLogin}
+        close={closeLogin}
+        editType={s_loginEditType}
+      />
     </header>
   );
 };

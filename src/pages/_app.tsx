@@ -70,6 +70,7 @@ export default function App({ Component, pageProps }: AppProps) {
       const res: AxiosResponse = await verifyUserToken();
       const { status, data } = res.data as IApiResponse;
       const currentPath = router.pathname;
+      console.log("_app currentPath: ", currentPath);
 
       if (status === "success") {
         // 如果目前正在首頁登入後要直接導轉到 dashboard
