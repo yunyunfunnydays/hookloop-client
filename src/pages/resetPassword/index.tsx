@@ -100,7 +100,7 @@ const ResetPassword = () => {
       // 一進來畫面，先 call API 去確認 重設密碼時效是否過期
       validateResetToken(router.query.resetToken.toString());
     }
-  }, [router.query.resetToken]);
+  }, [router.query]);
 
   return (
     <Spin spinning={s_loading} tip="Sending Reset Password Email..." className="overflow-y-auto overflow-x-hidden">

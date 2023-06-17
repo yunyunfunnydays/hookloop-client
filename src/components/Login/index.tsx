@@ -44,6 +44,7 @@ const Login: React.FC<ILogin> = (props) => {
    * 型別請參考 ILogin
    * open 用來控制要不要開啟登入彈窗
    * close 關閉彈窗時執行
+   * editType 指定目前情境是[登入][註冊][忘記密碼]
    */
   const { open, close, editType } = props;
   const { set_c_user, c_showPortal } = useContext(GlobalContext);
@@ -53,9 +54,9 @@ const Login: React.FC<ILogin> = (props) => {
   const [api, contextHolder] = notification.useNotification();
   // antd 用來監聽畫面寬度變化
   const screens: Record<string, boolean> = useBreakpoint();
-  // 判斷目前情境是[登入]還是[註冊]
+  // 判斷目前情境是[登入]還是[註冊][忘記密碼]
   const [s_editType, set_s_editType] = useState<"login" | "signUp" | "forgetPassword">("login");
-  // const [s_passwordVisible, set_s_passwordVisible] = useState(false);
+
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
   const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
@@ -220,6 +221,11 @@ const Login: React.FC<ILogin> = (props) => {
       }
     }
   }, [open, editType]);
+
+  useEffect(() => {
+    set_s_reset_password_email_status(false);
+    set_s_reset_password_timer(false);
+  }, [s_editType]);
 
   return (
     <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
