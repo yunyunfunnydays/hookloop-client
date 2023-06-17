@@ -193,7 +193,7 @@ const Kanban: React.FC = () => {
     <CustLayout>
       <KanbanContext.Provider value={contextValue}>
         <Spin spinning={s_spinning}>
-          <section id="board" className="relative inline-block px-4 pb-4 min-w-full min-h-[calc(100vh-80px)]">
+          <section id="board" className="relative inline-block min-h-[calc(100vh-80px)] min-w-full px-4 pb-4">
             <Filter set_s_open={set_s_open} />
             <section className="w-full pt-[90px]">
               <DragDropContext onDragEnd={handleDragEnd}>
