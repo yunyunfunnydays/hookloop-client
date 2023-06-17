@@ -102,11 +102,7 @@ const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
         >
           <Droppable droppableId={currentList._id} type="card">
             {(provided) => (
-              <div
-                className="min-w-[330px] bg-[#F5F5F5] px-5 py-4"
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
+              <div className="w-[330px] bg-[#F5F5F5] px-5 py-4" ref={provided.innerRef} {...provided.droppableProps}>
                 {/* TODO: 可以將把手擴大 cursor-grab mx-[-20px] mt-[-16px] pt-[16px] px-[20px] */}
                 {s_isEditingList ? (
                   <Input
