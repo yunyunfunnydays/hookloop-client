@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import Head from "next/head";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // component
@@ -13,6 +14,9 @@ const Dashboard: React.FC<IProps> = () => {
 
   return (
     <CustLayout>
+      <Head>
+        <title>dashboard</title>
+      </Head>
       <div className="mt-5 flex flex-col py-[30px]">
         <section className="mt-5 flex flex-col gap-8">
           {/* Workspace */}

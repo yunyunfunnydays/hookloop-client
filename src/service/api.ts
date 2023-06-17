@@ -38,7 +38,11 @@ export const createUser = (data: IUser) => {
 };
 
 export const getMe = () => {
-  return instance.get("/users/me");
+  return instance.get("/users/me", {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const updateMe = (data: { username: string }) => {
