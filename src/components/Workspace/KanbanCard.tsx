@@ -117,7 +117,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         }}
       >
         {contextHolder}
-        <div className="flex w-full justify-between" role="presentation" onClick={(e) => e.stopPropagation()}>
+        <div className="flex w-full justify-between" role="presentation">
           <p className="text-base font-medium text-[#262626]">{kanbanData.name}</p>
           <Popover
             placement="bottomLeft"
