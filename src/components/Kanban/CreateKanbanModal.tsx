@@ -44,9 +44,11 @@ const CreateKanbanModal: React.FC<CreateKanbanModalProps> = ({ workspaceId, set_
     }
     s_newDate.workspaceId = workspaceId;
     const res: AxiosResponse = await addkanban(s_newDate);
-    const { status, message } = res.data as IApiResponse;
+    const { status, message, data } = res.data as IApiResponse;
     if (status === "success") {
       msg.success(message);
+    } else if (data?.error) {
+      msg.error(data?.error);
     } else {
       msg.error(message);
     }
