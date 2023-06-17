@@ -22,7 +22,6 @@ const ResetPassword = () => {
   const [s_loading, set_s_loading] = useState(false);
   const [s_isResetTokenValid, set_s_isResetTokenValid] = useState(true);
   const [s_showLogin, set_s_showLogin] = useState(false);
-  const [s_valid_reset_token, set_s_valid_reset_token] = useState<string>();
 
   // 按鈕基本樣式
   const SUBMIT_BTN = "w-[250px] h-[32px] py-[4px] px-[15px] font-semibold";
@@ -101,8 +100,6 @@ const ResetPassword = () => {
       validateResetToken(router.query.resetToken.toString());
     }
   }, [router.query.resetToken]);
-  console.log("*************** router.asPath *********************", router.asPath);
-  console.log("*************** router.query *********************", router.query);
 
   return (
     <Spin spinning={s_loading} className="overflow-y-auto overflow-x-hidden">
