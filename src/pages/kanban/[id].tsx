@@ -50,8 +50,8 @@ const Kanban: React.FC = () => {
       const res: AxiosResponse = await getKanbanByKey(s_kanbanKey);
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
-        console.log("data.listOrder", data.listOrder);
-        set_c_listData(data.listOrder);
+        const newListOrder = data.listOrder.filter((item: any) => item.isArchived !== true);
+        set_c_listData(newListOrder);
         set_s_kanbanName(data.name);
         set_c_kanbanId(data._id);
         c_getAllTags(data._id);
@@ -153,6 +153,8 @@ const Kanban: React.FC = () => {
       // TODO: CreateList
       c_getKanbanByKey();
     } else if (data.type === "renameList") {
+      set_c_listData(data.result);
+    } else if (data.type === "archiveList") {
       set_c_listData(data.result);
     } else if (data.type === "createCard") {
       // TODO: CreateCard
