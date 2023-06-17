@@ -84,7 +84,7 @@ export const verifyPassword = (data: { newPassword: string; resetPasswordToken: 
 
 // 驗證新密碼
 export const validateResetPasswordToken = (resetToken: string) => {
-  return instance.get(`/${resetToken}`, {
+  return instance.get(`/auth/${resetToken}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: "",

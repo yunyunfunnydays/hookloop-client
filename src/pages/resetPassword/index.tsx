@@ -97,6 +97,7 @@ const ResetPassword = () => {
 
   useEffect(() => {
     if (router.query.resetToken) {
+      console.log("🚀 ~ ~ ~ ~ ~ ~ ~ router.query.resetToken:", router.query.resetToken);
       // 一進來畫面，先 call API 去確認 重設密碼時效是否過期
       validateResetToken(router.query.resetToken.toString());
     }
