@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Button, Input, Popover } from "antd";
+import { Button, Input, Popover, Tooltip } from "antd";
 import type { InputRef } from "antd";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { produce } from "immer";
@@ -122,19 +122,17 @@ const List: React.FC<ListProps> = ({ list: currentList, cards, index }) => {
                     >
                       {currentList.name}
                     </span>
-                    <Popover
-                      placement="rightBottom"
+                    <Tooltip
+                      placement="topLeft"
+                      color="white"
                       title={
                         <Button type="text" onClick={handleArchiveList}>
                           Archive List
                         </Button>
                       }
-                      trigger="click"
-                      arrow={false}
-                      className="w-10"
                     >
                       <EllipsisOutlined className="cursor-pointer text-xl" />
-                    </Popover>
+                    </Tooltip>
                   </div>
                 )}
                 <div className="mb-2 text-sm font-medium text-[#8C8C8C] text-['Roboto']">
