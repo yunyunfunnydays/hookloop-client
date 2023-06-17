@@ -22,6 +22,7 @@ const ResetPassword = () => {
   const [s_loading, set_s_loading] = useState(false);
   const [s_isResetTokenValid, set_s_isResetTokenValid] = useState(true);
   const [s_showLogin, set_s_showLogin] = useState(false);
+  const [s_valid_reset_token, set_s_valid_reset_token] = useState<string>();
 
   // 按鈕基本樣式
   const SUBMIT_BTN = "w-[250px] h-[32px] py-[4px] px-[15px] font-semibold";
@@ -91,18 +92,18 @@ const ResetPassword = () => {
   };
 
   useEffect(() => {
-    if (s_isResetTokenValid === false) {
-      return;
-    }
     router.replace(window.location.href);
-  }, [s_isResetTokenValid]);
+  }, []);
 
   useEffect(() => {
     if (router.query.resetToken) {
       // 一進來畫面，先 call API 去確認 重設密碼時效是否過期
       validateResetToken(router.query.resetToken.toString());
     }
-  }, [router.query]);
+  }, [router.query.resetToken]);
+  console.log("*************** window.location.href *********************", window.location.href);
+  console.log("*************** router.asPath *********************", router.asPath);
+  console.log("*************** router.query *********************", router.query);
 
   return (
     <Spin spinning={s_loading} className="overflow-y-auto overflow-x-hidden">
