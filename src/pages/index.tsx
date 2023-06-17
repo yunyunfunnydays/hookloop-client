@@ -164,7 +164,7 @@ const Home: React.FC = () => {
         {/* plan Emi version */}
         <section
           id="Plan"
-          className="mx-auto flex w-[90%] flex-col items-center gap-[40px] px-[12px] py-[40px] md:w-[960px]"
+          className="mx-auto flex w-[90%] flex-col items-center gap-[40px] px-[12px] py-[40px] md:w-[900px]"
         >
           <h1 className="font-['Montserrat'] text-[24px] font-black md:text-[40px]">PLAN & PRICING</h1>
           <PlanComponent source="landing-page" />
