@@ -69,7 +69,7 @@ export default function App({ Component, pageProps }: AppProps) {
       // step1 调用API检查token是否过期
       const res: AxiosResponse = await verifyUserToken();
       const { status, data } = res.data as IApiResponse;
-      const currentPath = router.pathname;
+      const currentPath = router.asPath;
       console.log("_app currentPath: ", currentPath);
 
       if (status === "success") {
