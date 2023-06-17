@@ -140,11 +140,7 @@ const Header: React.FC = () => {
       )}
 
       {/* 登入的彈窗 */}
-      <Login
-        open={s_showLogin}
-        close={closeLogin}
-        editType={s_loginEditType}
-      />
+      <Login open={s_showLogin} close={closeLogin} editType={s_loginEditType} />
     </header>
   );
 };
