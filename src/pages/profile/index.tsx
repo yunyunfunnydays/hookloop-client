@@ -97,7 +97,7 @@ const Profile = () => {
   return (
     <Spin spinning={s_spinning}>
       <section className="flex h-full justify-center">
-        <div className="py-8 w-[685px]">
+        <div className="w-[685px] py-8">
           <Row justify="center">
             <Col>
               <Upload
