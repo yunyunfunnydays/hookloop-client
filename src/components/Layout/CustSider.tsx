@@ -136,7 +136,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       trigger={null}
       width={235}
       collapsedWidth={0}
-      className="overflow-hidden border-r-[1px] transition-all duration-500"
+      className="z-10 overflow-hidden border-r-[1px] transition-all duration-500"
       collapsible
       collapsed={s_collapsed}
     >
