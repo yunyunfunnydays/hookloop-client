@@ -23,7 +23,6 @@ const paymentReturn = (req: NextApiRequest, res: NextApiResponse) => {
   const decryptedWithoutPadding = CryptoJS.enc.Utf8.stringify(decrypted).replace(/\0+$/, "");
   const returnInfo = JSON.parse(decodeURIComponent(decryptedWithoutPadding));
   const url = `/plan?Status=${returnInfo.Status}&MerchantOrderNo=${returnInfo.Result.MerchantOrderNo}&PaymentType=${returnInfo.Result.PaymentType}&PayTime=${returnInfo.Result.PayTime}&Amt=${returnInfo.Result.Amt}&ItemDesc=${returnInfo.Result.ItemDesc}`;
-  res.redirect(encodeURI(url));
 
   // 完成後進行重定向
   res.writeHead(302, {
