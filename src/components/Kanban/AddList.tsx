@@ -56,7 +56,7 @@ const AddList: React.FC<AddListProps> = () => {
       onChange={handleListNameChange}
       onBlur={handleInputEnd}
       onPressEnter={handleInputEnd}
-      className="h-[56px] max-w-[330px] bg-[#F5F5F5] px-5 py-4 text-xl font-medium text-[#262626] text-['Roboto']"
+      className="h-[56px] w-[330px] bg-[#F5F5F5] px-5 py-4 text-xl font-medium text-[#262626] text-['Roboto']"
     />
   ) : (
     <div role="presentation" className="w-[330px] bg-[#F5F5F5] px-5 py-4" onClick={handleAddList}>
