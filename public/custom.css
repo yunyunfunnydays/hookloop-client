@@ -51,8 +51,9 @@ body {
   margin-bottom: 5px !important;
 }
 
+.ant-menu-item:has(.ant-menu-title-content > .add-kanban),
 .ant-menu-item:has(.ant-menu-title-content > .members) {
-  padding-left: 5px !important;
+  padding-left: 4px !important;
   color: #262626;
   font-weight: 500;
 }
