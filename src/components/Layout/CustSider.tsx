@@ -7,6 +7,7 @@ import type { MenuProps } from "antd";
 import {
   DesktopOutlined,
   AppstoreOutlined,
+  AppstoreAddOutlined,
   UserOutlined,
   SettingOutlined,
   HomeOutlined,
@@ -21,6 +22,7 @@ import { archivedWorkspace } from "@/service/apis/workspace";
 // context
 import GlobalContext from "@/Context/GlobalContext";
 // component
+import AddKanban from "@/components/Kanban/AddKanban";
 import CreateWorkSpaceModal from "@/components/Workspace/CreateWorkSpaceModal";
 import MemberModal from "../Workspace/MemberModal";
 import SettingModal from "../Workspace/SettingModal";
@@ -84,6 +86,11 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
             })),
         },
         {
+          label: <AddKanban workspaceId={workspace.workspaceId} />,
+          key: `${workspace.workspaceId}add-kanban`,
+          icon: <AppstoreAddOutlined />,
+        },
+        {
           label: <span className="members">Members</span>,
           key: `${workspace.workspaceId}members`,
           icon: <UserOutlined />,
@@ -141,9 +148,11 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       collapsed={s_collapsed}
     >
       {/* Home */}
-      <section className="w-full px-7 py-5 text-base text-[#595959] cursor-pointer">
+      <section className="w-full cursor-pointer px-7 py-5 text-base text-[#595959]">
         <HomeOutlined />
-        <span className="ml-2 font-medium" onClick={()=>Router.push("/dashboard")}>Dashboard</span>
+        <span role="presentation" className="ml-2 font-medium" onClick={() => Router.push("/dashboard")}>
+          Dashboard
+        </span>
         <DoubleLeftOutlined className="float-right mt-1 cursor-pointer" onClick={() => set_s_collapsed(!s_collapsed)} />
       </section>
 
