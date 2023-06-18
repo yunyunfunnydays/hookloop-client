@@ -24,6 +24,13 @@ const paymentReturn = (req: NextApiRequest, res: NextApiResponse) => {
   const returnInfo = JSON.parse(decodeURIComponent(decryptedWithoutPadding));
   const url = `/plan?Status=${returnInfo.Status}&MerchantOrderNo=${returnInfo.Result.MerchantOrderNo}&PaymentType=${returnInfo.Result.PaymentType}&PayTime=${returnInfo.Result.PayTime}&Amt=${returnInfo.Result.Amt}&ItemDesc=${returnInfo.Result.ItemDesc}`;
   res.redirect(encodeURI(url));
+
+  // 完成後進行重定向
+  res.writeHead(302, {
+    Location: encodeURI(url), // 指定前端頁面的路徑
+    "Content-Type": "text/html",
+  });
+  res.end();
 };
 export default paymentReturn;
 
