@@ -74,6 +74,7 @@ const Plan = () => {
       return { [key]: value };
     });
     const { Status, MerchantOrderNo, PaymentType, PayTime, Amt, ItemDesc } = query;
+    console.log("🚀 ~ file: index.tsx:77 ~ useEffect ~ query:", query);
     if (MerchantOrderNo) {
       set_s_returnData({
         Status: `${Status}`,
@@ -83,7 +84,7 @@ const Plan = () => {
         Amt: Number(`${Amt}`),
         ItemDesc: `${ItemDesc}`,
       });
-      set_s_current(3);
+      set_s_current(2);
     }
   }, [router.asPath]);
 
