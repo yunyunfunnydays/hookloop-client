@@ -141,16 +141,16 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
       collapsed={s_collapsed}
     >
       {/* Home */}
-      <section className="w-full px-7 py-5 text-base text-[#595959]">
+      <section className="w-full px-7 py-5 text-base text-[#595959] cursor-pointer">
         <HomeOutlined />
-        <span className="ml-2 font-medium">Home</span>
+        <span className="ml-2 font-medium" onClick={()=>Router.push("/dashboard")}>Dashboard</span>
         <DoubleLeftOutlined className="float-right mt-1 cursor-pointer" onClick={() => set_s_collapsed(!s_collapsed)} />
       </section>
 
       {/* create workspace */}
       <section className=" w-full bg-[#F5F5F5] px-7 py-5 text-base text-[#262626]">
         <DesktopOutlined />
-        <span className="ml-2 font-medium">Workspace</span>
+        <span className="ml-2 font-medium">Workspaces</span>
         <Button
           className="float-right bg-[#FFA940] text-white"
           type="primary"
