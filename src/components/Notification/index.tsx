@@ -95,66 +95,77 @@ const Notification: React.FC = () => {
   }, [lastMessage]);
 
   return (
-    <Popover
-      arrow={false}
-      className="custPopover"
-      title={
-        <div className="flex border-b pb-2">
-          <h3 className="mr-auto text-[24px] font-medium">Notification</h3>
-          <div className="ml-auto flex flex-col">
-            <Switch size="small" className="ml-auto" checked={s_showUnreadOnly} onClick={() => set_s_showUnreadOnly((state) => !state)} />
-            <p className="ml-1 font-medium">Unread only</p>
-          </div>
-        </div>
-      }
-      content={
-        <div>
-          <a className="block text-right" onClick={() => markAllIsRead()}>
-            mark all as read
-          </a>
-          {s_notifications.map((msg, i) => (
-            <div
-              key={i}
-              className={`msg my-3 rounded border p-3 shadow-md shadow-slate-100 whitespace-pre-line ${
-                s_showUnreadOnly && msg.isRead ? "hidden" : ""
-              }`}
-            >
-              <div className="flex items-center">
-                <h3 className="text-[20px] font-medium">{msg.subject}</h3>
-                <div className="ml-auto mt-1">
-                  <Switch
-                    size="small"
-                    className="mx-auto block"
-                    disabled={msg.isRead}
-                    defaultChecked={!msg.isRead}
-                    onClick={() => markIsRead(msg._id)}
-                  />
-                  <small className="ml-auto block">mark as read</small>
-                </div>
-              </div>
-              <p>{msg.content}</p>
-              <div className="flex flex-wrap items-end mt-2">
-                <p className="mr-1">by </p>
-                <Avatar
-                  size={20}
-                  src={msg.fromUserId.avatar.length > 0 && `https://cdn.filestackcontent.com/${msg.fromUserId.avatar}`}
-                />
-                <p className="ml-1 font-medium">{msg.fromUserId.username}</p>
-              </div>
-              <small className="block font-medium">
-                in <Link href={`/kanban/${msg.kanbanId.key}`}>{msg.kanbanId.name}</Link>
-              </small>
-              <small className="block">{dayjs(msg.createdAt).format("YYYY-MM-DD HH:mm")}</small>
+    <>
+      {/* 渲染popover */}
+      <div id="custPopover" />
+      <Popover
+        arrow={false}
+        getPopupContainer={() => document.getElementById("custPopover") || document.body}
+        title={
+          <div className="flex border-b pb-2">
+            <h3 className="mr-auto text-[24px] font-medium">Notification</h3>
+            <div className="ml-auto flex flex-col">
+              <Switch
+                size="small"
+                className="ml-auto"
+                checked={s_showUnreadOnly}
+                onClick={() => set_s_showUnreadOnly((state) => !state)}
+              />
+              <p className="ml-1 font-medium">Unread only</p>
             </div>
-          ))}
-        </div>
-      }
-      trigger="click"
-    >
-      <Badge count={s_show_red_dot ? " " : 0} size="small">
-        <NotificationOutlined className="custPopover text-white" style={{ fontSize: 28 }} />
-      </Badge>
-    </Popover>
+          </div>
+        }
+        content={
+          <div>
+            <a className="block text-right" onClick={() => markAllIsRead()}>
+              mark all as read
+            </a>
+            {s_notifications.map((msg, i) => (
+              <div
+                key={i}
+                className={`msg my-3 whitespace-pre-line rounded border p-3 shadow-md shadow-slate-100 ${
+                  s_showUnreadOnly && msg.isRead ? "hidden" : ""
+                }`}
+              >
+                <div className="flex items-center">
+                  <h3 className="text-[20px] font-medium">{msg.subject}</h3>
+                  <div className="ml-auto mt-1">
+                    <Switch
+                      size="small"
+                      className="mx-auto block"
+                      disabled={msg.isRead}
+                      defaultChecked={!msg.isRead}
+                      onClick={() => markIsRead(msg._id)}
+                    />
+                    <small className="ml-auto block">mark as read</small>
+                  </div>
+                </div>
+                <p>{msg.content}</p>
+                <div className="mt-2 flex flex-wrap items-end">
+                  <p className="mr-1">by </p>
+                  <Avatar
+                    size={20}
+                    src={
+                      msg.fromUserId.avatar.length > 0 && `https://cdn.filestackcontent.com/${msg.fromUserId.avatar}`
+                    }
+                  />
+                  <p className="ml-1 font-medium">{msg.fromUserId.username}</p>
+                </div>
+                <small className="block font-medium">
+                  in <Link href={`/kanban/${msg.kanbanId.key}`}>{msg.kanbanId.name}</Link>
+                </small>
+                <small className="block">{dayjs(msg.createdAt).format("YYYY-MM-DD HH:mm")}</small>
+              </div>
+            ))}
+          </div>
+        }
+        trigger="click"
+      >
+        <Badge count={s_show_red_dot ? " " : 0} size="small">
+          <NotificationOutlined className="custPopover text-white" style={{ fontSize: 28 }} />
+        </Badge>
+      </Popover>
+    </>
   );
 };
 

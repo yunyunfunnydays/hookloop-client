@@ -16,7 +16,7 @@ const usePortal = () => {
 
   const portal = show
     ? ReactDOM.createPortal(
-        <div className="flex-center absolute bottom-0 left-0 right-0 top-0 h-screen w-screen bg-[#262626] font-['Lexend']">
+        <div className="flex-center absolute bottom-0 left-0 right-0 top-0 z-50 h-screen w-screen bg-[#262626] font-['Lexend']">
           <h1 className="text-8xl font-black uppercase tracking-widest">
             <span className="text-loading" data-text-preloader="H">
               H
