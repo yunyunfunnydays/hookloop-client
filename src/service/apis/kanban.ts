@@ -3,8 +3,9 @@ import Cookies from "js-cookie";
 import instance from "../instance";
 
 // 取得看板資料
-export const getKanbanByKey = (kanbanId: string, query?: any) => {
-  return instance.get(`kanbans/${kanbanId}`, { params: query });
+export const getKanbanByKey = (kanbanId: string, query?: any, userId?: string) => {
+  // return instance.get(`kanbans/${kanbanId}`, { params: query }); 新增一個 userId 參數
+  return instance.get(`kanbans/all/${kanbanId}`, { params: { query, userId } });
 };
 
 // 新建 kanban

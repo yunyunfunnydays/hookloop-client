@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useContext } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { Drawer, Spin, message } from "antd";
@@ -13,6 +13,7 @@ import { queryTypeInitValue } from "@/components/util/initValue";
 import CustLayout from "@/components/Layout";
 
 import KanbanContext from "@/Context/KanbanContext";
+import GlobalContext from "@/Context/GlobalContext";
 
 const Kanban: React.FC = () => {
   const router = useRouter();
@@ -27,6 +28,7 @@ const Kanban: React.FC = () => {
   const [s_open, set_s_open] = useState(false);
   const [c_query, set_c_query] = useState<IqueryType>(queryTypeInitValue);
   const [c_clearMode, set_c_clearMode] = useState(false);
+  const { c_user } = useContext(GlobalContext);
 
   const c_getAllTags = async (kanbanId = "") => {
     if (!kanbanId) return;
@@ -47,7 +49,7 @@ const Kanban: React.FC = () => {
     try {
       if (!s_kanbanKey) return;
       set_s_spinning(true);
-      const res: AxiosResponse = await getKanbanByKey(s_kanbanKey);
+      const res: AxiosResponse = await getKanbanByKey(s_kanbanKey, undefined, c_user.userId);
       const { status, data } = res.data as IApiResponse;
       if (status === "success") {
         const newListOrder = data.listOrder.filter((item: any) => item.isArchived !== true);
