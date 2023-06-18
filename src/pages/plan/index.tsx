@@ -11,13 +11,6 @@ import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
 import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
 
-interface IPaymentReturnType {
-  Status: string;
-  MerchantID: string;
-  Version: string;
-  TradeInfo: string;
-  TradeSha: string;
-}
 const Plan = () => {
   const router = useRouter();
   const [s_current, set_s_current] = useState(0);
@@ -73,17 +66,18 @@ const Plan = () => {
   };
 
   useEffect(() => {
-    console.log("--- router: ", router.query);
+    console.log("--- router: ", router);
     const { Status, MerchantOrderNo, PaymentType, PayTime, Amt, ItemDesc } = router.query;
-    if (router.query) {
+    if (MerchantOrderNo) {
       set_s_returnData({
         Status: `${Status}`,
         MerchantOrderNo: `${MerchantOrderNo}`,
         PaymentType: `${PaymentType}`,
-        PayTime: `${PayTime}`,
+        PayTime: `${decodeURI(PayTime as string)}`,
         Amt: Number(`${Amt}`),
         ItemDesc: `${ItemDesc}`,
       });
+      set_s_current(3);
     }
   }, [router.asPath]);
 
