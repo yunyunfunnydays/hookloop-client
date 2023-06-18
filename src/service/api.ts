@@ -37,7 +37,10 @@ export const createUser = (data: IUser) => {
   return instance.post(`/users`, data);
 };
 
-export const getMe = () => {
+export const getMe = (data: IUser) => {
+  return instance.get("/users/me", { params: data });
+};
+export const getMe1 = () => {
   return instance.get("/users/me", {
     headers: {
       "Content-Type": "multipart/form-data",

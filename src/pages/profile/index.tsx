@@ -13,10 +13,10 @@ import Cookies from "js-cookie";
 const { Title } = Typography;
 
 const Profile = () => {
-  const { set_c_user } = useContext(GlobalContext);
+  const { set_c_user, c_user } = useContext(GlobalContext);
   const [s_showChangePassword, set_s_showChangePassword] = useState<boolean>(false);
   const [s_spinning, set_s_spinning] = useState(false);
-  const [s_avatarUrl, set_s_avatarUrl] = useState<string>("");
+  // const [s_avatarUrl, set_s_avatarUrl] = useState<string>("");
   const [form] = Form.useForm();
 
   const closeChangePassword = (): void => {
@@ -24,20 +24,27 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      const res = await getMe();
-      const { status, data } = res.data as IApiResponse;
-      if (status === "success") {
-        form.setFieldsValue({
-          username: data.userData.username,
-          email: data.userData.email,
-        });
-        set_s_avatarUrl(data.userData.avatar);
-      } else {
-        msg.error("Failed to get user data");
-      }
-    })();
-  }, [form]);
+    form.setFieldsValue({
+      username: c_user.username,
+      email: c_user.email,
+    });
+  }, [c_user]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const res = await getMe(c_user);
+  //     const { status, data } = res.data as IApiResponse;
+  //     if (status === "success") {
+  //       form.setFieldsValue({
+  //         username: data.userData.username,
+  //         email: data.userData.email,
+  //       });
+  //       set_s_avatarUrl(data.userData.avatar);
+  //     } else {
+  //       msg.error("Failed to get user data");
+  //     }
+  //   })();
+  // }, [form]);
 
   const handleFinish = (values: { username: string; email: string }) => {
     (async () => {
@@ -84,7 +91,7 @@ const Profile = () => {
         msg.success(message);
 
         set_c_user(data.userData);
-        set_s_avatarUrl(data.userData.avatar);
+        // set_s_avatarUrl(data.userData.avatar);
       } else {
         msg.error(message);
       }
@@ -110,9 +117,9 @@ const Profile = () => {
                   handleChangeAvatar(info);
                 }}
               >
-                {s_avatarUrl ? (
+                {c_user.avatar.length > 0 ? (
                   <Image
-                    src={`https://cdn.filestackcontent.com/${s_avatarUrl}`}
+                    src={`https://cdn.filestackcontent.com/${c_user.avatar}`}
                     alt="avatar"
                     style={{ borderRadius: "100%" }}
                     width="100"
