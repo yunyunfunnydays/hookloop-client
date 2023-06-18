@@ -5,8 +5,6 @@ import icon_menu from "@/assets/icon_menu.svg";
 import balloon_orange from "@/assets/balloon_orange.svg";
 import balloon_white from "@/assets/balloon_white.svg";
 import icon_creditcard from "@/assets/icon_creditcard.svg";
-// eslint-disable-next-line import/no-cycle
-import { ITradeInfoRecordType } from "@/pages/plan";
 import dayjs from "dayjs";
 
 interface PayResultSuccessProps {

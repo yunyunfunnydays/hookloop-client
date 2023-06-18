@@ -11,14 +11,6 @@ import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
 import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
 
-export interface ITradeInfoRecordType {
-  Status: string;
-  MerchantOrderNo: string;
-  PaymentType: string;
-  PayTime: string;
-  Amt: number;
-  ItemDesc: string;
-}
 interface IPaymentReturnType {
   Status: string;
   MerchantID: string;
