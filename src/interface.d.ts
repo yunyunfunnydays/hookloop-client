@@ -173,4 +173,13 @@ declare global {
     aesEncrypted: string;
     shaEncrypted: string;
   }
+
+  interface ITradeInfoRecordType {
+    Status: string;
+    MerchantOrderNo: string;
+    PaymentType: string;
+    PayTime: string;
+    Amt: number;
+    ItemDesc: string;
+  }
 }

@@ -38,3 +38,6 @@ next-env.d.ts
 public/antd.min.css
 
 notes/
+
+# Environment varibales, exclude .env.example
+.env*
