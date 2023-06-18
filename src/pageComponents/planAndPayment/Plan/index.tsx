@@ -26,7 +26,7 @@ const plans = [
     cost: PriceOptions.FREE,
     perMonth: false,
     workspaces: "1",
-    btnTxt: "Sign up",
+    btnTxt: "Get Start",
     btnPrimary: false,
     planPerMonth: "Free for your whole team",
     planDescription: "For individuals or teams looking to organize any project.",

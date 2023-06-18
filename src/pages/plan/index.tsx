@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Spin, Steps, message } from "antd";
 
 import { PlanOptions } from "@/pageComponents/planAndPayment/Plan";
@@ -8,7 +8,6 @@ import Login from "@/components/Login";
 import CancelSubscribeModal from "@/pageComponents/planAndPayment/CancelSubscribeModal";
 import PayResultSuccess from "@/pageComponents/planAndPayment/PayResultSuccess";
 import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
-import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
 
 const Plan = () => {
@@ -56,20 +55,41 @@ const Plan = () => {
       const res = await createOrder(orderData);
       set_s_encryptionOderData(res.data.data);
       set_s_current(s_current + 1);
-      // eslint-disable-next-line no-console
-      console.log("🚀 ~ ~ ~ handleConfirmOrder ~ encryptionOderData:", res.data);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log("verifyUserResult/encryptionOderData err: ", err);
+      message.error("Fail to create order!");
     } finally {
       set_s_loading(false);
     }
   };
+  const handlePaymentReturn = () => {
+    // 擷取 URL 中的查詢字串參數
+    const searchParams = new URLSearchParams(window.location.search);
+    const formData = Object.fromEntries(searchParams.entries());
 
-  const handleSubmit = () => {
-    // (4) 向藍新金流 call API
-    // const pay = await axios.post("https://ccore.newebpay.com/MPG/mpg_gateway", encryptionOderData);
+    // 根據回傳資料進行相應的處理
+    if (formData.Status === "SUCCESS") {
+      // 支付成功處理邏輯
+      console.log("支付成功");
+      console.log("訊息:", formData.Message);
+      // 其他相關處理
+    } else {
+      // 支付失敗處理邏輯
+      console.log("支付失敗");
+      console.log("錯誤訊息:", formData.Message);
+      // 其他相關處理
+    }
   };
+
+  useEffect(() => {
+    if (router.query.paymentReturn === "true") {
+      // 在頁面載入時處理藍新金流回傳資訊
+      handlePaymentReturn();
+      console.log("--- window: ", window.location.href);
+      console.log("--- router: ", router);
+    }
+  }, [router.asPath]);
 
   const steps = [
     {
@@ -81,7 +101,7 @@ const Plan = () => {
       content: <ConfirmPayment handlePrevious={prev} encryptionOderData={s_encryptionOderData} />,
     },
     {
-      title: "Pay Results : Success",
+      title: "Payment Result",
       content: (
         <PayResultSuccess encryptionOderData={s_encryptionOderData} setCancelSubscribeModalVisible={set_s_showModal} />
       ),
