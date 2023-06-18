@@ -69,9 +69,10 @@ const Plan = () => {
   useEffect(() => {
     console.log("--- router: ", router);
     const [_, queryData] = decodeURI(router.asPath).split("?");
-    const [query] = queryData.split("&").map((item) => {
+    const query: { [key: string]: string } = {};
+    queryData.split("&").forEach((item) => {
       const [key, value] = item.split("=");
-      return { [key]: value };
+      query[key] = value;
     });
     const { Status, MerchantOrderNo, PaymentType, PayTime, Amt, ItemDesc } = query;
     console.log("🚀 ~ file: index.tsx:77 ~ useEffect ~ query:", query);
@@ -106,10 +107,6 @@ const Plan = () => {
           <PayResultFail />
         ),
     },
-    // {
-    //   title: "Pay Results : Failed",
-    //   content: <PayResultFail />,
-    // },
   ];
 
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
