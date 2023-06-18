@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import bodyParser from "body-parser";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
