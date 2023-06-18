@@ -68,7 +68,12 @@ const Plan = () => {
 
   useEffect(() => {
     console.log("--- router: ", router);
-    const { Status, MerchantOrderNo, PaymentType, PayTime, Amt, ItemDesc } = router.query;
+    const [_, queryData] = decodeURI(router.asPath).split("?");
+    const [query] = queryData.split("&").map((item) => {
+      const [key, value] = item.split("=");
+      return { [key]: value };
+    });
+    const { Status, MerchantOrderNo, PaymentType, PayTime, Amt, ItemDesc } = query;
     if (MerchantOrderNo) {
       set_s_returnData({
         Status: `${Status}`,
