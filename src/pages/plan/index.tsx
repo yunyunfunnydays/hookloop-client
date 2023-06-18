@@ -9,25 +9,17 @@ import CancelSubscribeModal from "@/pageComponents/planAndPayment/CancelSubscrib
 import PayResultSuccess from "@/pageComponents/planAndPayment/PayResultSuccess";
 import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
+import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
 
-interface TradeInfoRecordType {
+export interface ITradeInfoRecordType {
   Status: string;
-  Message: string;
-  Result: {
-    MerchantID: string;
-    Amt: number;
-    TradeNo: string;
-    MerchantOrderNo: string;
-    RespondType: string;
-    IP: string;
-    EscrowBank: string;
-    PaymentType: string;
-    PayTime: string;
-    PayerAccount5Code: string;
-    PayBankCode: string;
-  };
+  MerchantOrderNo: string;
+  PaymentType: string;
+  PayTime: string;
+  Amt: number;
+  ItemDesc: string;
 }
-interface PaymentReturnType {
+interface IPaymentReturnType {
   Status: string;
   MerchantID: string;
   Version: string;
@@ -41,7 +33,7 @@ const Plan = () => {
   const [s_loading, set_s_loading] = useState(false);
   const [s_showLogin, set_s_showLogin] = useState(false);
   const [s_encryptionOderData, set_s_encryptionOderData] = useState<ICreateOrderReturnType>();
-  const [s_formData, set_s_formData] = useState<PaymentReturnType>();
+  const [s_returnData, set_s_returnData] = useState<ITradeInfoRecordType>();
   // const next = () => {
   //   set_s_current(s_current + 1);
   // };
@@ -89,11 +81,17 @@ const Plan = () => {
   };
 
   useEffect(() => {
-    console.log("--- window: ", window.location.href);
-    console.log("--- router: ", router);
-    if (router.query.paymentReturn === "true") {
-      // 在頁面載入時處理藍新金流回傳資訊
-      // handlePaymentReturn();
+    console.log("--- router: ", router.query);
+    const { Status, MerchantOrderNo, PaymentType, PayTime, Amt, ItemDesc } = router.query;
+    if (router.query) {
+      set_s_returnData({
+        Status: `${Status}`,
+        MerchantOrderNo: `${MerchantOrderNo}`,
+        PaymentType: `${PaymentType}`,
+        PayTime: `${PayTime}`,
+        Amt: Number(`${Amt}`),
+        ItemDesc: `${ItemDesc}`,
+      });
     }
   }, [router.asPath]);
 
@@ -108,9 +106,12 @@ const Plan = () => {
     },
     {
       title: "Payment Result",
-      content: (
-        <PayResultSuccess encryptionOderData={s_encryptionOderData} setCancelSubscribeModalVisible={set_s_showModal} />
-      ),
+      content:
+        router.query.Status === "SUCCESS" ? (
+          <PayResultSuccess returnData={s_returnData} setCancelSubscribeModalVisible={set_s_showModal} />
+        ) : (
+          <PayResultFail />
+        ),
     },
     // {
     //   title: "Pay Results : Failed",
@@ -136,23 +137,6 @@ const Plan = () => {
 
       {/* 取消訂閱的 Modal */}
       <CancelSubscribeModal visible={s_showModal} setVisible={set_s_showModal} />
-      <form
-        action="https://hookloop-client.onrender.com/plan?paymentReturn=true"
-        method="post"
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <input type="text" name="TradeSha" value={s_formData?.Status} hidden />
-        <input type="text" name="TradeInfo" value={s_formData?.MerchantID} hidden />
-        <input type="text" name="TimeStamp" value={s_formData?.TradeInfo} hidden />
-        <input type="text" name="Version" value={s_formData?.TradeSha} hidden />
-        <input type="text" name="MerchantID" value={s_formData?.Version} hidden />
-        <button
-          type="submit"
-          style={{ display: "inline-block", background: "#000", color: "#fff", padding: "5px 15px", margin: 10 }}
-        >
-          Get Payment Return
-        </button>
-      </form>
     </Spin>
   );
 };

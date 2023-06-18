@@ -5,41 +5,46 @@ import icon_menu from "@/assets/icon_menu.svg";
 import balloon_orange from "@/assets/balloon_orange.svg";
 import balloon_white from "@/assets/balloon_white.svg";
 import icon_creditcard from "@/assets/icon_creditcard.svg";
+// eslint-disable-next-line import/no-cycle
+import { ITradeInfoRecordType } from "@/pages/plan";
+import dayjs from "dayjs";
 
 interface PayResultSuccessProps {
-  encryptionOderData?: ICreateOrderReturnType;
+  returnData?: ITradeInfoRecordType;
   setCancelSubscribeModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const PayResultSuccess = (props: PayResultSuccessProps) => {
-  const { encryptionOderData, setCancelSubscribeModalVisible } = props;
+  const { returnData, setCancelSubscribeModalVisible } = props;
+  const startDate = dayjs();
+  const endDate = startDate.add(30, "day");
 
   const tableContent = [
     [
       {
-        title: "Date",
-        content: encryptionOderData?.tradeInfo?.TimeStamp,
+        title: "PayTime",
+        content: returnData?.PayTime,
       },
       {
         title: "MerchantOrderNo",
-        content: encryptionOderData?.tradeInfo?.MerchantOrderNo,
+        content: returnData?.MerchantOrderNo,
       },
       {
-        title: "Accept Payment Method",
-        content: encryptionOderData?.tradeInfo?.WEBATM === 1 ? "WEBATM" : "",
+        title: "PaymentType",
+        content: returnData?.PaymentType,
       },
     ],
     [
       {
         title: "Plan",
-        content: encryptionOderData?.tradeInfo?.ItemDesc,
+        content: returnData?.ItemDesc,
       },
       {
         title: "Period",
-        content: "Mar 13, 2023 - Apr 13, 2023",
+        content: `${startDate.format("YYYY / MM / DD")} ~ ${endDate.format("YYYY / MM / DD")}`,
       },
       {
         title: "Amount",
-        content: `$ ${encryptionOderData?.tradeInfo?.Amt || ""}`,
+        content: `$ ${returnData?.Amt || ""}`,
       },
     ],
   ];
