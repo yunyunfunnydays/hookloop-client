@@ -298,7 +298,7 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
       </Button>
     </>
   );
-
+  console.log("form.getFieldsValue() = ", form.getFieldsValue());
   return (
     <Spin spinning={s_isLoaging}>
       {modalContextHolder}

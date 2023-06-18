@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Layout } from "antd";
 import { DoubleRightOutlined } from "@ant-design/icons";
+import GlobalContext from "@/Context/GlobalContext";
 // component
 import CustSider from "./CustSider";
 
@@ -11,6 +12,7 @@ interface IProps {
 
 const Index: React.FC<IProps> = ({ children }) => {
   // 控制 Sider 收合的開關
+  // const { portal } = useContext(GlobalContext);
   const [s_collapsed, set_s_collapsed] = useState(false);
   return (
     <Layout className="h-[calc(100vh_-_80px)] bg-white p-0">
