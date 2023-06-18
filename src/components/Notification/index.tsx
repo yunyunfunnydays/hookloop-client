@@ -134,7 +134,7 @@ const Notification: React.FC = () => {
                       size="small"
                       className="mx-auto block"
                       disabled={msg.isRead}
-                      defaultChecked={!msg.isRead}
+                      checked={!msg.isRead}
                       onClick={() => markIsRead(msg._id)}
                     />
                     <small className="ml-auto block">mark as read</small>
