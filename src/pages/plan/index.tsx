@@ -10,6 +10,30 @@ import PayResultSuccess from "@/pageComponents/planAndPayment/PayResultSuccess";
 import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
 
+interface TradeInfoRecordType {
+  Status: string;
+  Message: string;
+  Result: {
+    MerchantID: string;
+    Amt: number;
+    TradeNo: string;
+    MerchantOrderNo: string;
+    RespondType: string;
+    IP: string;
+    EscrowBank: string;
+    PaymentType: string;
+    PayTime: string;
+    PayerAccount5Code: string;
+    PayBankCode: string;
+  };
+}
+interface PaymentReturnType {
+  Status: string;
+  MerchantID: string;
+  Version: string;
+  TradeInfo: string;
+  TradeSha: string;
+}
 const Plan = () => {
   const router = useRouter();
   const [s_current, set_s_current] = useState(0);
@@ -17,7 +41,7 @@ const Plan = () => {
   const [s_loading, set_s_loading] = useState(false);
   const [s_showLogin, set_s_showLogin] = useState(false);
   const [s_encryptionOderData, set_s_encryptionOderData] = useState<ICreateOrderReturnType>();
-
+  const [s_formData, set_s_formData] = useState<PaymentReturnType>();
   // const next = () => {
   //   set_s_current(s_current + 1);
   // };
@@ -63,31 +87,13 @@ const Plan = () => {
       set_s_loading(false);
     }
   };
-  const handlePaymentReturn = () => {
-    // 擷取 URL 中的查詢字串參數
-    const searchParams = new URLSearchParams(window.location.search);
-    const formData = Object.fromEntries(searchParams.entries());
-
-    // 根據回傳資料進行相應的處理
-    if (formData.Status === "SUCCESS") {
-      // 支付成功處理邏輯
-      console.log("支付成功");
-      console.log("訊息:", formData.Message);
-      // 其他相關處理
-    } else {
-      // 支付失敗處理邏輯
-      console.log("支付失敗");
-      console.log("錯誤訊息:", formData.Message);
-      // 其他相關處理
-    }
-  };
 
   useEffect(() => {
+    console.log("--- window: ", window.location.href);
+    console.log("--- router: ", router);
     if (router.query.paymentReturn === "true") {
       // 在頁面載入時處理藍新金流回傳資訊
-      handlePaymentReturn();
-      console.log("--- window: ", window.location.href);
-      console.log("--- router: ", router);
+      // handlePaymentReturn();
     }
   }, [router.asPath]);
 
@@ -130,6 +136,23 @@ const Plan = () => {
 
       {/* 取消訂閱的 Modal */}
       <CancelSubscribeModal visible={s_showModal} setVisible={set_s_showModal} />
+      <form
+        action="https://hookloop-client.onrender.com/plan?paymentReturn=true"
+        method="post"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <input type="text" name="TradeSha" value={s_formData?.Status} hidden />
+        <input type="text" name="TradeInfo" value={s_formData?.MerchantID} hidden />
+        <input type="text" name="TimeStamp" value={s_formData?.TradeInfo} hidden />
+        <input type="text" name="Version" value={s_formData?.TradeSha} hidden />
+        <input type="text" name="MerchantID" value={s_formData?.Version} hidden />
+        <button
+          type="submit"
+          style={{ display: "inline-block", background: "#000", color: "#fff", padding: "5px 15px", margin: 10 }}
+        >
+          Get Payment Return
+        </button>
+      </form>
     </Spin>
   );
 };
