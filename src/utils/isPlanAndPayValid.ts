@@ -1,4 +1,4 @@
-const isPlanAndPayValid = (currentPlan: IPlan) => {
+const isPlanAndPayValid = (currentPlan: IPlan): boolean => {
   /** 檢查方案是否付費 或 過期 (免費版沒有期限) */
   const today = new Date();
   const targetEndDate = new Date(currentPlan.endAt);
@@ -11,3 +11,4 @@ const isPlanAndPayValid = (currentPlan: IPlan) => {
   }
   return true;
 };
+export default isPlanAndPayValid;
