@@ -1,7 +1,7 @@
 import { AxiosResponse as axiosRes } from "axios";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Dayjs } from "dayjs";
-import { PlanOptions } from "./pageComponents/planAndPayment/Plan";
+import { PlanOptions } from "./components/Plan";
 
 declare global {
   interface AxiosResponse extends axiosRes {}
@@ -13,6 +13,27 @@ declare global {
     password: string;
     avatar: string;
     userId: string;
+    currentPlan?: IPlan;
+  }
+
+  interface IUserApiResponse {
+    token: string;
+    user: {
+      id: string;
+      email: string;
+      username: string;
+      avatar: string;
+      isArchived: boolean;
+      lastActiveTime: string;
+      createdAt: string;
+      updatedAt: string;
+      currentPlan?: {
+        userId?: string | null;
+        name?: string | null;
+        endAt?: string | null;
+        status?: "UN-PAID" | "NONE" | "PAY-SUCCESS" | "PAY-FAIL" | null;
+      };
+    };
   }
 
   interface IApiResponse<T = any> {
@@ -149,6 +170,13 @@ declare global {
 
   interface IPlanOrder {
     targetPlan: PlanOptions;
+  }
+
+  interface IPlan {
+    userId: string;
+    name: PlanOptions;
+    endAt: string;
+    status: "UN-PAID" | "NONE" | "PAY-SUCCESS" | "PAY-FAIL";
   }
 
   interface IPaymentTradeInfoType {
