@@ -148,7 +148,6 @@ const Login: React.FC<ILogin> = (props) => {
       confirm: "",
     });
     set_s_editType("login");
-    set_s_loading(false);
   };
 
   // 因為登入、註冊完成時要做的事情一樣，所以將功能拉出來共用

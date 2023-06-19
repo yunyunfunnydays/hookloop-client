@@ -151,6 +151,12 @@ declare global {
     targetPlan: PlanOptions;
   }
 
+  interface IPlan {
+    name: "Free" | "Standard" | "Premium";
+    endAt: string;
+    status: "UN-PAID" | "NONE" | "PAY-SUCCESS" | "PAY-FAIL";
+  }
+
   interface IPaymentTradeInfoType {
     MerchantID: string;
     RespondType: string;
