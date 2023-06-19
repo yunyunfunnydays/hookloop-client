@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import { useRouter } from "next/router";
-import PlanComponent from "@/pageComponents/planAndPayment/Plan";
+import PlanComponent from "@/components/Plan";
 
 interface ChooseYourPlanProps {
   handleConfirmOrder: () => Promise<void>;

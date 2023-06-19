@@ -1,5 +1,5 @@
 import GlobalContext from "@/Context/GlobalContext";
-import { PlanOptions } from "@/pageComponents/planAndPayment/Plan";
+import { PlanOptions } from "@/components/Plan";
 import { useContext } from "react";
 
 enum AvailableWorkspaceTotal {
