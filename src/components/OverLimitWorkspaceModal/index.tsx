@@ -1,4 +1,4 @@
-import { Button, Modal, Space } from "antd";
+import { Button, Divider, Modal, Space } from "antd";
 import { ExclamationCircleTwoTone } from "@ant-design/icons";
 import { useRouter } from "next/router";
 
@@ -11,17 +11,16 @@ const OverLimitWorkspaceModal = (props: ModalProps) => {
   const router = useRouter();
 
   return (
-    <Modal title="Basic Modal" open={open} onCancel={() => setOpen(false)}>
-      <section className="flex flex-col text-center">
-        <Space>
-          <ExclamationCircleTwoTone twoToneColor="#ffa940" />
-          <h3 className="text-[32px] font-bold">Oops! No more Workspaces available!</h3>
-        </Space>
+    <Modal open={open} onCancel={() => setOpen(false)} maskClosable={false} footer={false}>
+      <Space>
+        <ExclamationCircleTwoTone twoToneColor="#ffa940" className="text-[20px] font-bold" />
+        <h3 className="text-[20px] font-bold">Oops! No more Workspaces available!</h3>
+      </Space>
+      <Divider dashed />
 
-        <Button type="primary" className="w-46 mx-auto" onClick={() => router.push("/plan")}>
-          Want more workspaces ?
-        </Button>
-      </section>
+      <Button type="primary" className="mx-auto w-full" onClick={() => router.push("/plan")}>
+        Want more workspaces ?
+      </Button>
     </Modal>
   );
 };

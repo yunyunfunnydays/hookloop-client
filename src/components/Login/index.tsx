@@ -125,7 +125,6 @@ const Login: React.FC<ILogin> = (props) => {
   };
 
   const switchRouter = (data: any) => {
-    console.log("🚀 ~ file: index.tsx:128 ~ switchRouter ~ data:", data);
     if (Router.pathname.includes("/plan")) {
       Router.push(Router.asPath);
       return;

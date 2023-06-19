@@ -24,8 +24,10 @@ import GlobalContext from "@/Context/GlobalContext";
 // component
 import AddKanban from "@/components/Kanban/AddKanban";
 import CreateWorkSpaceModal from "@/components/Workspace/CreateWorkSpaceModal";
+import { hasAvailableWorkspaceByPlan } from "@/utils";
 import MemberModal from "../Workspace/MemberModal";
 import SettingModal from "../Workspace/SettingModal";
+import OverLimitWorkspaceModal from "../OverLimitWorkspaceModal";
 
 interface IProps {
   s_collapsed: boolean;
@@ -33,7 +35,7 @@ interface IProps {
 }
 
 const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
-  const { c_workspaces, c_getAllWorkspace, set_c_user } = useContext(GlobalContext);
+  const { c_workspaces, c_getAllWorkspace, set_c_user, c_user } = useContext(GlobalContext);
 
   // 目前點選的 workspace
   const [s_workspace, set_s_workspace] = useState<Iworkspace>(workspaceInitValue);
@@ -46,6 +48,9 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
 
   // 顯示選擇 Member 的開關
   const [s_isShowMember, set_s_isShowMember] = useState(false);
+
+  // 顯示選擇 超出方案可增 Workspace 數量的開關
+  const [s_overLimitWorkspaceModalVisible, set_s_overLimitWorkspaceModalVisible] = useState(false);
 
   const archived = async (workspaceId: string) => {
     const res: AxiosResponse = await archivedWorkspace(workspaceId);
@@ -166,7 +171,16 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           size="small"
           shape="circle"
           icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
-          onClick={() => set_s_isShowModal(true)}
+          onClick={() => {
+            if (c_user.currentPlan) {
+              const canCreateWorkspace = hasAvailableWorkspaceByPlan(c_user.currentPlan, c_workspaces);
+              if (canCreateWorkspace) {
+                set_s_isShowModal(true);
+              } else {
+                set_s_overLimitWorkspaceModalVisible(true);
+              }
+            }
+          }}
         />
       </section>
 
@@ -231,6 +245,8 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           <SettingModal s_workspace={s_workspace} set_s_showWorkspaceSetting={set_s_showWorkspaceSetting} />
         )}
       </Modal>
+
+      <OverLimitWorkspaceModal open={s_overLimitWorkspaceModalVisible} setOpen={set_s_overLimitWorkspaceModalVisible} />
     </Layout.Sider>
   );
 };
