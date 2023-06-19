@@ -69,6 +69,9 @@ const Plan = () => {
   useEffect(() => {
     console.log("--- router: ", router);
     const [_, queryData] = decodeURI(router.asPath).split("?");
+    if (!queryData) {
+      return;
+    }
     const query: { [key: string]: string } = {};
     queryData.split("&").forEach((item) => {
       const [key, value] = item.split("=");
