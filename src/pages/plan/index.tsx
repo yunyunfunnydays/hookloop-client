@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Steps, message } from "antd";
 
-import { PlanOptions } from "@/pageComponents/planAndPayment/Plan";
+import { PlanOptions } from "@/components/Plan";
 import { useRouter } from "next/router";
 import { createOrder, verifyUserToken } from "@/service/api";
 import Login from "@/components/Login";

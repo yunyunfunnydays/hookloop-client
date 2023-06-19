@@ -27,7 +27,8 @@ import GlobalContext from "@/Context/GlobalContext";
 import { IApiResponse } from "@/service/instance";
 import { createUser, forgetPassword, login } from "@/service/api";
 import Timer from "@/components/Timer";
-import { trimValues } from "@/utils";
+import { isPlanAndPayValid, trimValues } from "@/utils";
+import ExpiredOrInvalidPaymentModal from "../ExpiredOrInvalidPaymentModal";
 
 interface ILogin {
   open: boolean;
@@ -47,7 +48,7 @@ const Login: React.FC<ILogin> = (props) => {
    * editType 指定目前情境是[登入][註冊][忘記密碼]
    */
   const { open, close, editType } = props;
-  const { set_c_user, c_showPortal } = useContext(GlobalContext);
+  const { c_user, set_c_user, c_showPortal } = useContext(GlobalContext);
   const [form] = Form.useForm();
 
   // API 錯誤時用來讓使用者明確知道錯在哪裡
@@ -59,10 +60,11 @@ const Login: React.FC<ILogin> = (props) => {
 
   // 點擊按鈕 call API 等待過程，給轉圈圈優化使用者體驗
   const [s_loading, set_s_loading] = useState(false);
+  // 重設密碼寄出狀態、定時設定
   const [s_reset_password_email_status, set_s_reset_password_email_status] = useState(false);
   const [s_reset_password_timer, set_s_reset_password_timer] = useState(false);
 
-  // const ICON_STYLE = "cursor-pointer mb-2";
+  const [s_invalidPaymentModal_visible, set_s_invalidPaymentModal_visible] = useState(false);
 
   // 按鈕基本樣式
   const SUBMIT_BTN = "w-[120px] h-[32px] py-[4px] px-[15px] font-semibold";
@@ -122,22 +124,31 @@ const Login: React.FC<ILogin> = (props) => {
     return "90%";
   };
 
+  const switchRouter = (data: any) => {
+    if (Router.pathname.includes("/plan")) {
+      Router.push(Router.asPath);
+      return;
+    }
+
+    const isValidforPayment = isPlanAndPayValid(data.user.currentPlan);
+    if (isValidforPayment) {
+      Router.push("/dashboard");
+    } else {
+      set_s_invalidPaymentModal_visible(true);
+    }
+  };
+
   // 因為登入、註冊完成時要做的事情一樣，所以將功能拉出來共用
   const handleResponse = (res: IApiResponse) => {
     const { data, message, status } = res;
     if (status === "success") {
       Cookies.set("hookloop-token", data.token);
-      // 這邊登入、註冊後端給的不一樣, 之後記得改
       set_c_user({
-        userId: data.user.id || data.user._id,
+        userId: data.user.id,
         ...data.user,
       });
       c_showPortal();
-      if (Router.pathname.includes("/plan")) {
-        Router.push(Router.asPath);
-      } else {
-        Router.push("/dashboard");
-      }
+      switchRouter(data);
       close();
     } else {
       msg.error(message);
@@ -148,7 +159,6 @@ const Login: React.FC<ILogin> = (props) => {
       confirm: "",
     });
     set_s_editType("login");
-    set_s_loading(false);
   };
 
   // 因為登入、註冊完成時要做的事情一樣，所以將功能拉出來共用
@@ -170,9 +180,9 @@ const Login: React.FC<ILogin> = (props) => {
   const onFinish = async (values: IUser) => {
     if (s_editType === "login") {
       set_s_loading(true);
-      const res: AxiosResponse = await login(trimValues(values));
+      const res = await login(trimValues(values));
 
-      const { status } = res.data as IApiResponse;
+      const { status } = res.data;
       if (status === "success") {
         handleResponse(res.data);
       } else {
@@ -224,173 +234,171 @@ const Login: React.FC<ILogin> = (props) => {
   }, [open, editType]);
 
   return (
-    <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
-      <Spin spinning={s_loading}>
-        {contextHolder}
-        <div className="flex flex-col items-center p-[25px] pt-[7px]">
-          <Form
-            layout="vertical"
-            name="basic"
-            form={form}
-            onFinish={onFinish}
-            className="flex w-full flex-col items-center gap-[40px]"
-          >
-            <Image src={logo} alt="HOOK LOOP" className="mt-5" />
-
-            <Form.Item
-              name="email"
-              className="w-full"
-              label={<Title level={5}>Email</Title>}
-              rules={[
-                { required: true },
-                {
-                  type: "email",
-                  message: "The input is not valid E-mail!",
-                },
-              ]}
+    <>
+      <Modal width={getWidth()} destroyOnClose open={open} onCancel={handleCancel} footer={null}>
+        <Spin spinning={s_loading}>
+          {contextHolder}
+          <div className="flex flex-col items-center p-[25px] pt-[7px]">
+            <Form
+              layout="vertical"
+              name="basic"
+              form={form}
+              onFinish={onFinish}
+              className="flex w-full flex-col items-center gap-[40px]"
             >
-              <Input placeholder="type your email" size="large" />
-            </Form.Item>
+              <Image src={logo} alt="HOOK LOOP" className="mt-5" />
 
-            {s_editType === "signUp" && (
               <Form.Item
-                label={<Title level={5}>Username</Title>}
+                name="email"
                 className="w-full"
-                name="username"
-                rules={[{ required: true }]}
+                label={<Title level={5}>Email</Title>}
+                rules={[
+                  { required: true },
+                  {
+                    type: "email",
+                    message: "The input is not valid E-mail!",
+                  },
+                ]}
               >
-                <Input size="large" placeholder="type your username" />
+                <Input placeholder="type your email" size="large" />
               </Form.Item>
-            )}
 
-            {s_editType !== "forgetPassword" && (
-              <Row className="w-full">
-                <Col span={24} className="flex items-end gap-1">
-                  <Form.Item
-                    className="flex-1"
-                    label={<Title level={5}>Password</Title>}
-                    name="password"
-                    rules={[{ required: true }, { max: 20 }, { min: 8 }]}
-                  >
-                    <Input.Password
-                      size="large"
-                      placeholder="enter 8 to 20 letters."
-                      // iconRender={(_) => <div />}
-                      // visibilityToggle={{
-                      //   visible: s_passwordVisible,
-                      // }}
-                    />
-                  </Form.Item>
-                  {/* {s_passwordVisible ? (
-                    <EyeOutlined
-                      className={ICON_STYLE}
-                      onClick={() => set_s_passwordVisible((prev) => !prev)}
-                      style={{ fontSize: "24px" }}
-                    />
-                  ) : (
-                    <EyeInvisibleOutlined
-                      className={ICON_STYLE}
-                      onClick={() => set_s_passwordVisible((prev) => !prev)}
-                      style={{ fontSize: "24px" }}
-                    />
-                  )} */}
-                </Col>
-              </Row>
-            )}
+              {s_editType === "signUp" && (
+                <Form.Item
+                  label={<Title level={5}>Username</Title>}
+                  className="w-full"
+                  name="username"
+                  rules={[{ required: true }]}
+                >
+                  <Input size="large" placeholder="type your username" />
+                </Form.Item>
+              )}
 
-            {s_editType === "signUp" && (
+              {s_editType !== "forgetPassword" && (
+                <Row className="w-full">
+                  <Col span={24} className="flex items-end gap-1">
+                    <Form.Item
+                      className="flex-1"
+                      label={<Title level={5}>Password</Title>}
+                      name="password"
+                      rules={[{ required: true }, { max: 20 }, { min: 8 }]}
+                    >
+                      <Input.Password
+                        size="large"
+                        placeholder="enter 8 to 20 letters."
+                        // iconRender={(_) => <div />}
+                        // visibilityToggle={{
+                        //   visible: s_passwordVisible,
+                        // }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              )}
+
+              {s_editType === "signUp" && (
+                <Row className="w-full">
+                  <Col span={24}>
+                    <Form.Item
+                      name="confirm"
+                      label={<Title level={5}>Confirm Password</Title>}
+                      dependencies={["password"]}
+                      hasFeedback
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please confirm your password!",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (!value || getFieldValue("password") === value) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(new Error("The two passwords that you entered do not match!"));
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password size="large" placeholder="please confirm your password" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              )}
+
               <Row className="w-full">
                 <Col span={24}>
-                  <Form.Item
-                    name="confirm"
-                    label={<Title level={5}>Confirm Password</Title>}
-                    dependencies={["password"]}
-                    hasFeedback
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please confirm your password!",
-                      },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (!value || getFieldValue("password") === value) {
-                            return Promise.resolve();
-                          }
-                          return Promise.reject(new Error("The two passwords that you entered do not match!"));
-                        },
-                      }),
-                    ]}
-                  >
-                    <Input.Password size="large" placeholder="please confirm your password" />
+                  <Form.Item className="flex-center mb-2">
+                    <Button
+                      type="primary"
+                      className={s_editType === "forgetPassword" ? RESET_PASSWORD_SUBMIT_BTN : SUBMIT_BTN}
+                      htmlType="submit"
+                      disabled={s_editType === "forgetPassword" && s_reset_password_timer === true}
+                    >
+                      {s_editType === "login" && "Log in"}
+                      {s_editType === "signUp" && "Sign up"}
+                      {s_editType === "forgetPassword" && s_reset_password_timer === true && (
+                        <Space>
+                          Re-Send Email in
+                          <Timer setTimerTrigger={set_s_reset_password_timer} />
+                        </Space>
+                      )}
+                      {s_editType === "forgetPassword" &&
+                        s_reset_password_timer === false &&
+                        "Send Reset Password Email"}
+                    </Button>
                   </Form.Item>
                 </Col>
-              </Row>
-            )}
 
-            <Row className="w-full">
-              <Col span={24}>
-                <Form.Item className="flex-center mb-2">
-                  <Button
-                    type="primary"
-                    className={s_editType === "forgetPassword" ? RESET_PASSWORD_SUBMIT_BTN : SUBMIT_BTN}
-                    htmlType="submit"
-                    disabled={s_editType === "forgetPassword" && s_reset_password_timer === true}
+                {s_editType === "login" && (
+                  <Text
+                    type="secondary"
+                    underline
+                    className="flex-center mx-auto block cursor-pointer"
+                    onClick={() => toggleEditType("forgetPassword")}
                   >
-                    {s_editType === "login" && "Log in"}
-                    {s_editType === "signUp" && "Sign up"}
-                    {s_editType === "forgetPassword" && s_reset_password_timer === true && (
-                      <Space>
-                        Re-Send Email in
-                        <Timer setTimerTrigger={set_s_reset_password_timer} />
-                      </Space>
-                    )}
-                    {s_editType === "forgetPassword" && s_reset_password_timer === false && "Send Reset Password Email"}
-                  </Button>
-                </Form.Item>
-              </Col>
+                    Forget your password?
+                  </Text>
+                )}
+              </Row>
+            </Form>
 
-              {s_editType === "login" && (
-                <Text
-                  type="secondary"
-                  underline
-                  className="flex-center mx-auto block cursor-pointer"
-                  onClick={() => toggleEditType("forgetPassword")}
-                >
-                  Forget your password?
-                </Text>
-              )}
-            </Row>
-          </Form>
-
-          <div className="flex-center mt-[40px] h-[105px] w-full flex-col gap-2 bg-[#F5F5F5]">
-            <Title level={5}>{s_editType === "login" ? "Not have account yet?" : "Already have an account?"}</Title>
-            <Button
-              className={`text-black ${SUBMIT_BTN}`}
-              onClick={() => {
-                if (s_editType === "login") {
-                  toggleEditType("signUp");
-                } else {
-                  toggleEditType("login");
-                }
-              }}
-            >
-              {s_editType === "login" ? "Sign up" : "Log in"}
-            </Button>
-          </div>
-          {s_reset_password_email_status && (
-            <div className="flex-center mt-[20px] w-full flex-col bg-[#ffe8eb] p-[20px]">
-              <Title level={5} type="danger">
-                An email has been sent to your email.
-              </Title>
-              <Paragraph type="danger">
-                Follow the directions in the email to reset your password. <br />
-                The email reset authorization is available for 10 minutes.
-              </Paragraph>
+            <div className="flex-center mt-[40px] h-[105px] w-full flex-col gap-2 bg-[#F5F5F5]">
+              <Title level={5}>{s_editType === "login" ? "Not have account yet?" : "Already have an account?"}</Title>
+              <Button
+                className={`text-black ${SUBMIT_BTN}`}
+                onClick={() => {
+                  if (s_editType === "login") {
+                    toggleEditType("signUp");
+                  } else {
+                    toggleEditType("login");
+                  }
+                }}
+              >
+                {s_editType === "login" ? "Sign up" : "Log in"}
+              </Button>
             </div>
-          )}
-        </div>
-      </Spin>
-    </Modal>
+            {s_reset_password_email_status && (
+              <div className="flex-center mt-[20px] w-full flex-col bg-[#ffe8eb] p-[20px]">
+                <Title level={5} type="danger">
+                  An email has been sent to your email.
+                </Title>
+                <Paragraph type="danger">
+                  Follow the directions in the email to reset your password. <br />
+                  The email reset authorization is available for 10 minutes.
+                </Paragraph>
+              </div>
+            )}
+          </div>
+        </Spin>
+      </Modal>
+
+      {/* 付費方案過期或未付費提示 */}
+      <ExpiredOrInvalidPaymentModal
+        targetPlan={c_user?.currentPlan?.name}
+        open={s_invalidPaymentModal_visible}
+        setOpen={set_s_invalidPaymentModal_visible}
+      />
+    </>
   );
 };
 

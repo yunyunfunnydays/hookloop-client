@@ -4,7 +4,7 @@ import { AxiosResponse } from "axios";
 import instance from "./instance";
 
 // 登入
-export const login = (data: IUser) => {
+export const login = (data: IUser): Promise<AxiosResponse<IApiResponse<IUserApiResponse>>> => {
   return instance.post(`auth/login`, data);
 };
 
