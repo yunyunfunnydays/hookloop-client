@@ -155,6 +155,7 @@ const Plan = () => {
       set_s_current(2);
     }
   }, [router.asPath]);
+  console.log("c_user: ", c_user);
 
   const steps = [
     {
