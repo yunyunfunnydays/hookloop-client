@@ -79,7 +79,7 @@ export default function App({ Component, pageProps }: AppProps) {
         // 儲存使用者資訊
         set_c_user({
           ...data,
-          userId: data._id,
+          userId: data._id || data.id,
         });
         return;
       }
