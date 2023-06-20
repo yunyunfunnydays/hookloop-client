@@ -1,18 +1,21 @@
 import { Button } from "antd";
-import { useRouter } from "next/router";
 
-const PayResultFail = () => {
-  const router = useRouter();
+interface PayResultProps {
+  setCurrent: React.Dispatch<React.SetStateAction<number>>;
+}
+const PayResultFail = (props: PayResultProps) => {
+  const { setCurrent } = props;
 
   return (
     <section className="flex flex-col text-center">
       <h1 className="text-[32px] font-bold">Oops! Something went wrong!</h1>
-      <p className="my-6">
-        Sorry, there was an issue with your payment. Please try again or contact customer support for assistance.
-        contact our customer support team via email at yulaie1012@gmail.com.
+      <p className="text-[16px]">Sorry, there was an issue with your payment.</p>
+      <p className="text-[16px]">
+        Please try again or contact customer support for assistance. contact our customer support team via email at{" "}
+        <a href="mailto:hookloop.official@gmail.com">Service Mail</a> .
       </p>
-      <Button type="primary" className="w-46 mx-auto" onClick={() => router.push("/plan")}>
-        Try again (這裡怎麼用 form 表單？)
+      <Button type="primary" className="w-46 mx-auto mt-10" onClick={() => setCurrent(0)}>
+        Try again
       </Button>
     </section>
   );
