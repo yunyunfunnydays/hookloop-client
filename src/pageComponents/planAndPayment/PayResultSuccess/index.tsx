@@ -63,7 +63,7 @@ const PayResultSuccess = (props: PayResultSuccessProps) => {
           <div className="my-3 w-full border-b-2" />
           <Space>
             <h4 className="text-[16px]">Payment Status</h4>
-            {returnData?.Status && <Tag>{returnData?.Status}</Tag>}
+            {returnData?.Status && <Tag color="green">{returnData?.Status}</Tag>}
           </Space>
 
           <h2 className="mt-10 flex text-[20px] font-bold">
