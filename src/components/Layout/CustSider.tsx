@@ -172,6 +172,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
           shape="circle"
           icon={<PlusOutlined style={{ verticalAlign: "middle" }} />}
           onClick={() => {
+            console.log("🚀 ~ file: CustSider.tsx:176 ~ c_user:", c_user);
             if (c_user.currentPlan) {
               const canCreateWorkspace = hasAvailableWorkspaceByPlan(c_user.currentPlan, c_workspaces);
               if (canCreateWorkspace) {
