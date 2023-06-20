@@ -12,8 +12,8 @@ const nextConfig = {
     ],
   },
   env: {
-    rootUrl: process.env.NODE_ENV === "production" ? "https://hookloop-server.onrender.com" : "http://localhost:8080",
-    wsUrl: process.env.NODE_ENV === "production" ? "wss://hookloop-server.onrender.com" : "ws://localhost:8080",
+    rootUrl: process.env.NODE_ENV === "production" ? "http://ec2-3-83-67-168.compute-1.amazonaws.com:8080" : "http://localhost:8080",
+    wsUrl: process.env.NODE_ENV === "production" ? "http://ec2-3-83-67-168.compute-1.amazonaws.com:8080" : "ws://localhost:8080",
   },
 };
 
