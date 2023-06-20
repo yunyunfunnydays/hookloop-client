@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Router, { useRouter } from "next/router";
 import Image from "next/image";
-import { Grid, Button, Breadcrumb } from "antd";
+import { Grid, Button, Breadcrumb, Typography, Tag } from "antd";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 // logo
 import logo_white from "@/assets/logo_white.svg";
@@ -15,6 +15,7 @@ import { kanbanInitValue, workspaceInitValue } from "@/components/util/initValue
 import Notification from "@/components/Notification";
 import Login from "../Login";
 import CustAvatar from "../util/CustAvatar";
+import { PlanOptions } from "../Plan";
 
 const Header: React.FC = () => {
   const { c_user, c_workspaces } = useContext(GlobalContext);
@@ -92,8 +93,14 @@ const Header: React.FC = () => {
 
       {hasAuth ? (
         <div className="flex items-center gap-[24px]">
+          <Tag
+            className={`text-[16px] font-bold ${c_user.currentPlan?.name === PlanOptions.FREE && "text-[#fff]"} ${
+              c_user.currentPlan?.name === PlanOptions.STANDARD && "border-[#f0b63a] text-[#f0b63a]"
+            } ${c_user.currentPlan?.name === PlanOptions.PREMIUM && "border-[#e54764] text-[#e54764]"}`}
+          >
+            {c_user.currentPlan?.name}
+          </Tag>
           <Notification />
-
           <CustAvatar info={c_user} onClick={() => Router.push("/profile")} />
         </div>
       ) : (

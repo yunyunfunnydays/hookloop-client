@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Spin, Steps, message } from "antd";
+import { Spin, Steps, message, notification } from "antd";
 
 import { PlanOptions } from "@/components/Plan";
 import { useRouter } from "next/router";
@@ -11,11 +11,11 @@ import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
 import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
 import GlobalContext from "@/Context/GlobalContext";
-import dayjs from "dayjs";
 
 const Plan = () => {
   const router = useRouter();
-  const { c_user, set_c_user } = useContext(GlobalContext);
+  const { c_user } = useContext(GlobalContext);
+  const [api, contextHolder] = notification.useNotification();
   const [s_current, set_s_current] = useState(0);
   const [s_showModal, set_s_showModal] = useState(false);
   const [s_loading, set_s_loading] = useState(false);
@@ -72,7 +72,10 @@ const Plan = () => {
         c_user.currentPlan.name === PlanOptions.FREE ||
         (c_user.currentPlan.status === "PAY-SUCCESS" && validEndDate > today)
       ) {
-        message.info(`You have subscribed ${c_user.currentPlan.name} plan!`);
+        api.warning({
+          message: `You have subscribed ${c_user.currentPlan.name} plan!`,
+          placement: "topLeft",
+        });
         router.push("/dashboard");
         return;
       }
@@ -87,22 +90,32 @@ const Plan = () => {
         targetPlan === PlanOptions.FREE &&
         originalPlan !== PlanOptions.FREE
       ) {
-        message.error(`
-          You can't change to ${PlanOptions.FREE} plan !
-          Choose original plan : ${originalPlan} for keeping your workspaces !
-          Recommended: ${PlanOptions.PREMIUM} for unlimited workspaces !
-        `);
+        api.warning({
+          message: (
+            <>
+              <h4>You can`&apos;`t change to {PlanOptions.FREE} plan !</h4>
+              <p>Choose original plan : {originalPlan} for keeping your workspaces !</p>
+              <p>Recommended: {PlanOptions.PREMIUM} for unlimited workspaces !</p>
+            </>
+          ),
+          placement: "topLeft",
+        });
         return;
       }
       if (
         c_user.currentPlan.status === "PAY-SUCCESS" &&
         targetPlan === PlanOptions.STANDARD &&
-        originalPlan !== PlanOptions.PREMIUM
+        originalPlan === PlanOptions.PREMIUM
       ) {
-        message.error(`
-          You can't change to ${PlanOptions.STANDARD} plan !
-          Choose original plan : ${originalPlan} for keeping your workspaces !
-        `);
+        api.warning({
+          message: (
+            <>
+              <h4>You can`&apos;`t change to {PlanOptions.STANDARD} plan !</h4>
+              <p>Choose original plan : {originalPlan} for keeping your workspaces !</p>
+            </>
+          ),
+          placement: "topLeft",
+        });
         return;
       }
     }
@@ -118,7 +131,6 @@ const Plan = () => {
   };
 
   useEffect(() => {
-    console.log("--- router: ", router);
     const [_, queryData] = decodeURI(router.asPath).split("?");
     if (!queryData) {
       return;
@@ -140,22 +152,10 @@ const Plan = () => {
         ItemDesc: `${ItemDesc}`,
       });
 
-      // 更新使用者最新方案資訊
-      // set_c_user({
-      //   ...c_user,
-      //   currentPlan: {
-      //     userId: c_user.userId,
-      //     name: ItemDesc as PlanOptions,
-      //     status: `${Status === "SUCCESS" ? "PAY-SUCCESS" : "PAY-FAIL"}`,
-      //     endAt: dayjs().add(30, "day").format("YYYY-MM-DD"),
-      //   },
-      // });
-
       // 導向下一步：付款結果
       set_s_current(2);
     }
   }, [router.asPath]);
-  console.log("c_user: ", c_user);
 
   const steps = [
     {
@@ -180,7 +180,8 @@ const Plan = () => {
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   return (
-    <Spin spinning={s_loading} tip="Create Order...">
+    <Spin spinning={s_loading} tip={s_current === 0 ? "Create Order..." : "Create Order..."}>
+      {contextHolder}
       <section className="mx-auto mt-8 flex h-full w-[80%] flex-col justify-center lg:w-[900px]">
         <Steps progressDot current={s_current} items={items} />
         <div className="my-8">{steps[s_current].content}</div>
