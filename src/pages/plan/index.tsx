@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Spin, Steps, message } from "antd";
 
 import { PlanOptions } from "@/components/Plan";
@@ -10,19 +10,17 @@ import PayResultSuccess from "@/pageComponents/planAndPayment/PayResultSuccess";
 import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
 import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
+import GlobalContext from "@/Context/GlobalContext";
 
 const Plan = () => {
   const router = useRouter();
+  const { c_user } = useContext(GlobalContext);
   const [s_current, set_s_current] = useState(0);
   const [s_showModal, set_s_showModal] = useState(false);
   const [s_loading, set_s_loading] = useState(false);
   const [s_showLogin, set_s_showLogin] = useState(false);
   const [s_encryptionOderData, set_s_encryptionOderData] = useState<ICreateOrderReturnType>();
   const [s_returnData, set_s_returnData] = useState<ITradeInfoRecordType>();
-
-  // const next = () => {
-  //   set_s_current(s_current + 1);
-  // };
 
   const prev = () => {
     set_s_encryptionOderData(undefined);
@@ -34,23 +32,9 @@ const Plan = () => {
     set_s_showLogin(false);
   };
 
-  const handleConfirmOrder = async () => {
+  const handleCreateOrder = async () => {
     set_s_loading(true);
     try {
-      // (1) 確認方案：
-      if (!router.query.targetPlan) {
-        message.error("Choose a target Paln!");
-      }
-
-      // (2) 確認使用者身份：
-      const verifyUserResult = await verifyUserToken();
-      const { status, data } = verifyUserResult.data as IApiResponse;
-      if (status !== "success" || !data._id) {
-        // (3) 導向 登入Ｍodal 畫面
-        set_s_showLogin(true);
-        return;
-      }
-      // (4) 取得加密訂單資料
       const orderData: IPlanOrder = {
         targetPlan: router.query.targetPlan as PlanOptions,
       };
@@ -64,6 +48,72 @@ const Plan = () => {
     } finally {
       set_s_loading(false);
     }
+  };
+
+  const handleConfirmOrder = async () => {
+    // (1) 確認方案
+    if (!router.query.targetPlan) {
+      message.error("Choose a target Paln!");
+    }
+
+    // (2) 確認使用者身份
+    if (!c_user.email) {
+      set_s_showLogin(true);
+      return;
+    }
+
+    // (3) 確認使用者使用方案 與 選擇是否衝突
+    if (c_user.currentPlan?.name && c_user.currentPlan.name === router.query.targetPlan) {
+      // (3-1) 檢查付款時間是否已過期 與 付款狀態
+      const today = new Date();
+      const validEndDate = new Date(c_user.currentPlan.endAt);
+      if (
+        c_user.currentPlan.name === PlanOptions.FREE ||
+        (c_user.currentPlan.status === "PAY-SUCCESS" && validEndDate > today)
+      ) {
+        message.info(`You have subscribed ${c_user.currentPlan.name} plan!`);
+        router.push("/dashboard");
+        return;
+      }
+    }
+
+    if (c_user.currentPlan?.name && c_user.currentPlan.name !== router.query.targetPlan) {
+      // (3-2) 檢查原方案(已付費) 與 目標方案 是否會衝突
+      const originalPlan = c_user.currentPlan.name;
+      const targetPlan = router.query.targetPlan?.toString();
+      if (
+        c_user.currentPlan.status === "PAY-SUCCESS" &&
+        targetPlan === PlanOptions.FREE &&
+        originalPlan !== PlanOptions.FREE
+      ) {
+        message.error(`
+          You can't change to ${PlanOptions.FREE} plan !
+          Choose original plan : ${originalPlan} for keeping your workspaces !
+          Recommended: ${PlanOptions.PREMIUM} for unlimited workspaces !
+        `);
+        return;
+      }
+      if (
+        c_user.currentPlan.status === "PAY-SUCCESS" &&
+        targetPlan === PlanOptions.STANDARD &&
+        originalPlan !== PlanOptions.PREMIUM
+      ) {
+        message.error(`
+          You can't change to ${PlanOptions.STANDARD} plan !
+          Choose original plan : ${originalPlan} for keeping your workspaces !
+        `);
+        return;
+      }
+    }
+
+    // (4) 付費方案：取得加密訂單資料
+    if (router.query.targetPlan !== PlanOptions.FREE) {
+      await handleCreateOrder();
+      return;
+    }
+
+    // 免費方案，登入後直接進入 Dashboard 頁面
+    router.push("/dashboard");
   };
 
   useEffect(() => {
@@ -107,7 +157,7 @@ const Plan = () => {
         router.query.Status === "SUCCESS" ? (
           <PayResultSuccess returnData={s_returnData} setCancelSubscribeModalVisible={set_s_showModal} />
         ) : (
-          <PayResultFail />
+          <PayResultFail setCurrent={set_s_current} />
         ),
     },
   ];
