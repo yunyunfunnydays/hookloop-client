@@ -143,6 +143,8 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
     };
   });
 
+  console.log("c_user: ", c_user);
+
   return (
     <Layout.Sider
       trigger={null}
@@ -247,6 +249,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         )}
       </Modal>
 
+      {/* 超過方案使用數量提示 */}
       <OverLimitWorkspaceModal open={s_overLimitWorkspaceModalVisible} setOpen={set_s_overLimitWorkspaceModalVisible} />
     </Layout.Sider>
   );
