@@ -6,6 +6,7 @@ import balloon_orange from "@/assets/balloon_orange.svg";
 import balloon_white from "@/assets/balloon_white.svg";
 import icon_creditcard from "@/assets/icon_creditcard.svg";
 import dayjs from "dayjs";
+import { useRouter } from "next/router";
 
 interface PayResultSuccessProps {
   returnData?: ITradeInfoRecordType;
@@ -13,6 +14,7 @@ interface PayResultSuccessProps {
 }
 const PayResultSuccess = (props: PayResultSuccessProps) => {
   const { returnData, setCancelSubscribeModalVisible } = props;
+  const router = useRouter();
   const startDate = dayjs();
   const endDate = startDate.add(30, "day");
 
@@ -48,23 +50,25 @@ const PayResultSuccess = (props: PayResultSuccessProps) => {
   ];
 
   return (
-    <section>
+    <section className="border border-black p-8">
       <main className="relative flex flex-col">
         <Image className="mx-auto mb-5" src={logo_black} alt="HOOK LOOP" />
-        <div className="border border-black p-8">
-          <h2 className="mt-10 flex text-[20px] font-bold">
+        <div className="p-8">
+          <h2 className="mt-5 flex text-[20px] font-bold">
             <Space>
               <Image className="mr-2 w-6" src={icon_creditcard} alt="icon_creditcard" />
               Billing
-              <Tag color="magenta">幾月幾號 PAID</Tag>
             </Space>
           </h2>
           <div className="my-3 w-full border-b-2" />
-          <h3 className="font-medium text-gray-400">Credit Card</h3>
-          <p className="font-bold">****-****-4444</p>
+          <Space>
+            <h4 className="text-[16px]">Payment Status</h4>
+            {returnData?.Status && <Tag>{returnData?.Status}</Tag>}
+          </Space>
+
           <h2 className="mt-10 flex text-[20px] font-bold">
             <Image className="mr-2 w-6" src={icon_menu} alt="icon_menu" />
-            Check List / Invoices
+            Invoices
           </h2>
           <div className="my-3 w-full border-b-2" />
           <table className="w-full table-auto border border-[#F0F0F0]">
@@ -81,17 +85,27 @@ const PayResultSuccess = (props: PayResultSuccessProps) => {
               ))}
             </tbody>
           </table>
-          <Button className="mb-2 mt-10 font-bold" type="dashed" onClick={() => setCancelSubscribeModalVisible(true)}>
+          {/* <Button className="mb-2 mt-10 font-bold" type="dashed" onClick={() => setCancelSubscribeModalVisible(true)}>
             Cancel Subscription
           </Button>
-          <p>Canceled subscription will remain active until the end of the current billing period.</p>
+          <p>Canceled subscription will remain active until the end of the current billing period.</p> */}
         </div>
-        <Image className="absolute bottom-[-30px] right-[-50px]" src={balloon_orange} alt="balloon_orange" />
-        <Image className="absolute bottom-[-160px] right-[-10px]" src={balloon_white} alt="balloon_white" />
+        <Image
+          className="absolute"
+          style={{ bottom: "-30px", right: "-50px" }}
+          src={balloon_orange}
+          alt="balloon_orange"
+        />
+        <Image
+          className="absolute"
+          style={{ bottom: "-160px", right: "-10px" }}
+          src={balloon_white}
+          alt="balloon_white"
+        />
       </main>
 
-      <footer className="mx-auto mb-4 mt-16">
-        <Button type="primary" onClick={() => message.success("You have successfully subscribed!")}>
+      <footer className="mx-auto mb-4 mt-16 text-center">
+        <Button type="primary" onClick={() => router.push("/dashboard")}>
           Go to Dashboard
         </Button>
       </footer>
