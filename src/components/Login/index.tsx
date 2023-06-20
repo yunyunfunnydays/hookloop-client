@@ -27,8 +27,7 @@ import GlobalContext from "@/Context/GlobalContext";
 import { IApiResponse } from "@/service/instance";
 import { createUser, forgetPassword, login } from "@/service/api";
 import Timer from "@/components/Timer";
-import { isPlanAndPayValid, trimValues } from "@/utils";
-import ExpiredOrInvalidPaymentModal from "../ExpiredOrInvalidPaymentModal";
+import { trimValues } from "@/utils";
 
 interface ILogin {
   open: boolean;
@@ -48,7 +47,7 @@ const Login: React.FC<ILogin> = (props) => {
    * editType 指定目前情境是[登入][註冊][忘記密碼]
    */
   const { open, close, editType } = props;
-  const { c_user, set_c_user, c_showPortal } = useContext(GlobalContext);
+  const { set_c_user, c_showPortal } = useContext(GlobalContext);
   const [form] = Form.useForm();
 
   // API 錯誤時用來讓使用者明確知道錯在哪裡
