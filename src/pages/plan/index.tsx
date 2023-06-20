@@ -141,15 +141,15 @@ const Plan = () => {
       });
 
       // 更新使用者最新方案資訊
-      set_c_user({
-        ...c_user,
-        currentPlan: {
-          userId: c_user.userId,
-          name: ItemDesc as PlanOptions,
-          status: `${Status === "SUCCESS" ? "PAY-SUCCESS" : "PAY-FAIL"}`,
-          endAt: dayjs().add(30, "day").format("YYYY-MM-DD"),
-        },
-      });
+      // set_c_user({
+      //   ...c_user,
+      //   currentPlan: {
+      //     userId: c_user.userId,
+      //     name: ItemDesc as PlanOptions,
+      //     status: `${Status === "SUCCESS" ? "PAY-SUCCESS" : "PAY-FAIL"}`,
+      //     endAt: dayjs().add(30, "day").format("YYYY-MM-DD"),
+      //   },
+      // });
 
       // 導向下一步：付款結果
       set_s_current(2);
