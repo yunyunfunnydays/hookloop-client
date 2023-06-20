@@ -3,7 +3,7 @@ import { Spin, Steps, message } from "antd";
 
 import { PlanOptions } from "@/components/Plan";
 import { useRouter } from "next/router";
-import { createOrder, verifyUserToken } from "@/service/api";
+import { createOrder } from "@/service/api";
 import Login from "@/components/Login";
 import CancelSubscribeModal from "@/pageComponents/planAndPayment/CancelSubscribeModal";
 import PayResultSuccess from "@/pageComponents/planAndPayment/PayResultSuccess";
@@ -11,10 +11,11 @@ import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
 import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
 import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
 import GlobalContext from "@/Context/GlobalContext";
+import dayjs from "dayjs";
 
 const Plan = () => {
   const router = useRouter();
-  const { c_user } = useContext(GlobalContext);
+  const { c_user, set_c_user } = useContext(GlobalContext);
   const [s_current, set_s_current] = useState(0);
   const [s_showModal, set_s_showModal] = useState(false);
   const [s_loading, set_s_loading] = useState(false);
@@ -128,8 +129,8 @@ const Plan = () => {
       query[key] = value;
     });
     const { Status, MerchantOrderNo, PaymentType, PayTime, Amt, ItemDesc } = query;
-    console.log("🚀 ~ file: index.tsx:77 ~ useEffect ~ query:", query);
     if (MerchantOrderNo) {
+      // 存回傳結果資料
       set_s_returnData({
         Status: `${Status}`,
         MerchantOrderNo: `${MerchantOrderNo}`,
@@ -138,6 +139,19 @@ const Plan = () => {
         Amt: Number(`${Amt}`),
         ItemDesc: `${ItemDesc}`,
       });
+
+      // 更新使用者最新方案資訊
+      set_c_user({
+        ...c_user,
+        currentPlan: {
+          userId: c_user.userId,
+          name: ItemDesc as PlanOptions,
+          status: `${Status === "SUCCESS" ? "PAY-SUCCESS" : "PAY-FAIL"}`,
+          endAt: dayjs().add(30, "day").format("YYYY-MM-DD"),
+        },
+      });
+
+      // 導向下一步：付款結果
       set_s_current(2);
     }
   }, [router.asPath]);
