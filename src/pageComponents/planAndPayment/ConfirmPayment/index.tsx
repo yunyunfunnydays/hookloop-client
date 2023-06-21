@@ -39,7 +39,7 @@ const ConfirmPayment = (props: ConfirmPaymentProps) => {
             </span>
           </div>
 
-          <form action="https://ccore.newebpay.com/MPG/mpg_gateway" method="post" className="block">
+          <form action={process.env.PAY_TEST_MPG_URL} method="post" className="block">
             <input type="text" name="TradeSha" value={encryptionOderData?.shaEncrypted} hidden />
             <input type="text" name="TradeInfo" value={encryptionOderData?.aesEncrypted} hidden />
             <input type="text" name="TimeStamp" value={encryptionOderData?.tradeInfo?.TimeStamp} hidden />
