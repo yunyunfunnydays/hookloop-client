@@ -13,6 +13,8 @@ const ConfirmPayment = (props: ConfirmPaymentProps) => {
   const startDate = dayjs();
   const endDate = startDate.add(30, "day");
 
+  console.log("process.env.PAY_TEST_MPG_URL: ", process.env.PAY_TEST_MPG_URL);
+
   return (
     <section>
       <main className="flex flex-col">
