@@ -53,7 +53,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Landing Page</title>
+        <title>HOOKLOOP</title>
       </Head>
 
       <nav
