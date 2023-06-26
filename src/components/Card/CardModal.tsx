@@ -335,12 +335,13 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
           </Row>
 
           <Row gutter={[12, 0]}>
-            <Col span={24}>
+            <Col span={24} className="h-[250px]">
               <FieldLabel>Description</FieldLabel>
 
               <ReactQuill
                 theme="snow"
                 defaultValue={form.getFieldValue("description")}
+                className="h-[200px]"
                 modules={modules}
                 onChange={(value) => {
                   form.setFieldsValue({
@@ -349,7 +350,9 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
                 }}
               />
             </Col>
+          </Row>
 
+          <Row gutter={[12, 0]}>
             <Col span={24}>
               <Row gutter={[12, 0]} align="bottom">
                 <Col span={3} className="flex flex-col">
