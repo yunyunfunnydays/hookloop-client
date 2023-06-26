@@ -206,6 +206,7 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
         width="572px"
         open={s_isShowModal}
         onCancel={() => set_s_isShowModal(false)}
+        destroyOnClose
         footer={null}
       >
         {s_isShowModal && <CreateWorkSpaceModal set_s_isShowModal={set_s_isShowModal} />}

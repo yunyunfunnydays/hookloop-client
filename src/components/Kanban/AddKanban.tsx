@@ -12,7 +12,7 @@ const AddKanban: React.FC<AddKanbanProps> = ({ workspaceId }) => {
   return (
     <span className="add-kanban">
       <span role="presentation" onClick={() => set_s_isShowModal(true)}>
-        Add kanban`
+        Add kanban
       </span>
       {/* 建立 kanban 的 Modal */}
       <Modal

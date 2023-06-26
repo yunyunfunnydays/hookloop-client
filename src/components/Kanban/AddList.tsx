@@ -20,6 +20,7 @@ const AddList: React.FC<AddListProps> = () => {
   }, [s_isAddingList]);
 
   const handleListNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > 25) return;
     set_s_listName(e.target.value);
   };
 

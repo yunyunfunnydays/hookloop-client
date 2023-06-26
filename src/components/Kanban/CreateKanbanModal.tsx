@@ -37,8 +37,18 @@ const CreateKanbanModal: React.FC<CreateKanbanModalProps> = ({ workspaceId, set_
       set_s_isLoading(false);
       return;
     }
+    if (s_newDate.name.length < 2) {
+      messageApi.warning("kanban name should be at least 2 characters");
+      set_s_isLoading(false);
+      return;
+    }
     if (s_newDate.key === "") {
       messageApi.warning("please type key");
+      set_s_isLoading(false);
+      return;
+    }
+    if (s_newDate.key.length < 2) {
+      messageApi.warning("kanban key should be at least 2 characters");
       set_s_isLoading(false);
       return;
     }
