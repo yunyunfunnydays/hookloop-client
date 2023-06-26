@@ -105,6 +105,12 @@ const WorkspaceModal: React.FC<IProps> = ({ set_s_isShowModal }) => {
       set_s_isLoaging(false);
       return;
     }
+    if (s_newDate.workspaceName.length < 2) {
+      messageApi.error("workspace name length must be greater than 2");
+      set_s_isLoaging(false);
+      return;
+    }
+
     const res: AxiosResponse = await addWorkspace(s_newDate);
     const { status, message } = res.data as IApiResponse;
     if (status === "success") {
