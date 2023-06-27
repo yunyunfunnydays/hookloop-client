@@ -64,7 +64,17 @@ const CreateKanbanModal: React.FC<CreateKanbanModalProps> = ({ workspaceId, set_
     }
     c_getAllWorkspace();
     set_s_isLoading(false);
-    set_s_isShowModal(false);
+
+    // 回覆內容包含 suggestKey 時更新 s_newData
+    if (data?.customMessage && data?.customMessage?.suggestKey) {
+      set_s_newData({
+        ...s_newDate,
+        key: data?.customMessage?.suggestKey,
+        name: data?.customMessage?.suggestKey,
+      });
+    } else {
+      set_s_isShowModal(false);
+    }
   };
 
   return (
