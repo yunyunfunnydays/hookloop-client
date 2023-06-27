@@ -45,7 +45,6 @@ export const createTag = (kanbanId: string, data: Pick<ITag, "name" | "color" | 
   return instance.post(`kanbans/${kanbanId}/tag`, data, {
     headers: {
       Authorization: `Bearer ${Cookies.get("hookloop-token")}`,
-      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -55,7 +54,6 @@ export const updateTag = (kanbanId: string, data: Pick<ITag, "name" | "color" | 
   return instance.patch(`kanbans/${kanbanId}/tag/${tagId}`, data, {
     headers: {
       Authorization: `Bearer ${Cookies.get("hookloop-token")}`,
-      "Content-Type": "multipart/form-data",
     },
   });
 };

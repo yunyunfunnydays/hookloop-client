@@ -55,6 +55,7 @@ export const updateMe = (data: { username: string }) => {
 export const updateAvatar = (data: any) => {
   return instance.patch("/users/me", data, {
     headers: {
+      Authorization: `Bearer ${Cookies.get("hookloop-token")}`,
       "Content-Type": "multipart/form-data",
     },
   });
