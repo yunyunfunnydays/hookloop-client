@@ -24,12 +24,14 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    set_s_spinning(true);
     form.setFieldsValue({
       username: c_user.username,
       email: c_user.email,
     });
     // 避免抓到 avatar 空值
     set_s_avatarUrl(c_user.avatar);
+    set_s_spinning(false);
   }, [c_user, c_user.avatar]);
 
   // useEffect(() => {
@@ -91,15 +93,10 @@ const Profile = () => {
 
       if (status === "success") {
         set_c_user(data.userData);
-        set_s_spinning(false);
-
-        if (!s_spinning) {
-          msg.success(message);
-        }
       } else {
-        set_s_spinning(false);
         msg.error(message);
       }
+      set_s_spinning(false);
     } catch (err) {
       // error
     }
