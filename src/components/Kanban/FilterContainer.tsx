@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-boolean-value */
 import React, { useContext } from "react";
 import GlobalContext from "@/Context/GlobalContext";
 import { Checkbox, Row, Col, Typography, Divider, Select, Radio } from "antd";
@@ -21,7 +22,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
   const handleChange = (type: keyof IqueryType, value: HandleChangeValue) => {
     set_c_query({
       ...c_query,
-      [type]: value || "",
+      [type]: value,
     });
   };
   console.log("c_query = ", c_query);
@@ -29,7 +30,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
     <div className="flex flex-col">
       <Row gutter={[12, 12]}>
         <Col span={24}>
-          <Typography.Title level={5}>Reporters</Typography.Title>
+          <Typography.Title level={5}>Owner</Typography.Title>
         </Col>
         <Checkbox.Group
           className="member-chackbox flex flex-col gap-2"
@@ -50,7 +51,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
           }
         />
         <Col span={24}>
-          <Typography.Title level={5}>Members</Typography.Title>
+          <Typography.Title level={5}>Assignee</Typography.Title>
         </Col>
         <Checkbox.Group
           className="member-chackbox flex flex-col gap-2"
@@ -108,7 +109,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
                 className="w-full"
                 allowClear
                 value={c_query.priority}
-                onChange={(value) => handleChange("priority", value)}
+                onChange={(value) => handleChange("priority", value || "")}
                 options={[
                   { label: "Low", value: "Low" },
                   { label: "Medium", value: "Medium" },
@@ -130,7 +131,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
                 className="w-full"
                 allowClear
                 value={c_query.status}
-                onChange={(value) => handleChange("status", value)}
+                onChange={(value) => handleChange("status", value || "")}
                 options={[
                   { label: "Pending", value: "Pending" },
                   { label: "In Progress", value: "In Progress" },
@@ -150,9 +151,15 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ c_Tags, c_query, set_
         </Col>
 
         <Col span={24}>
-          <Radio.Group value={c_query.isMatch} onChange={(e) => handleChange("isMatch", e.target.value)}>
+          <Radio.Group
+            value={c_query.isMatch}
+            onChange={(e) => {
+              console.log(e.target.value);
+              handleChange("isMatch", e.target.value);
+            }}
+          >
             <Radio value={false}>Partially</Radio>
-            <Radio value>Fully</Radio>
+            <Radio value={true}>Fully</Radio>
           </Radio.Group>
         </Col>
       </Row>

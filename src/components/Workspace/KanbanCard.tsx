@@ -142,6 +142,7 @@ const KanbanCard: React.FC<IProps> = ({ kanbanData }) => {
         width="572px"
         open={s_showNameModal}
         onCancel={() => set_s_showNameModal(false)}
+        destroyOnClose
         footer={null}
       >
         {s_showNameModal && <RenameKanbanModal kanbanData={kanbanData} set_s_showNameModal={set_s_showNameModal} />}
