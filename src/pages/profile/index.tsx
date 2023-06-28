@@ -16,7 +16,7 @@ const Profile = () => {
   const { set_c_user, c_user } = useContext(GlobalContext);
   const [s_showChangePassword, set_s_showChangePassword] = useState<boolean>(false);
   const [s_spinning, set_s_spinning] = useState(false);
-  // const [s_avatarUrl, set_s_avatarUrl] = useState<string>("");
+  const [s_avatarUrl, set_s_avatarUrl] = useState<string>("");
   const [form] = Form.useForm();
 
   const closeChangePassword = (): void => {
@@ -28,7 +28,9 @@ const Profile = () => {
       username: c_user.username,
       email: c_user.email,
     });
-  }, [c_user]);
+    // 避免抓到 avatar 空值
+    set_s_avatarUrl(c_user.avatar);
+  }, [c_user, c_user.avatar]);
 
   // useEffect(() => {
   //   (async () => {
@@ -88,14 +90,16 @@ const Profile = () => {
       const { status, message, data } = res.data as IApiResponse;
 
       if (status === "success") {
-        msg.success(message);
-
         set_c_user(data.userData);
-        // set_s_avatarUrl(data.userData.avatar);
+        set_s_spinning(false);
+
+        if (!s_spinning) {
+          msg.success(message);
+        }
       } else {
+        set_s_spinning(false);
         msg.error(message);
       }
-      set_s_spinning(false);
     } catch (err) {
       // error
     }
@@ -117,11 +121,11 @@ const Profile = () => {
                   handleChangeAvatar(info);
                 }}
               >
-                {c_user.avatar.length > 0 ? (
+                {s_avatarUrl.length > 0 ? (
                   <Image
-                    src={`https://cdn.filestackcontent.com/${c_user.avatar}`}
+                    src={`https://cdn.filestackcontent.com/${s_avatarUrl}`}
                     alt="avatar"
-                    style={{ borderRadius: "100%" }}
+                    style={{ borderRadius: "100%", width: "100px", height: "100px" }}
                     width="100"
                     height="100"
                   />
