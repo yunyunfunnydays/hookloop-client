@@ -29,7 +29,7 @@ const Dashboard: React.FC<IProps> = () => {
   return (
     <CustLayout>
       <Head>
-        <title>dashboard</title>
+        <title>Dashboard</title>
       </Head>
       <div className="mt-5 flex flex-col py-[30px]">
         <section className="mt-5 flex flex-col gap-8">
