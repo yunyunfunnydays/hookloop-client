@@ -77,8 +77,8 @@ const Card: React.FC<CardProps> = ({ card, index }) => {
             <div className="flex gap-2">
               {Object.keys(c_Tags).length > 0 &&
                 card.tag?.map((tagId: string) => (
-                  <span key={tagId} className={`${c_Tags[tagId].color} rounded-[50px] px-2 py-1`}>
-                    <IconRenderer iconName={c_Tags[tagId].icon as keyof typeof AntdIcons} />
+                  <span key={tagId} className={`${c_Tags[tagId]?.color} rounded-[50px] px-2 py-1`}>
+                    <IconRenderer iconName={c_Tags[tagId]?.icon as keyof typeof AntdIcons} />
                     <span className="ml-2">{c_Tags[tagId]?.name}</span>
                   </span>
                 ))}
