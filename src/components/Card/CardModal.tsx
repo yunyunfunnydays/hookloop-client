@@ -207,7 +207,11 @@ const CardModal: React.FC<IProps> = ({ card, set_s_showCard }) => {
           // status="success"
           className="p-0"
           icon={<CustAvatar size={100} info={c_memberMap[modifyUserId]} />}
-          title={<span className="text-lg font-bold">Ariean made changed to this document.</span>}
+          title={
+            <span className="text-lg font-bold">
+              {c_memberMap[modifyUserId].username} made changed to this document.
+            </span>
+          }
           subTitle="Do you want to overwrite the current file?"
           extra={[
             <Button
