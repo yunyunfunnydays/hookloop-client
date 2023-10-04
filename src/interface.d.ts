@@ -160,13 +160,13 @@ declare global {
     id: string;
     cards: ICard1[];
   }
-  interface IDragItem {
-    private _id(arg0: number, length: number, _id: any, id: string): unknown;
-    id: string;
-    type: string;
-    currentListId: string;
-    currentCardIndex?: number;
-  }
+  // interface IDragItem {
+  //   private _id(arg0: number, length: number, _id: any, id: string): unknown;
+  //   id: string;
+  //   type: string;
+  //   currentListId: string;
+  //   currentCardIndex?: number;
+  // }
 
   interface IPlanOrder {
     targetPlan: PlanOptions;
