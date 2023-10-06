@@ -19,7 +19,9 @@
 ***
 
 ``` typescript
-declare global {}
+declare global {
+  '注意其中不是'
+}
 ```
 #### 擴展全域命名空間
 - 使用 `declare global {}`，是在擴展全域命名空間（global namespace）。在這個命名空間內部定義的類型和變量將成為全域可用，**無需進行 import**。
@@ -178,4 +180,6 @@ interface IListsCards {
   ```
 ### IDragItem
 定義拖拉項目的資料結構。
+
+沒用到且 private 設定不明白。
   
