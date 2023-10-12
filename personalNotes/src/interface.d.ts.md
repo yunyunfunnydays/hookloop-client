@@ -97,7 +97,10 @@ interface AxiosResponse extends axiosRes {}
   state: "create" | "delete";
   }
   type ImemberRecord = Record<string, Imember>;
-  //取代{ [key: string]: Imember }
+  //取代  
+  interface ImemberRecord {
+    [key: string]: Imember 
+    }
   ```
 
   這是一個 TypeScript 的類型別名（type alias），使用了 TypeScript 內建的工具型別 `Record`。
@@ -125,22 +128,22 @@ interface AxiosResponse extends axiosRes {}
   其中，`member1`、`member2` 等都是字串鍵 `string`，而每個鍵對應的值都符合 `Imember` 的型別。
 
   使用 `Record` 工具型別可以快速地建立這種鍵-值對映的物件型別，而不需要使用索引簽章（如 `{ [key: string]: Imember }`）。
-***
-```typescript
-interface IListsCards {
-  cards: { [key: string]: ICard };
-  lists: { [key: string]: IList };
-  listOrder: string[];
-}
-```
-  相當於
+
   ```typescript
   interface IListsCards {
-    cards: Record<string, ICard>;
-    lists: Record<string, IList>;
+    cards: { [key: string]: ICard };
+    lists: { [key: string]: IList };
     listOrder: string[];
   }
   ```
+    相當於
+    ```typescript
+    interface IListsCards {
+      cards: Record<string, ICard>;
+      lists: Record<string, IList>;
+      listOrder: string[];
+    }
+    ```
 ***
   ```typescript
   interface IList1 {

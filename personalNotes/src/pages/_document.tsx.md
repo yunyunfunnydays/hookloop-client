@@ -31,7 +31,7 @@
 2. **自訂的Document類**:
    這邊建立了一個名為 `MyDocument` 的新類，並繼承了 `Document` 類。
 
-3. **`getInitialProps` 方法**:
+3. **`Document.getInitialProps` 方法**:
    ```jsx
    static async getInitialProps(ctx: DocumentContext) {
      const initialProps = await Document.getInitialProps(ctx);

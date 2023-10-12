@@ -42,7 +42,7 @@ import type { MenuProps } from "antd"
       - 清晰性: 顯式地使用 import type 使得程式碼閱讀者知道這是一個型別的引入，而不是值。
 
       - 編譯優化: 
-        - 在 TypeScript 中，型別是在編譯時進行檢查的，並且不會出現在編譯後的 JavaScript 輸出中。所以，不論你使用哪種導入方法，MyType 都不會在編譯後的 JavaScript 中出現。
+        - 在 TypeScript 中，型別是在編譯時進行檢查的，並且不會出現在編譯後的 JavaScript 輸出中。但若有使用到值(如；extend class 或 將 num 作為物件取值)，則會在編譯後的 JavaScript 中出現。
         - 但使用 import type 可以確保 TypeScript 編譯器不會將 MyType 視為運行時的值。這意味著如果你不小心在程式碼中嘗試使用它作為運行時的值，`例如將 import type 引入的 class 做 extend，或將 num 作為物件取值時`，TypeScript 會報告一個錯誤。
   
           ```ts
@@ -170,6 +170,8 @@ const menuProps = {
     如果你直接使用 `const Menu: ...` 而不加 `declare`，TypeScript 編譯器會期望你在當前的作用域中為 `Menu` 提供一個具體的值或實現。
 
     使用 `declare` 就是為了告知 TypeScript：“我知道這個東西存在，只是在這裡你看不到它的具體實現或值”。這讓你可以在 TypeScript 中描述和使用那些已經存在但不在當前檔案或作用域中的事物。
+   ### 4. `ForwardRefExoticComponent<MenuProps & React.RefAttributes<MenuRef>>`
+    & 用於同時使用多個型別定義
 
 - `MenuProps["onClick"]`：
   - 
