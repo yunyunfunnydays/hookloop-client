@@ -7,12 +7,12 @@ interface IProps {
   c_user: IUser;
   set_c_user: ISetStateFunction<IUser>;
   c_getAllWorkspace: () => void;
-  c_showPortal: () => void;
+  set_c_showPortal: ISetStateFunction<boolean>;
   c_socketNotification: (userId: string, description: React.ReactNode) => void;
 }
 
 const GlobalContext = React.createContext<IProps>({
-  c_showPortal: () => {},
+  set_c_showPortal: () => {},
   c_socketNotification: () => {},
   c_memberMap: {},
   c_workspaces: [],

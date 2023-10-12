@@ -47,7 +47,7 @@ const Login: React.FC<ILogin> = (props) => {
    * editType 指定目前情境是[登入][註冊][忘記密碼]
    */
   const { open, close, editType } = props;
-  const { set_c_user, c_showPortal } = useContext(GlobalContext);
+  const { set_c_user, set_c_showPortal } = useContext(GlobalContext);
   const [form] = Form.useForm();
 
   // API 錯誤時用來讓使用者明確知道錯在哪裡
@@ -138,7 +138,8 @@ const Login: React.FC<ILogin> = (props) => {
         userId: data.user.id,
         ...data.user,
       });
-      c_showPortal();
+      console.log(true);
+      set_c_showPortal(true);
       switchRouter(data);
       close();
     } else {

@@ -25,7 +25,7 @@ import GlobalContext from "../Context/GlobalContext";
 export default function App({ Component, pageProps }: AppProps) {
   const [api, contextHolder] = notification.useNotification();
   // 登入時強迫 user 看我做的動畫
-  const { showPortal, portal } = usePortal();
+  const { setShowPortal, portal } = usePortal();
   const router = useRouter();
   // 所有 workspace
   const [c_workspaces, set_c_workspaces] = useState<Iworkspace[]>([]);
@@ -60,6 +60,7 @@ export default function App({ Component, pageProps }: AppProps) {
       set_c_workspaces(_data);
     }
     set_s_isLoading(false);
+    setShowPortal(false);
   };
 
   // 第一次渲染判斷 token 是否過期並取得登入人員資訊
@@ -134,7 +135,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return withTheme(
     <GlobalContext.Provider
       value={{
-        c_showPortal: showPortal,
+        set_c_showPortal: setShowPortal,
         c_memberMap,
         c_workspaces,
         set_c_workspaces,

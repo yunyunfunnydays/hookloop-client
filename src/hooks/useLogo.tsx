@@ -2,19 +2,9 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 const usePortal = () => {
-  const [show, setShow] = useState<boolean>(false);
+  const [showPortal, setShowPortal] = useState<boolean>(false);
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (show) {
-      timer = setTimeout(() => setShow(false), 3400);
-    }
-    return () => clearTimeout(timer);
-  }, [show]);
-
-  const showPortal = () => setShow(true);
-
-  const portal = show
+  const portal = showPortal
     ? ReactDOM.createPortal(
         <div className="flex-center absolute bottom-0 left-0 right-0 top-0 z-50 h-screen w-screen bg-[#262626] font-['Lexend']">
           <h1 className="text-8xl font-black uppercase tracking-widest">
@@ -49,7 +39,7 @@ const usePortal = () => {
     : null;
 
   // return [showPortal, portal];
-  return { showPortal, portal };
+  return { setShowPortal, portal };
 };
 
 export default usePortal;
