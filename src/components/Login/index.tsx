@@ -126,7 +126,7 @@ const Login: React.FC<ILogin> = (props) => {
       Router.push(Router.asPath);
       return;
     }
-    Router.push("/dashboard");
+    Router.replace("/dashboard");
   };
 
   // 因為登入、註冊完成時要做的事情一樣，所以將功能拉出來共用

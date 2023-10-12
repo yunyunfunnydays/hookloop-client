@@ -37,6 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [c_user, set_c_user] = useState<IUser>(userInitValue);
 
   // 當 socket 吐資料回來時告訴使用者是哪位仁兄在改東西
+  // TODO Convert to a standalone component
   const c_socketNotification = (userId: string, description: React.ReactNode) => {
     api.info({
       message: <span className="ml-3 mt-5 text-lg">{c_memberMap[userId]?.username}</span>,
@@ -60,6 +61,7 @@ export default function App({ Component, pageProps }: AppProps) {
       set_c_workspaces(_data);
     }
     set_s_isLoading(false);
+    // End the animation after get workspace data
     setShowPortal(false);
   };
 
@@ -75,7 +77,7 @@ export default function App({ Component, pageProps }: AppProps) {
       if (status === "success") {
         // 如果目前正在首頁登入後要直接導轉到 dashboard
         if (currentPath === "/") {
-          Router.push("dashboard");
+          Router.replace("dashboard");
         }
         // 儲存使用者資訊
         set_c_user({
@@ -84,13 +86,10 @@ export default function App({ Component, pageProps }: AppProps) {
         });
         return;
       }
+      // TODO forget Passwords
       if (currentPath.includes("/resetPassword")) {
         Router.push(currentPath);
         return;
-      }
-      // 因為沒有驗證成功，所以要導轉到首頁
-      if (currentPath !== "/") {
-        Router.push("/");
       }
       set_c_user(userInitValue);
     })();
