@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "antd";
 import check_circle from "@/assets/check_circle.svg";
@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 
 interface IPlan {
   source: "landing-page" | "plan-page";
+  s_selected: PlanOptions;
+  set_s_selected: ISetStateFunction<PlanOptions>;
 }
 export enum PriceOptions {
   FREE = 0,
@@ -58,14 +60,21 @@ const plans = [
   },
 ];
 
-const Plan: React.FC<IPlan> = (props) => {
-  const { source } = props;
+const Plan: React.FC<IPlan> = ({ source, s_selected = PlanOptions.FREE, set_s_selected = () => {} }) => {
   const router = useRouter();
   const isIndex = source === "landing-page";
-  const [s_selected, set_s_selected] = useState<PlanOptions>();
 
-  const handleSelectedPlan = (targetPlan: PlanOptions) => {
+  const enterPlanPage = (targetPlan: PlanOptions) => {
     router.push(`/plan?targetPlan=${targetPlan}`);
+  };
+
+  const handleSelectedPlan = (
+    targetPlan: PlanOptions,
+    e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>,
+  ) => {
+    e.preventDefault();
+    if (isIndex) enterPlanPage(targetPlan);
+    if ("button" in e || ("key" in e && e.key === "Enter")) set_s_selected(targetPlan);
   };
 
   useEffect(() => {
@@ -80,16 +89,17 @@ const Plan: React.FC<IPlan> = (props) => {
       {plans.map((plan, index) => {
         return (
           <section
+            key={plan.title}
             className="relative mb-5 w-full cursor-pointer md:mb-0 md:w-[32%]"
             role="menuitem"
             tabIndex={index}
-            onClick={() => handleSelectedPlan(plan.title)}
-            onKeyDown={() => handleSelectedPlan(plan.title)}
+            onClick={(e) => handleSelectedPlan(plan.title, e)}
+            onKeyDown={(e) => handleSelectedPlan(plan.title, e)}
           >
             <div
-              className={`flex flex-col overflow-hidden rounded-lg ${isIndex ? "items-center" : ""} border ${
-                !isIndex && s_selected === plan.title ? "border-4 border-black" : "border-[#D9D9D9]"
-              } `}
+              className={`flex flex-col overflow-hidden rounded-lg border border-gray-300  ${
+                isIndex ? "items-center" : ""
+              }  ${!isIndex && s_selected === plan.title ? "scale-105 shadow-lg" : ""} `}
             >
               <header className={`flex-center w-full py-3 bg-[${plan.bgColor}]`}>
                 <h5 className={`text-[28px] font-bold text-[${plan.titleColor}]`}>{plan.title}</h5>
@@ -122,7 +132,7 @@ const Plan: React.FC<IPlan> = (props) => {
                   <Button
                     type={plan.btnPrimary ? "primary" : "default"}
                     className={`mt-5 h-[40px] w-[115px] font-bold text-${plan.btnPrimary ? "white" : "black"}`}
-                    onClick={() => handleSelectedPlan(plan.title)}
+                    onClick={() => enterPlanPage(plan.title)}
                   >
                     {plan.btnTxt}
                   </Button>
@@ -134,7 +144,7 @@ const Plan: React.FC<IPlan> = (props) => {
               <Image
                 src={check_circle}
                 alt="check-circle"
-                className="absolute right-5 top-5 h-10 w-10 rounded-full md:bottom-[-50px] md:left-[calc(50%-20px)] md:right-auto md:top-auto"
+                className="absolute right-5 top-8 h-10 w-10 rounded-full md:bottom-[-55px] md:left-[calc(50%-20px)] md:right-auto md:top-auto"
               />
             )}
           </section>
