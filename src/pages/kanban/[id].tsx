@@ -28,7 +28,7 @@ const Kanban: React.FC = () => {
   const [s_open, set_s_open] = useState(false);
   const [c_query, set_c_query] = useState<IqueryType>(queryTypeInitValue);
   const [c_clearMode, set_c_clearMode] = useState(false);
-  const { c_user } = useContext(GlobalContext);
+  const { c_user, set_c_memberMap, c_workspaces } = useContext(GlobalContext);
 
   const c_getAllTags = async (kanbanId = "") => {
     if (!kanbanId) return;
@@ -178,6 +178,34 @@ const Kanban: React.FC = () => {
   useEffect(() => {
     c_getKanbanByKey();
   }, [s_kanbanKey]);
+  // 取得 workspace 上所有 member 並整理資料格式
+  useEffect(() => {
+    const {
+      pathname,
+      query: { id },
+    } = router;
+    console.log("!!c_workspaces", c_workspaces);
+    console.log("!!c_user", c_user);
+    console.log("!!router", router);
+    // 如果沒有進入 kanban 就不執行
+    if (!pathname.includes("kanban")) return;
+    if (!c_workspaces || !id) return;
+    // 用 c_workspaceId 找出目前 workspace 上所有成員的資料
+    const nowWorkspace = c_workspaces.find(({ kanbans, members }: Iworkspace) => {
+      if (kanbans.length === 0 || members.length === 0) return false;
+      return kanbans.some(({ key }: Ikanban) => key === id);
+    });
+
+    if (!nowWorkspace) return;
+    if (!c_user) return;
+
+    const memberMap = nowWorkspace.members.reduce((prev: ImemberRecord, curr) => {
+      prev[curr.userId] = curr;
+      return prev;
+    }, {});
+
+    set_c_memberMap(memberMap);
+  }, [c_workspaces]);
 
   const contextValue = useMemo(
     () => ({

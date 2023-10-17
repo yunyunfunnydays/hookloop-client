@@ -1,6 +1,7 @@
 import React from "react";
 
 interface IProps {
+  set_c_memberMap: ISetStateFunction<ImemberRecord>;
   c_memberMap: ImemberRecord;
   c_workspaces: Iworkspace[];
   set_c_workspaces: ISetStateFunction<Iworkspace[]>;
@@ -14,6 +15,7 @@ interface IProps {
 const GlobalContext = React.createContext<IProps>({
   set_c_showPortal: () => {},
   c_socketNotification: () => {},
+  set_c_memberMap: () => {},
   c_memberMap: {},
   c_workspaces: [],
   set_c_workspaces: () => {},
