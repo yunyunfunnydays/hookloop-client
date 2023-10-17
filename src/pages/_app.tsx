@@ -1,5 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import whyDidYouRender from "@welldone-software/why-did-you-render";
+
 // 順序很重要!!
 import "../styles/protal.css";
 import "../styles/globals.css";
@@ -21,6 +24,10 @@ import withTheme from "../../theme/index";
 import { userInitValue } from "../components/util/initValue";
 // context
 import GlobalContext from "../Context/GlobalContext";
+// Tracking unnecessary re-renders
+if (process.env.NODE_ENV === "development") {
+  whyDidYouRender(React);
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   const [api, contextHolder] = notification.useNotification();
@@ -37,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [c_user, set_c_user] = useState<IUser>(userInitValue);
 
   // 當 socket 吐資料回來時告訴使用者是哪位仁兄在改東西
-  // TODO Convert to a standalone component
+  // TODO Convert to a standalone component ：popup notification
   const c_socketNotification = (userId: string, description: React.ReactNode) => {
     api.info({
       message: <span className="ml-3 mt-5 text-lg">{c_memberMap[userId]?.username}</span>,
@@ -86,10 +93,14 @@ export default function App({ Component, pageProps }: AppProps) {
         });
         return;
       }
-      // TODO forget Passwords
+      // FIXME forget Passwords
       if (currentPath.includes("/resetPassword")) {
         Router.push(currentPath);
         return;
+      }
+      // 因為沒有驗證成功，所以要導轉到首頁
+      if (currentPath !== "/") {
+        Router.push("/");
       }
       set_c_user(userInitValue);
     })();
@@ -103,38 +114,11 @@ export default function App({ Component, pageProps }: AppProps) {
     c_getAllWorkspace();
   }, [c_user]);
 
-  // 取得 workspace 上所有 member 並整理資料格式
-  useEffect(() => {
-    const {
-      pathname,
-      query: { id },
-    } = router;
-
-    // 如果沒有進入 kanban 就不執行
-    if (!pathname.includes("kanban")) return;
-    if (!c_workspaces || !id) return;
-
-    // 用 c_workspaceId 找出目前 workspace 上所有成員的資料
-    const nowWorkspace = c_workspaces.find(({ kanbans, members }: Iworkspace) => {
-      if (kanbans.length === 0 || members.length === 0) return false;
-      return kanbans.some(({ key }: Ikanban) => key === id);
-    });
-
-    if (!nowWorkspace) return;
-    if (!c_user) return;
-
-    const memberMap = nowWorkspace.members.reduce((prev: ImemberRecord, curr) => {
-      prev[curr.userId] = curr;
-      return prev;
-    }, {});
-
-    set_c_memberMap(memberMap);
-  }, [router, c_workspaces, c_user]);
-
   return withTheme(
     <GlobalContext.Provider
       value={{
         set_c_showPortal: setShowPortal,
+        set_c_memberMap,
         c_memberMap,
         c_workspaces,
         set_c_workspaces,
@@ -147,12 +131,10 @@ export default function App({ Component, pageProps }: AppProps) {
       {portal}
       {contextHolder}
       <Spin spinning={s_isLoading}>
-        {/* <Head>
-          <meta name="google" content="notranslate" />
-        </Head> */}
         <Header />
         <Component {...pageProps} />
       </Spin>
     </GlobalContext.Provider>,
   );
 }
+App.whyDidYouRender = true;

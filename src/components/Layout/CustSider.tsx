@@ -257,3 +257,4 @@ const CustSider: React.FC<IProps> = ({ s_collapsed, set_s_collapsed }) => {
 };
 
 export default CustSider;
+CustSider.whyDidYouRender = true;
