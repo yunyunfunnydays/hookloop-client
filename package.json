@@ -68,6 +68,7 @@
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "@welldone-software/why-did-you-render": "^7.0.1",
     "commitizen": "^4.3.0",
     "commitlint": "^17.6.1",
     "conventional-changelog-cli": "^2.2.2",

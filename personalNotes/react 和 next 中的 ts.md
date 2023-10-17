@@ -16,6 +16,22 @@
     - `ReactNode`(React 節點): 一個可渲染的 React 子元素，它可能是一個元素、字串、數字等
     - `ReactElement`: 一個在 React 中的元素
     - `FC<Props>` 或 `FunctionComponent<Props>`: 函式型元件的型別
+      - ### React.FC
+        `React.FC` 或 `React.FunctionComponent` 是一個泛型（generic）接口，用於描述函數組件的形狀和屬性。這個接口接受一個泛型參數，即組件的 `props` 的型別。
+
+        它會自動加上兒童（children）屬性，並確保你的組件接受一個 `props` 參數，並返回一個 JSX 元素。
+
+        ```tsx
+        const MyComponent: React.FC<{ name: string }> = ({ name, children }) => {
+          return (
+            <div>
+              Hello, {name}!
+              {children}
+            </div>
+          );
+        };
+        ```
+
     - `ChangeEvent<HTMLInputElement>`: 通常用在輸入元件 (input element) 的事件處理
     ```tsx
     import React, { FC, ReactNode } from "react";
@@ -225,7 +241,7 @@ const ButtonComponent: FC = () => {
 
 # 其他常忘的 ts
 
-## 非空斷言操作符(Non-null assertion operator)
+## !非空斷言操作符(Non-null assertion operator)
 在 TypeScript (TS) 中, `!` 號後置操作符被稱為「非空斷言操作符」(Non-null assertion operator)。當你確定某個值不會是 `null` 或 `undefined`，但 TypeScript 推斷不能確定此事時，你可以使用此操作符來告訴 TypeScript：「我確定這個值不會是 `null` 或 `undefined`」。
 
 ### 使用場景
@@ -678,6 +694,97 @@ let strLength: number = (someValue as string).length;
     }
     ```
        
+## 判斷事件類型
+在 React 與 TypeScript 的結合使用中，有幾種常用的方式來判斷事件類型：
+
+- ### `instanceof`
+
+  通過 `instanceof` 來判斷對象是否是某個構造函數的實例。但需要注意的是，在 React 中，原生的 DOM 事件和 React 的合成事件（Synthetic Event）不是同一個類型，所以這個方法不適用於 React 的合成事件。
+
+  ```tsx
+  if (e instanceof MouseEvent) {
+    // ...
+  } else if (e instanceof KeyboardEvent) {
+    // ...
+  }
+  ```
+
+- ### 屬性檢查（Property Checking）
+
+  使用 `in` 運算符來檢查某個屬性是否存在於事件對象中。
+
+  ```tsx
+  if ('button' in e) {
+    // MouseEvent
+  } else if ('key' in e) {
+    // KeyboardEvent
+  }
+  ```
+
+- ### `type` 屬性
+
+  某些事件對象會有一個 `type` 屬性，這個屬性會包含一個字串，用來表示事件的類型。
+
+  ```tsx
+  if (e.type === 'click') {
+    // MouseEvent
+  } else if (e.type === 'keydown') {
+    // KeyboardEvent
+  }
+  ```
+
+- ### `nativeEvent`
+
+  React 的合成事件對象包含一個 `nativeEvent` 屬性，這個屬性會指向原生的 DOM 事件對象。你可以透過這個屬性來進一步判斷事件類型。
+
+  ```tsx
+  if (e.nativeEvent instanceof MouseEvent) {
+    // ...
+  } else if (e.nativeEvent instanceof KeyboardEvent) {
+    // ...
+  }
+  ```
+
+- ### 自定義屬性（Custom Attributes）
+
+  在某些情況下，你也可以在 JSX 元素上添加自定義的 data 屬性，然後在事件處理函式中使用這些屬性來判斷事件的類型或來源。
+
+  ```tsx
+  <button data-event-type="mouse" onClick={handleEvent}>Click Me</button>
+  <input data-event-type="keyboard" onKeyDown={handleEvent} />
+  ```
+
+  在 `handleEvent` 中：
+
+  ```tsx
+  const eventType = e.currentTarget.getAttribute('data-event-type');
+  if (eventType === 'mouse') {
+    // MouseEvent
+  } else if (eventType === 'keyboard') {
+    // KeyboardEvent
+  }
+  ```
+
+### 最推薦的方法取決於你的具體需求，但一般來說，**`屬性檢查（Property Checking）`** 是一個相對簡單和可靠的方法。
+
+### 優點：
+
+- 這個方法不依賴於實例的具體類型，因此即使在 React 的合成事件（Synthetic Event）和原生 DOM 事件之間，也能正確工作。
+- 它的實現也相對簡單，不需要對事件對象進行過多的檢查或操作。
+
+### 範例：
+
+```tsx
+if ('button' in e) {
+  // 處理鼠標事件（MouseEvent）
+} else if ('key' in e) {
+  // 處理鍵盤事件（KeyboardEvent）
+}
+```
+
+這種方法在多數情況下都能夠有效地區分不同類型的事件，而且實現起來也相對簡單。
+
+
 
 
 
