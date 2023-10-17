@@ -42,30 +42,30 @@ const ConfirmPayment = (props: ConfirmPaymentProps) => {
           </div>
 
           <form action="https://ccore.newebpay.com/MPG/mpg_gateway" method="post" className="block">
-            <input type="text" name="TradeSha" value={encryptionOderData?.shaEncrypted} hidden />
-            <input type="text" name="TradeInfo" value={encryptionOderData?.aesEncrypted} hidden />
-            <input type="text" name="TimeStamp" value={encryptionOderData?.tradeInfo?.TimeStamp} hidden />
-            <input type="text" name="Version" value={encryptionOderData?.tradeInfo?.Version} hidden />
-            <input type="text" name="MerchantID" value={encryptionOderData?.tradeInfo?.MerchantID} hidden />
+            <input type="text" name="TradeSha" defaultValue={encryptionOderData?.shaEncrypted} hidden />
+            <input type="text" name="TradeInfo" defaultValue={encryptionOderData?.aesEncrypted} hidden />
+            <input type="text" name="TimeStamp" defaultValue={encryptionOderData?.tradeInfo?.TimeStamp} hidden />
+            <input type="text" name="Version" defaultValue={encryptionOderData?.tradeInfo?.Version} hidden />
+            <input type="text" name="MerchantID" defaultValue={encryptionOderData?.tradeInfo?.MerchantID} hidden />
             <label htmlFor="MerchantOrderNo" className="block text-[14px] font-bold">
               MerchantOrderNo:{" "}
             </label>
             <input
               type="text"
               name="MerchantOrderNo"
-              value={encryptionOderData?.tradeInfo?.MerchantOrderNo}
+              defaultValue={encryptionOderData?.tradeInfo?.MerchantOrderNo}
               style={inputStyles}
             />
             <br />
             <label htmlFor="Amt" className="block text-[14px] font-bold">
               Amount:{" "}
             </label>
-            <input type="text" name="Amt" value={encryptionOderData?.tradeInfo?.Amt} style={inputStyles} />
+            <input type="text" name="Amt" defaultValue={encryptionOderData?.tradeInfo?.Amt} style={inputStyles} />
             <br />
             <label htmlFor="Email" className="block text-[14px] font-bold">
               Email:{" "}
             </label>
-            <input type="email" name="Email" value={encryptionOderData?.tradeInfo?.Email} style={inputStyles} />
+            <input type="email" name="Email" defaultValue={encryptionOderData?.tradeInfo?.Email} style={inputStyles} />
             <footer style={{ position: "absolute", bottom: 15, left: "50%", transform: "translateX(-50%)" }}>
               <Button onClick={handlePrevious}>Previous</Button>
               <button
