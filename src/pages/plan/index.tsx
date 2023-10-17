@@ -5,11 +5,11 @@ import { PlanOptions } from "@/components/Plan";
 import { useRouter } from "next/router";
 import { createOrder } from "@/service/api";
 import Login from "@/components/Login";
-import CancelSubscribeModal from "@/pageComponents/planAndPayment/CancelSubscribeModal";
-import PayResultSuccess from "@/pageComponents/planAndPayment/PayResultSuccess";
-import ChooseYourPlan from "@/pageComponents/planAndPayment/ChooseYourPlan";
-import ConfirmPayment from "@/pageComponents/planAndPayment/ConfirmPayment";
-import PayResultFail from "@/pageComponents/planAndPayment/PayResultFail";
+import CancelSubscribeModal from "@/pages/plan/components/CancelSubscribeModal";
+import PayResultSuccess from "@/pages/plan/components/PayResultSuccess";
+import ChooseYourPlan from "@/pages/plan/components/ChooseYourPlan";
+import ConfirmPayment from "@/pages/plan/components/ConfirmPayment";
+import PayResultFail from "@/pages/plan/components/PayResultFail";
 import GlobalContext from "@/Context/GlobalContext";
 
 const Plan = () => {
@@ -40,6 +40,7 @@ const Plan = () => {
         targetPlan: router.query.targetPlan as PlanOptions,
       };
       const res = await createOrder(orderData);
+      console.log("11111111111111111111111111111111111111111111111111111111", res.data.data);
       set_s_encryptionOderData(res.data.data);
       set_s_current(s_current + 1);
     } catch (err) {

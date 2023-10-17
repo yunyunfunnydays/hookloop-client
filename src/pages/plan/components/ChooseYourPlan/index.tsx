@@ -22,7 +22,6 @@ const ChooseYourPlan = (props: ChooseYourPlanProps) => {
   };
 
   useEffect(() => {
-    console.log(123);
     if (s_submit) handleConfirmOrder();
   }, [router.query]);
 

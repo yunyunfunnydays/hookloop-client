@@ -7,8 +7,8 @@ import { useRouter } from "next/router";
 
 interface IPlan {
   source: "landing-page" | "plan-page";
-  s_selected: PlanOptions;
-  set_s_selected: ISetStateFunction<PlanOptions>;
+  s_selected?: PlanOptions;
+  set_s_selected?: ISetStateFunction<PlanOptions>;
 }
 export enum PriceOptions {
   FREE = 0,

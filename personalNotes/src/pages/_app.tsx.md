@@ -29,7 +29,7 @@
   - 當你在一個組件內部想要存取當前的路由資訊時 (例如網址, 查詢參數等)，你可以使用這個 hook。提供當前的路由對象。
   - 其中包括了許多有用的屬性，如
     - pathname(當前的路徑)
-    - query(查詢參數)
+    - query(查詢參數)無論是動態路由參數（像 [id]）還是 URL 的 query string（? 之後的參數），你都可以用 useRouter 的 query 屬性來取得。query 的寫入是非同步的，在組件剛掛載（mount）的時候可能會是一個空對象。因此，在使用 router.query 之前，你可能需要確保它已經被填充。
     - asPath(顯示在瀏覽器地址欄的實際路徑)等。
 
    ```tsx
@@ -37,15 +37,17 @@
 
      function MyComponent() {
        const router = useRouter();
-       console.log(router.pathname);  // 當前的路徑
-       console.log(router.query);    // 查詢參數，例如 { id: '123' } 
+       //users/123?name=John
+       console.log(router.pathname);  // 當前的路徑，例如 "/users/[id]"
+       console.log(router.query);    // 查詢參數，例如 { id: '123', name: 'John' } 
+       console.log(router.asPath);  // 瀏覽器地址欄裡實際看到的路徑，例如 "/users/123"
      }
      ```
 
 ## Next.js 的路由系統
 
 在 Next.js 中，路由是基於 `pages` 資料夾內的檔案結構。例如，`pages/about.tsx` 會對應到 `/about` 的路徑。這種基於檔案系統的路由方法使得建立頁面非常直覺且簡單。
-
+會先嘗試匹配靜態路由（也就是具體名稱的文件或資料夾），再去匹配動態路由（像 [id].js 這種）
 - 動態路由 (dynamic routes)：
   
   在 Next.js 中，動態路由允許你為變數路徑創建頁面。例如，如果你想要為每篇部落格文章創建一個頁面，你可以使用動態路由。
@@ -64,8 +66,7 @@
 
 - 捕獲路由 (catch-all routes)
 
-  捕獲路由允許你匹配多段路徑。例如，如果你想要匹配所有 `/a/b/c` 形式的路徑，無論路徑有多少段。
-
+  捕獲路由允許你匹配多段路徑。例如，如果你想要匹配所有 `/a/b/c` 形式的路徑，無論路徑有多少段，在 Next.js 裡是用來匹配所有不符合其他路由規則的路徑。
   **如何使用**: 使用三個點 (`...`) 在方括號內。例如: `pages/[...params].tsx`。
 
   如果用戶訪問 `/a/b/c`，`[...params].tsx` 將被渲染，並且 `params` 會是一個陣列 `['a', 'b', 'c']`。
