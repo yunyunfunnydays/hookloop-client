@@ -62,7 +62,6 @@ export default function App({ Component, pageProps }: AppProps) {
     const { status, data } = res.data as IApiResponse;
     if (status === "success") {
       // msg.success(message);
-
       const _data = data.filter((workspace: Iworkspace) => workspace.isArchived !== true);
 
       set_c_workspaces(_data);
