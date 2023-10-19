@@ -78,7 +78,6 @@ const Home: React.FC = () => {
           Quick Start
         </a>
       </nav>
-      {`process.env.rootUrl= ${process.env.rootUrl}`}
       <section className="h-[calc(100vh_-_160px)] overflow-auto pt-[15px]">
         {/* mission */}
         <section
