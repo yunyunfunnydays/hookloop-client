@@ -23,7 +23,7 @@ const instance: AxiosInstance = axios.create({
 instance.interceptors.response.use(
   (response: AxiosResponse) => {
     const { status } = response.data as IApiResponse;
-
+    console.log(`process.env.rootUrl= ${process.env.rootUrl}`);
     if (status === "success") {
       const { data, message } = response.data;
       response.data = {
